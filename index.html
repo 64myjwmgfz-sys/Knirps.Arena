@@ -894,6 +894,13 @@ body.modal-open { overflow: hidden; }
 .unit .base, .unit.gu .base { left: 24%; right: 24%; bottom: 9%; height: 13%; border: 0; border-radius: 50%; opacity: 1; background: radial-gradient(ellipse at center, rgba(20, 40, 20, 0.42) 0%, rgba(20, 40, 20, 0.22) 55%, rgba(20, 40, 20, 0) 75%); box-shadow: none; }
 .unit.picked .base { box-shadow: 0 0 0 3px var(--gold); background: rgba(255, 216, 102, 0.25); }
 .unit.guarding .base, .unit.upt .base { box-shadow: 0 0 0 3px #FFD866; }
+/* Schatten: imaginäre Sonne unten links -> die Silhouette der Figur wird auf den Boden projiziert (nach oben rechts, flach gedrückt, zum Ende hin blasser) */
+.unit .base { background: none; }
+.unit .shd { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; transform-origin: 50% 87%; transform: matrix(1, 0, -0.62, 0.3, 0, 0); filter: brightness(0) blur(1.3px); opacity: 0.4; -webkit-mask-image: linear-gradient(to top, #000 8%, rgba(0, 0, 0, 0.3) 100%); mask-image: linear-gradient(to top, #000 8%, rgba(0, 0, 0, 0.3) 100%); }
+.unit .shd svg { display: block; width: 100%; height: 100%; overflow: visible; scale: var(--flip, 1) var(--crouch, 0.97); }
+.unit.dying .shd { opacity: 0; }
+/* Rückansicht von Bogi und Bolzo: den Arm, der sonst quer über den Rücken läge, nicht zeigen */
+.unit.fb[data-type="archer"] .arm2, .unit.fb[data-type="crossbow"] .arm2 { visibility: hidden; }
 
 /* Natürliche Kampfhaltung: leicht in den Knien, Schrittstellung, Oberkörper geneigt */
 .unit .tok svg { rotate: calc(var(--sw, 1) * var(--lean, 3) * -1deg); scale: 1 var(--crouch, 0.97); }
@@ -1937,6 +1944,7 @@ CH.shield = critter({
     el.style.setProperty('--mx', f === 'B' ? -1 : 1); el.style.setProperty('--sw', ws); el.style.setProperty('--sa', -ws);
     el.style.setProperty('--fw', f === 'B' ? -1 : 1); el.style.setProperty('--flip', f === 'S' ? (u.flip || 1) : 1);
     el.classList.toggle('fs', f === 'S');
+    el.classList.toggle('fb', f === 'B');
   }
   /* Figur dreht sich in Angriffs- bzw. Laufrichtung: zur Seite, vom Betrachter weg (Rückansicht) oder zu ihm hin */
   function setFacing(u, face, flip) {
@@ -1946,6 +1954,7 @@ CH.shield = critter({
     u.face = f; u.flip = fl; u.faceSet = true;
     var tok = tokOf(u); if (!tok) return;
     tok.innerHTML = icon(skey(u));
+    var sh = u.el.querySelector('.shd'); if (sh) sh.innerHTML = tok.innerHTML;
     faceVars(u);
   }
   function faceVec(u, v) {
@@ -2414,11 +2423,11 @@ CH.shield = critter({
       el.style.setProperty('--ph', '-' + (Math.random() * 2.8).toFixed(2) + 's');
       el.className = 'unit l' + u.level + (t.ability || t.aoe ? ' champ' : '') + ' ' + (u.team === 'p' ? 'mine' : 'foe') + (S.phase === 'battle' && u.team === 'e' ? ' reveal' : '') +
         (S.sel && S.sel.kind === 'unit' && S.sel.id === u.id ? ' picked' : '') + (S.pop === u.id ? ' pop' : '');
-      el.innerHTML = '<div class="base"></div><div class="tok" style="--c:' + t.color + '">' + icon(skey(u)) + '</div>' +
+      el.innerHTML = '<div class="base"></div><div class="shd">' + icon(skey(u)) + '</div><div class="tok" style="--c:' + t.color + '">' + icon(skey(u)) + '</div>' +
         (t.hero ? '<span class="lv champ" aria-label="' + t.role + '">' + CROWN + '</span>' : u.level ? '<span class="lv l' + u.level + '" aria-label="' + u.level + ' von 3 Sternen">' + stars(u.level) + '</span>' : '') +
         '<span class="hpbar"><i></i></span>' + chbarHtml(t) + '<span class="hit"></span>';
       unitsEl.appendChild(el);
-      u.el = el;
+      u.el = el; faceVars(u);
       place(u);
       if (S.pop === u.id && !RM) { var tk = el.querySelector('.tok'); if (tk && tk.animate) tk.animate([{ transform: 'scaleX(0.15)' }, { transform: 'scaleX(1)' }], { duration: 280, easing: 'ease-out' }); }
       if (u.max !== undefined) setHp(u);
@@ -2867,7 +2876,7 @@ CH.shield = critter({
     magic: '<svg width="52" height="26" viewBox="-26 -13 52 26"><circle r="12" cx="4" fill="#4D9BFF" opacity=".28"/><path d="M-22,0 H12" stroke="#1B2630" stroke-width="6" stroke-linecap="round"/><path d="M-22,0 H12" stroke="#A8CEFF" stroke-width="3" stroke-linecap="round"/><path d="M10,-7 L23,0 L10,7Z" fill="#DCEAFF" stroke="#1B2630" stroke-width="2.200" stroke-linejoin="round"/><path d="M-22,0 L-26,-5 M-22,0 L-26,5" stroke="#2F6FE0" stroke-width="3" stroke-linecap="round"/><circle cx="-8" cy="-6" r="1.800" fill="#fff"/><circle cx="-2" cy="6" r="1.500" fill="#fff"/></svg>',
     hole: '<svg width="40" height="20" viewBox="-20 -10 40 20"><ellipse rx="17" ry="7" fill="#3B2414" stroke="#1B2630" stroke-width="2"/><ellipse rx="11" ry="4" cy="1" fill="#24150B"/></svg>',
     mound: '<svg width="34" height="22" viewBox="-17 -11 34 22"><path d="M-15,9 Q-12,-8 0,-9 Q12,-8 15,9Z" fill="#8A5A32" stroke="#1B2630" stroke-width="2" stroke-linejoin="round"/><path d="M-8,3 Q-4,-4 2,-3" fill="none" stroke="#B07C4A" stroke-width="2" stroke-linecap="round"/></svg>',
-    bigbolt: '<svg width="120" height="44" viewBox="-60 -22 120 44"><circle r="20" cx="8" fill="#4D9BFF" opacity=".25"/><circle r="12" cx="14" fill="#A8CEFF" opacity=".35"/><path d="M-52,-10 L-40,0 L-52,10 L-45,0Z" fill="#2F6FE0" stroke="#1B2630" stroke-width="2" stroke-linejoin="round"/><path d="M-46,0 H34" stroke="#1B2630" stroke-width="10" stroke-linecap="round"/><path d="M-46,0 H34" stroke="#A8CEFF" stroke-width="6" stroke-linecap="round"/><path d="M-46,0 H34" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M30,-13 L56,0 L30,13Z" fill="#DCEAFF" stroke="#1B2630" stroke-width="3" stroke-linejoin="round"/></svg>',
+    bigbolt: '<svg width="104" height="39" viewBox="-90 -32 170 64"><defs><radialGradient id="bbg"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#9FD0FF" stop-opacity=".6"/><stop offset="1" stop-color="#7A5CFF" stop-opacity="0"/></radialGradient><linearGradient id="bbs" x1="0" x2="1"><stop offset="0" stop-color="#8E6BFF" stop-opacity="0"/><stop offset=".4" stop-color="#7FB8FF"/><stop offset="1" stop-color="#fff"/></linearGradient><filter id="bbb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter></defs><ellipse cx="-10" cy="0" rx="82" ry="22" fill="url(#bbg)" opacity=".75"/><path d="M-86,-2 Q-60,-16 -30,-5 M-86,3 Q-60,15 -30,4 M-80,0 H-40" fill="none" stroke="#B9A2FF" stroke-width="2.200" stroke-linecap="round" opacity=".7"/><path d="M-62,0 H40" stroke="#6FB4FF" stroke-width="15" stroke-linecap="round" filter="url(#bbb)" opacity=".9"/><path d="M-62,0 H38" stroke="#1B2630" stroke-width="9" stroke-linecap="round"/><path d="M-62,0 H38" stroke="url(#bbs)" stroke-width="6" stroke-linecap="round"/><path d="M-58,0 H36" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M-64,-11 L-50,0 L-64,11 L-57,0Z" fill="#7FD6FF" stroke="#1B2630" stroke-width="2" stroke-linejoin="round"/><path d="M-52,-8 L-42,0 L-52,8 L-47,0Z" fill="#B9A2FF" stroke="#1B2630" stroke-width="1.600" stroke-linejoin="round"/><path d="M32,-15 L64,0 L32,15 L38,0Z" fill="#9FD8FF" filter="url(#bbb)" opacity=".95"/><path d="M32,-14 L62,0 L32,14 L38,0Z" fill="#F2F8FF" stroke="#1B2630" stroke-width="3" stroke-linejoin="round"/><path d="M40,0 H54" stroke="#7FB8FF" stroke-width="2.400" stroke-linecap="round"/><g fill="#fff"><path d="M-20,-14 l2,5 5,2 -5,2 -2,5 -2,-5 -5,-2 5,-2z"/><path d="M10,10 l1.600,4 4,1.600 -4,1.600 -1.600,4 -1.600,-4 -4,-1.600 4,-1.600z"/><path d="M-45,9 l1.300,3 3,1.300 -3,1.300 -1.300,3 -1.300,-3 -3,-1.300 3,-1.300z"/></g></svg>',
     gas: function (sz, v) {
       var o = v ? [[-14, -10, 30], [16, 8, 26], [4, -22, 22]] : [[12, -8, 28], [-16, 10, 28], [0, 20, 20]];
       return '<svg width="' + sz + '" height="' + sz + '" viewBox="-50 -50 100 100"><circle r="40" fill="url(#gsm)"/>' + o.map(function (c) { return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '" fill="url(#gsm)"/>'; }).join('') + '</svg>';
@@ -3477,19 +3486,16 @@ CH.shield = critter({
         hits.push({ e: e, d: hurt(u, e, u.atk * def.opener.mult, post), at: 520 + fl * Math.min(1, frac) });
       });
       u.cd = u.ai;
-      // Zielspalte aufleuchten lassen
-      var y0 = Math.min(u.y, endY), y1 = Math.max(u.y, endY) + 1, el = document.createElement('div');
-      el.className = 'fxgrid';
-      el.innerHTML = '<svg viewBox="0 0 360 780" preserveAspectRatio="none"><polygon points="' + pts([proj(u.x, y0), proj(u.x + 1, y0), proj(u.x + 1, y1), proj(u.x, y1)]) + '" fill="#4D9BFF" fill-opacity=".3" stroke="#2F6FE0" stroke-width="2.600" stroke-linejoin="round"/></svg>';
-      fxEl.appendChild(el);
-      play(el, [{ opacity: 0 }, { opacity: 1, offset: 0.2 }, { opacity: 0.9, offset: 0.7 }, { opacity: 0 }], 520 + fl);
       var v = { x: vx, y: vy };
       try { faceVec(u, v); } catch (e) {}
       lean(u, v, 900, 6, 0.5);
       wpn(u, [{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(' + (-vx * 6) + 'px,' + (-vy * 6) + 'px) scale(1.2)', offset: 0.5 },
               { transform: 'translate(' + (vx * 4) + 'px,' + (vy * 4) + 'px) scale(0.95)', offset: 0.6 }, { transform: 'translate(0,0) scale(1)' }], 900);
       later(0, function () { floatText(u, 'Riesenpfeil!', 'reflect'); });
-      later(520, function () { fxStar(A, '#A8CEFF', 0.9, 300); fly(A, B0, fl, SVG.bigbolt, a * 57.2958, true); shake(4, 220); });
+      later(520, function () { fxStar(A, '#C9E4FF', 1.1, 340); fxRing(A, '#9FD0FF', 1.6, 420); fly(A, B0, fl, SVG.bigbolt, a * 57.2958, true); shake(4, 220); });
+      for (var sp = 1; sp <= 9; sp++) (function (f) {
+        later(520 + fl * f, function () { fxStar({ x: A.x + (B0.x - A.x) * f + (Math.random() - 0.5) * 14, y: A.y + (B0.y - A.y) * f + (Math.random() - 0.5) * 14 }, f % 2 ? '#C9E4FF' : '#D8C2FF', 0.45 + Math.random() * 0.3, 420); });
+      })(sp / 10);
       hits.forEach(function (H) {
         later(H.at, function () {
           var vv = vec(u, H.e);
