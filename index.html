@@ -1316,6 +1316,35 @@ html, body { overscroll-behavior-x: none; }
 .strow.big .stb { width: 34px; height: 34px; stroke-width: 2; }
 .upgrow b { letter-spacing: 0; }
 .dock .tray { pointer-events: auto; }
+
+/* Sammlung: heller Raster-Look (Vorlage: Clash-Mini-Sammlung) */
+.chead { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.cgot { color: #FFB43A !important; font-family: var(--font-display); font-weight: 400 !important; font-size: 15px !important; letter-spacing: .02em; text-shadow: 0 2px 0 #1B2630, 0 0 4px rgba(0,0,0,.5); margin-top: 0 !important; }
+.cpanel { padding: 12px 10px 16px; border-radius: 18px; background: linear-gradient(#7FD0DC, #5DB7C9); box-shadow: 0 0 0 3px var(--m-ol), inset 0 3px 0 rgba(255,255,255,.35); }
+.cpanel .cgrid { gap: 12px 10px; }
+.cc { background: linear-gradient(#D6F3F6, #B3E3EA); box-shadow: 0 0 0 2.5px #4C9DB0, 0 4px 0 2.5px #3C7F91, inset 0 2px 0 rgba(255,255,255,.7); color: #1B3A48; padding-bottom: 8px; }
+.cc.in { box-shadow: 0 0 0 3px var(--m-gold), 0 4px 0 3px #B97800, inset 0 2px 0 rgba(255,255,255,.7); }
+.cc .cplat { background: radial-gradient(ellipse at 50% 28%, #B9C2CC, #6E7886 74%); box-shadow: 0 5px 0 #4B5461, 0 0 0 2px #2B3540; }
+.ccost { background: linear-gradient(#D45BF0, #9526C2); color: #fff; box-shadow: 0 0 0 2.5px #4A1163; text-shadow: 0 2px 0 rgba(0,0,0,.35); }
+.ccost.hero { background: linear-gradient(var(--m-gold-l), var(--m-gold)); color: #3A2500; box-shadow: 0 0 0 2.5px var(--m-ol); text-shadow: none; }
+.cc .strow { margin: -8px 0 3px; }
+.cc .stb { width: 19px; height: 19px; }
+.cc .stb.off { fill: #9DB6C0; stroke: #5F7886; opacity: .85; }
+.cprow { position: relative; display: block; margin: 0 8px 0 14px; }
+.cpi { position: absolute; left: -12px; top: 50%; transform: translateY(-50%); z-index: 3; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(#FFD75E, #F09A1E); box-shadow: 0 0 0 2px #2A1A0E; font-style: normal; }
+.cpi svg { width: 12px; height: 12px; fill: none; stroke: #3A2500; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.cprow .cpro { margin: 0; height: 16px; border-radius: 8px; background: #2A3C4A; box-shadow: 0 0 0 2px #1B2630; }
+.cprow .cpro i { background: linear-gradient(#6FE7F2, #1CB5D6); }
+.cprow .cpro b { line-height: 16px; font-size: 11px; padding-left: 8px; }
+.cc.lk { background: linear-gradient(#DCE1E6, #BCC4CC); box-shadow: 0 0 0 2.5px #8B96A3, 0 4px 0 2.5px #6B7683, inset 0 2px 0 rgba(255,255,255,.6); }
+.cc.lk .cplat { background: radial-gradient(ellipse at 50% 28%, #C9CED4, #8B939D 74%); box-shadow: 0 5px 0 #6B737E, 0 0 0 2px #4A525C; }
+.cc.lk .cart svg { filter: grayscale(1) brightness(.95) contrast(.9); opacity: .9; }
+.clock { background: #C4CBD3; color: #5B6673; border-radius: 9px; }
+.clbl { display: block; padding: 8px 4px 2px; font-family: var(--font-display); font-size: 14px; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.45), 0 0 3px rgba(0,0,0,.4); }
+.clbl.hh { color: #3A2500; text-shadow: none; }
+.cc.lk .clbl { color: #fff; }
+.cc.lk .strow { visibility: hidden; }
+.cempty { grid-column: 1 / -1; margin: 18px 6px; text-align: center; color: #1B3A48; font-weight: 800; font-size: 14px; }
 </style>
 
 <div class="menu" id="menu"></div>
@@ -4398,9 +4427,10 @@ CH.shield = critter({
     return out + '</span>';
   }
   function cardBar(k) {
-    var lv = upLevel(k); if (lv >= 3) return '<span class="cpro max"><b>Max</b></span>';
+    var lv = upLevel(k), ic = '<em class="cpi">' + mi('cards') + '</em>';
+    if (lv >= 3) return '<span class="cprow">' + ic + '<span class="cpro max"><b>Max</b></span></span>';
     var need = CARD_NEED[lv], have = S.cards[k] || 0;
-    return '<span class="cpro' + (have >= need ? ' rdy' : '') + '"><i style="width:' + Math.min(100, Math.round(have / need * 100)) + '%"></i><b>' + have + '/' + need + '</b></span>';
+    return '<span class="cprow">' + ic + '<span class="cpro' + (have >= need ? ' rdy' : '') + '"><i style="width:' + Math.min(100, Math.round(have / need * 100)) + '%"></i><b>' + have + '/' + need + '</b></span></span>';
   }
   function collHtml() {
     var tab = S.collTab || 'mini', list = tab === 'hero' ? HEROES : POOL, i;
@@ -4411,21 +4441,21 @@ CH.shield = critter({
       if (i === 2) { /* Zeilenumbruch durch Grid */ }
     }
     deckTiles += '<button class="cdt cdh" data-open="' + S.heroKey + '" aria-label="Held ' + TYPES[S.heroKey].name + ' ansehen"><span class="cplat"></span>' + CH[S.heroKey] + '</button>';
-    var cards = list.map(function (key) {
-      var t = TYPES[key], lk = !unlocked(key), inD = t.hero ? S.heroKey === key : S.deck.indexOf(key) >= 0;
+    var rest = list.filter(function (key) { return TYPES[key].hero ? S.heroKey !== key : S.deck.indexOf(key) < 0; });
+    var cards = rest.map(function (key) {
+      var t = TYPES[key], lk = !unlocked(key), inD = false;
       return '<button class="cc' + (inD ? ' in' : '') + (lk ? ' lk' : '') + '" data-open="' + key + '">' +
         (lk ? '<span class="clock">' + mi('lock') + '</span>' : '<span class="ccost' + (t.hero ? ' hero' : '') + '">' + (t.hero ? mi('crown') : t.cost) + '</span>') +
         '<span class="cart"><span class="cplat"></span>' + CH[key] + '</span>' +
         (t.hero ? '' : starRow(upLevel(key))) +
         (t.hero || lk ? '' : cardBar(key)) +
-        '<span class="cname">' + t.name + '</span>' +
-        '<span class="cstat' + (inD || lk ? '' : ' no') + '">' + (lk ? (key === 'knallo' ? 'Ab Baumwollfeld' : 'Ab Dorena') : inD ? (t.hero ? 'Dein Held' : 'Im Deck') : t.hero ? 'Held' : 'Nicht im Deck')+ '</span></button>';
+        (lk ? '<span class="clbl">Gesperrt</span>' : t.hero ? '<span class="clbl hh">' + t.name + '</span>' : '') + '</button>';
     }).join('');
-    return '<div><h2 class="mtitle">Sammlung</h2><p class="msub">' +
-      (S.inGame ? 'Änderungen am Deck gelten ab dem nächsten Spiel.' : 'Tippe eine Figur an: Werte ansehen und ins Deck nehmen.') + '</p></div>' +
+    var got = list.filter(function (k) { return unlocked(k); }).length;
+    return '<div class="chead"><div><h2 class="mtitle">Sammlung</h2><p class="msub cgot">Gesammelt: ' + got + '/' + list.length + '</p></div></div>' +
       '<div class="ctabs"><button class="ctab' + (tab === 'hero' ? ' on' : '') + '" data-ctab="hero">' + mi('crown') + 'Helden</button><button class="ctab' + (tab === 'mini' ? ' on' : '') + '" data-ctab="mini">' + mi('swords') + 'Minis</button></div>' +
       '<div class="panel"><div class="dhead"><b>Dein Deck</b><span class="dcount' + (S.deck.length === DECK_SIZE ? ' ok' : '') + '">' + (S.deck.length + 1) + '/' + DECK_TOTAL + '</span></div>' + (sf ? '<div class="cbanner"><span>Tippe auf die Figur, die durch ' + TYPES[sf].name + ' ersetzt wird.</span><button data-swapcancel="1">Abbrechen</button></div>' : '') + '<div class="cdeck">' + deckTiles + '</div></div>' +
-      '<div class="cgrid">' + cards + '</div>' + (S.cmodal ? cmodalHtml(S.cmodal) : '');
+      '<div class="cpanel"><div class="cgrid">' + (cards || '<p class="cempty">Alle Karten dieser Art sind schon in deinem Deck.</p>') + '</div></div>' + (S.cmodal ? cmodalHtml(S.cmodal) : '');
   }
 
   function cmodalHtml(k) {
