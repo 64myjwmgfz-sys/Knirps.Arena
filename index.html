@@ -3130,6 +3130,55 @@ CH.shield = critter({
     }
     play(d, fr, dur, { easing: 'linear' });
   }
+  /* Realistische Bombenexplosion: Hitzeblitz, Feuerball mit Verlauf, Rußrauch, Staubring, Brandfleck, Trümmer */
+  function fxBoom(P, k, big) {
+    k = k || 1; var sc = big ? 1.5 : 1;
+    function blob(css, w, h, dx, dy, frames, dur, delay, ease) {
+      var d = document.createElement('div');
+      d.className = 'fxo'; d.style.transform = T(P.x + dx, P.y + dy, 1, 0);
+      var i = document.createElement('div');
+      i.style.cssText = 'position:absolute;left:' + (-w / 2) + 'px;top:' + (-h / 2) + 'px;width:' + w + 'px;height:' + h + 'px;border-radius:50%;' + css;
+      d.appendChild(i); fxEl.appendChild(d);
+      var a = anim(i, frames, dur, { easing: ease || 'ease-out', fill: 'both', delay: delay || 0 });
+      if (!a) { setTimeout(function () { d.remove(); }, 300); return; }
+      a.onfinish = function () { d.remove(); };
+    }
+    var R = 34 * k * sc;
+    // Brandfleck am Boden
+    blob('background:radial-gradient(ellipse,rgba(40,26,18,.6) 40%,rgba(40,26,18,0) 72%)', R * 2.6, R * 1.1, 0, 8 * k,
+      [{ transform: 'scale(.3)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: 0.25 }, { transform: 'scale(1.05)', opacity: 0 }], 1300);
+    // Staubring
+    blob('border:' + Math.max(3, 5 * k) + 'px solid rgba(232,212,170,.85);box-sizing:border-box', R * 1.2, R * .5, 0, 8 * k,
+      [{ transform: 'scale(.3)', opacity: .9 }, { transform: 'scale(' + (3.6) + ')', opacity: 0 }], 620);
+    // Feuerball aus mehreren Verlaufskugeln
+    var offs = [[0, -10], [-14, -2], [14, -4], [-6, -22], [8, -18]];
+    offs.forEach(function (o, i) {
+      var w = R * (1.5 - i * 0.12);
+      blob('background:radial-gradient(circle,rgba(255,250,205,1) 0%,rgba(255,176,46,1) 36%,rgba(226,76,22,.9) 72%,rgba(90,22,10,0) 100%)', w, w,
+        o[0] * k * sc, (o[1] - 8) * k * sc,
+        [{ transform: 'scale(.2)', opacity: 1 }, { transform: 'scale(1.1)', opacity: 1, offset: 0.35 }, { transform: 'scale(1.25) translateY(' + (-8 * k) + 'px)', opacity: 0 }], 560 + i * 40, i * 14);
+    });
+    // Blitz (heller Kern)
+    blob('background:radial-gradient(circle,rgba(255,255,255,1) 0%,rgba(255,226,140,.85) 40%,rgba(255,200,80,0) 72%)', R * 4, R * 4, 0, -10 * k,
+      [{ transform: 'scale(.3)', opacity: 1 }, { transform: 'scale(1)', opacity: .9, offset: 0.3 }, { transform: 'scale(1.1)', opacity: 0 }], 260);
+    // Rußrauch steigt auf
+    for (var i = 0; i < 5; i++) {
+      var sw = R * (1.1 + Math.random() * .5), dx = (Math.random() - .5) * R * 1.1;
+      blob('background:radial-gradient(circle at 35% 35%,rgba(128,122,130,.95),rgba(34,30,36,.95))', sw, sw, dx, -14 * k,
+        [{ transform: 'translateY(0) scale(.3)', opacity: 0 }, { transform: 'translateY(' + (-22 * k) + 'px) scale(.9)', opacity: .9, offset: 0.3 },
+         { transform: 'translateY(' + (-70 * k - Math.random() * 20) + 'px) scale(1.35)', opacity: 0 }], 900 + Math.random() * 200, 140 + i * 40);
+    }
+    // Trümmer + Glut
+    var n = big ? 16 : 11;
+    for (var j = 0; j < n; j++) {
+      var ang = Math.random() * 6.283, dist = (34 + Math.random() * 54) * k * sc, ember = j % 2 === 0, sz = ember ? 5 : 8;
+      var up = -(14 + Math.random() * 26) * k;
+      blob(ember ? 'background:#FFC24A;box-shadow:0 0 6px #FF8A3D' : 'background:#4A3526;border-radius:2px', sz * k, ember ? sz * k : 5 * k, 0, -8 * k,
+        [{ transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+         { transform: 'translate(' + Math.cos(ang) * dist * .6 + 'px,' + (Math.sin(ang) * dist * .5 + up) + 'px) rotate(200deg)', opacity: 1, offset: 0.5 },
+         { transform: 'translate(' + Math.cos(ang) * dist + 'px,' + (Math.sin(ang) * dist * .5 + 10 * k) + 'px) rotate(420deg)', opacity: 0 }], 520 + Math.random() * 220, 0, 'cubic-bezier(.2,.7,.4,1)');
+    }
+  }
   function shake(px, dur) {
     if (RM) return;
     anim(board, [
@@ -3856,11 +3905,10 @@ CH.shield = critter({
       later(520, function () { bombFly(A, v.B, fb, SVG.bomb); });
       hitAt = 520 + fb;
       later(hitAt, function () {
-        fxStar(v.B, '#FF9B3D', 1.5 * k, 380); fxStar(v.B, '#FFE27A', 0.9 * k, 300); fxRing(v.B, '#FF8A3D', 2.4, 460);
-        fxPuff(v.B, '#6B6F82', 8, 38); shake(isAoe ? 8 : 5, isAoe ? 320 : 240);
+        fxBoom(v.B, k, isAoe); shake(isAoe ? 8 : 5, isAoe ? 320 : 240);
         if (isAoe) {
           var pw = tilePx({ x: tx0, y: ty0 });
-          fxGrid(tx0, ty0, 560); fxRing(v.B, '#FFB84A', pw.w * 1.6 / 26, 520); fxPuff(v.B, '#6B6F82', 14, pw.w * 1.2);
+          fxGrid(tx0, ty0, 560); fxRing(v.B, '#FFB84A', pw.w * 1.6 / 26, 520); fxPuff(v.B, '#6B6F82', 10, pw.w * 1.2);
           aoeHit.forEach(function (e) { showHit(e, vec(u, e), e.dmgOut, 1.8 * k); });
         } else showHit(t, v, dmg, 1.8 * k);
       });
