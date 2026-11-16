@@ -4787,7 +4787,7 @@ CH.shield = critter({
       deckTiles += dk ? '<button class="cdt' + (sf ? ' swap' : '') + '" ' + (sf ? 'data-swaptile="' + dk + '"' : 'data-open="' + dk + '"') + ' aria-label="' + TYPES[dk].name + '"><span class="ccost" aria-label="Kosten ' + TYPES[dk].cost + '">' + TYPES[dk].cost + '</span><span class="cplat"></span>' + CH[dk] + starRow(upLevel(dk)) + '</button>' : '<div class="cdt empty" aria-label="Frei"></div>';
       if (i === 2) { /* Zeilenumbruch durch Grid */ }
     }
-    deckTiles += !S.heroKey ? '<div class="cdt cdh empty" aria-label="Held frei"></div>' : '<button class="cdt cdh" data-open="' + S.heroKey + '" aria-label="Held ' + TYPES[S.heroKey].name + ' ansehen"><span class="cplat"></span>' + CH[S.heroKey] + '</button>';
+    deckTiles += !S.heroKey ? '<div class="cdt cdh empty" aria-label="Held frei"></div>' : '<button class="cdt cdh" data-open="' + S.heroKey + '" aria-label="Held ' + TYPES[S.heroKey].name + ' ansehen"><span class="ccost hlv" aria-label="Level ' + heroLv(S.heroKey) + '">' + heroLv(S.heroKey) + '</span><span class="cplat"></span>' + CH[S.heroKey] + '</button>';
     var rest = list.filter(function (key) { return TYPES[key].hero ? S.heroKey !== key : S.deck.indexOf(key) < 0; });
     var so = S.collSort || 'cosa', sk = so.slice(0, 3), sd = so.slice(3) === 'a' ? 1 : -1;
     if (tab !== 'hero' && sk) {
