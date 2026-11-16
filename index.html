@@ -1040,7 +1040,7 @@ body.in-menu { background: radial-gradient(110% 50% at 50% 0%, rgba(255, 255, 25
 .cfx .pts span { position: absolute; bottom: -20px; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.85); box-shadow: 0 0 10px 3px rgba(255,235,160,.7); opacity: 0; transform: scale(var(--s)); animation: cfloat 8s linear infinite; }
 .ctitle { position: absolute; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + 22px); text-align: center; font-family: var(--font-display); font-weight: 400; font-size: 40px; color: #FFD95A; -webkit-text-stroke: 8px #2A1A0E; paint-order: stroke fill; letter-spacing: .04em; text-transform: uppercase; animation: hspop .45s cubic-bezier(.2,1.4,.4,1) backwards; }
 .cstage { position: absolute; left: 0; right: 0; top: 46%; height: 40%; perspective: 1100px; }
-.cs { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX(-24deg) rotateY(-30deg); animation: csway 5s ease-in-out infinite alternate, cdrop .8s cubic-bezier(.3,1.2,.5,1) backwards; }
+.cs { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX(-24deg) rotateY(-30deg); animation: csway 5s ease-in-out infinite alternate, cpop .55s cubic-bezier(.2,1.5,.45,1) backwards; }
 .cfx.glow .cstage { animation: gpulse .8s ease-in-out infinite alternate; } .cfx.glow .cs { animation: csway 5s ease-in-out infinite alternate, cwig .5s ease-in-out infinite; }
 .cfx .floor { position: absolute; left: 50%; top: 66%; width: 270px; height: 70px; margin-left: -135px; border-radius: 50%; background: radial-gradient(rgba(0,0,0,.5), transparent 70%); }
 .cglow { position: absolute; left: 50%; top: 30%; width: 360px; height: 360px; margin: -180px 0 0 -180px; border-radius: 50%; background: radial-gradient(circle, rgba(255,236,150,.95), rgba(255,200,60,.35) 45%, transparent 70%); opacity: 0; transform: scale(.4); transition: opacity .5s, transform .5s; }
@@ -1088,7 +1088,7 @@ body.in-menu { background: radial-gradient(110% 50% at 50% 0%, rgba(255, 255, 25
 @keyframes crays { to { transform: rotate(360deg); } }
 @keyframes cfloat { 0% { transform: translateY(0) scale(var(--s)); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-110vh) scale(var(--s)); opacity: 0; } }
 @keyframes csway { from { transform: rotateX(-24deg) rotateY(-42deg); } to { transform: rotateX(-24deg) rotateY(-16deg); } }
-@keyframes cdrop { from { opacity: 0; margin-top: -500px; } }
+@keyframes cpop { 0% { scale: .05; opacity: 0; } 55% { opacity: 1; } 100% { scale: 1; opacity: 1; } }
 @keyframes cwig { 0%, 100% { translate: 0 0; rotate: 0deg; } 25% { translate: -4px 0; rotate: -3deg; } 75% { translate: 4px 0; rotate: 3deg; } }
 @keyframes gpulse { from { filter: brightness(1) drop-shadow(0 0 6px rgba(255, 220, 90, .5)); } to { filter: brightness(1.35) drop-shadow(0 0 30px rgba(255, 220, 90, 1)); } }
 @keyframes rise { from { transform: translateY(330px) scale(.2); opacity: 0; } 60% { opacity: 1; } }
@@ -1575,6 +1575,114 @@ html, body { overscroll-behavior-x: none; }
 .cdp .cdt { aspect-ratio: 1 / 1.12; }
 .cdp .cdt .cplat { height: 36%; bottom: 5%; }
 .cdp .cdt > svg { width: 84%; height: auto; max-width: none; bottom: 25%; }
+
+/* Kisten/Balken-Update */
+.rcard .rart, .rcard .rfig.cart { display: block; position: relative; width: 210px; height: 200px; aspect-ratio: auto; margin: 0 auto; }
+.rcard .rfig.cart > svg { position: absolute; left: 50%; bottom: 26%; width: 84%; height: auto; transform: translateX(-50%); overflow: visible; z-index: 1; }
+.rcard .cplat { position: absolute; left: 8%; right: 8%; bottom: 3%; height: 37%; border-radius: 0; background: none; box-shadow: none; }
+.rcard .cplat::before { content: ""; position: absolute; left: 0; right: 0; top: 26%; bottom: 0; border-radius: 0 0 50% 50% / 0 0 66% 66%; background: linear-gradient(180deg, #8C97A5 0%, #5F6A78 55%, #454E5B 100%); box-shadow: 0 0 0 2.5px #2B3540, 0 5px 6px rgba(0,0,0,.25), inset 0 -5px 0 rgba(0,0,0,.15); }
+.rcard .cplat::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 66%; border-radius: 50%; background: radial-gradient(ellipse at 50% 28%, #DCE2E8 0%, #AEB8C3 58%, #929DAB 100%); box-shadow: 0 0 0 2.5px #2B3540, inset 0 -3px 0 rgba(0,0,0,.12), inset 0 3px 0 rgba(255,255,255,.5); }
+.rcard .rfig .strow { position: absolute; left: 50%; bottom: 3%; transform: translateX(-50%); margin: 0; gap: 4px; z-index: 3; display: flex; align-items: flex-end; }
+.rcard .rfig .stb { width: 26px; height: 26px; stroke-width: 2.2; }
+.rcard .rfig .stb:nth-child(1) { transform: translateY(-5px) rotate(-18deg); }
+.rcard .rfig .stb:nth-child(2) { transform: translateY(3px); }
+.rcard .rfig .stb:nth-child(3) { transform: translateY(-5px) rotate(18deg); }
+.rcard .rfig .stb.on { fill: #FFD43B; stroke: #6B3F06; animation: stglow 2.2s ease-in-out infinite; }
+.rcard .rfig .stb.off { fill: #59636F; stroke: #2B3540; opacity: 1; }
+/* Balken: Segmente je Karte + Zielsymbol am Ende */
+.cpro, .rbar { position: relative; overflow: visible; }
+.cpro::after, .rbar::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: repeating-linear-gradient(90deg, transparent 0, transparent calc(100% / var(--seg, 1) - 2px), rgba(10,20,30,.7) calc(100% / var(--seg, 1) - 2px), rgba(10,20,30,.7) calc(100% / var(--seg, 1))); }
+.cpro > i, .rbar > i { overflow: hidden; }
+.cpro b { position: relative; z-index: 2; }
+.cpgoal { position: absolute; right: -9px; top: 50%; width: 24px; height: 24px; margin-top: -12px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 35% 28%, #FFF6C0, #FFE070 55%, #F0B52A); box-shadow: 0 0 0 2.5px #5A3606, 0 2px 0 2.5px rgba(0,0,0,.25); z-index: 3; }
+.cpgoal svg { width: 15px; height: 15px; }
+.cpgoal.up { background: radial-gradient(circle at 35% 28%, #C7FFAA, #4FD35B 60%, #25A03C); box-shadow: 0 0 0 2.5px #14602A, 0 2px 0 2.5px rgba(0,0,0,.25); animation: uparbob 1s ease-in-out infinite; }
+.cprow .cpro { margin-right: 8px; }
+.cpro.big .cpgoal, .rbar .cpgoal { right: -10px; width: 28px; height: 28px; margin-top: -14px; }
+.cpro.big .cpgoal svg, .rbar .cpgoal svg { width: 17px; height: 17px; }
+.cpro.max .cpgoal { display: none; }
+.rcard .rbar, .hbar .rbar { overflow: visible; margin-right: 18px; }
+.rcard .rbar { margin-left: 8px; }
+
+/* Kisten-Karte: kein Kasten mehr, Figur im Glaskasten auf Plattform, keine Stats */
+.rcard { background: none !important; box-shadow: none !important; border-radius: 0; padding: 4px 0 0; width: 280px; margin-left: -140px; }
+.rcard .rup { display: none !important; }
+.rcard b { color: #fff; -webkit-text-stroke: 4px #1B1440; paint-order: stroke fill; font-weight: 900; font-size: 26px; text-shadow: 0 3px 0 rgba(0,0,0,.3); }
+.rcard small { color: #fff; -webkit-text-stroke: 3px #1B1440; paint-order: stroke fill; font-weight: 900; text-shadow: 0 2px 0 rgba(0,0,0,.3); }
+.rcard .rn { font-size: 36px; }
+.rcard .rfig.cart { width: 250px; height: 250px; }
+.rcard .rfig.cart > svg { bottom: 27%; width: 76%; }
+.rcard .cplat { left: 14%; right: 14%; bottom: 10%; height: 31%; }
+.rcard .rfig .strow { bottom: 10.5%; }
+.rcard .rfig .stb { width: 24px; height: 24px; }
+.rplinth { position: absolute; left: 4%; right: 4%; bottom: 0; height: 15%; border-radius: 12px 12px 20px 20px; background: linear-gradient(180deg, #4A4F8C, #262A5E); box-shadow: 0 0 0 2.5px #151845, 0 10px 18px rgba(0,0,0,.45), inset 0 3px 0 rgba(255,255,255,.28); z-index: 0; }
+.rplinth::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: 22%; height: 3px; border-radius: 2px; background: rgba(255,255,255,.18); }
+.rglass { position: absolute; left: 4%; right: 4%; top: 2%; bottom: 10%; border-radius: 26px 26px 6px 6px; z-index: 4; pointer-events: none; overflow: hidden;
+  background: linear-gradient(160deg, rgba(255,255,255,.30) 0%, rgba(190,225,255,.10) 36%, rgba(190,225,255,.06) 62%, rgba(255,255,255,.18) 100%);
+  box-shadow: inset 0 0 0 2.5px rgba(255,255,255,.7), inset 0 0 26px rgba(170,215,255,.35), inset 6px 0 14px rgba(255,255,255,.18), 0 0 26px rgba(150,190,255,.35); }
+.rglass::before { content: ""; position: absolute; left: -10%; top: -10%; width: 34%; height: 130%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.38), rgba(255,255,255,0)); transform: skewX(-16deg) translateX(30%); animation: glint 3.2s ease-in-out infinite; }
+.rglass::after { content: ""; position: absolute; left: 7%; right: 7%; top: 3%; height: 9%; border-radius: 40px 40px 60% 60%; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0)); }
+@keyframes glint { 0%, 55% { transform: skewX(-16deg) translateX(-120%); opacity: 0; } 70% { opacity: 1; } 100% { transform: skewX(-16deg) translateX(420%); opacity: 0; } }
+
+/* Upgrade-Pfeil oben rechts */
+.cuarr { position: absolute; top: 5px; right: 5px; z-index: 6; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 35% 28%, #C7FFAA, #4FD35B 60%, #25A03C); box-shadow: 0 0 0 2.5px #14602A, 0 3px 0 2.5px rgba(0,0,0,.25), 0 0 12px rgba(120,255,120,.6); animation: cuabob 1s ease-in-out infinite; pointer-events: none; }
+.cuarr svg { width: 19px; height: 19px; }
+.cdt .cuarr { top: 3px; right: 3px; width: 26px; height: 26px; }
+.cdt .cuarr svg { width: 16px; height: 16px; }
+@keyframes cuabob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.cdt .cuarr { top: 9px; right: 5px; }
+.cuarr { animation-name: cuabob2; }
+@keyframes cuabob2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.cc .cuarr { top: 9px; right: 8px; }
+.cuarr { background: none !important; box-shadow: none !important; filter: drop-shadow(0 2px 0 rgba(0,0,0,.3)) drop-shadow(0 0 6px rgba(110,255,120,.7)); }
+.cuarr svg { width: 28px; height: 28px; }
+.cdt .cuarr svg { width: 24px; height: 24px; }
+.cpgoal.up { background: none !important; box-shadow: none !important; filter: drop-shadow(0 2px 0 rgba(0,0,0,.3)) drop-shadow(0 0 5px rgba(110,255,120,.7)); }
+.cpgoal.up svg { width: 26px; height: 26px; }
+.cuarr, .cpgoal.up { filter: drop-shadow(0 0 3px #CFFF9E) drop-shadow(0 0 8px rgba(120,255,110,.95)) drop-shadow(0 0 16px rgba(90,255,110,.7)) !important; animation: cuabob2 1s ease-in-out infinite, cuglow 1.6s ease-in-out infinite !important; }
+@keyframes cuglow { 0%, 100% { filter: drop-shadow(0 0 3px #CFFF9E) drop-shadow(0 0 7px rgba(120,255,110,.85)) drop-shadow(0 0 12px rgba(90,255,110,.5)); } 50% { filter: drop-shadow(0 0 4px #F0FFD8) drop-shadow(0 0 11px rgba(140,255,120,1)) drop-shadow(0 0 22px rgba(90,255,110,.9)); } }
+.cuarr::before, .cpgoal.up::before { content: ""; position: absolute; left: 50%; top: 50%; width: 140%; height: 140%; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(170,255,140,.45), rgba(170,255,140,0) 65%); z-index: -1; animation: cuhalo 1.6s ease-in-out infinite; pointer-events: none; }
+@keyframes cuhalo { 0%, 100% { opacity: .5; transform: translate(-50%, -50%) scale(.85); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); } }
+
+.rbar.tick { animation: rbtick .35s ease-out; }
+@keyframes rbtick { 0% { transform: scale(1); } 35% { transform: scale(1.06, 1.25); filter: brightness(1.3); } 100% { transform: scale(1); } }
+.rbar.rdy > i { background: linear-gradient(180deg, #B8FF9A 0%, #45CC4E 55%, #239A38 100%) !important; }
+
+/* Glaskasten (Verpackung) in Sammlung und Deck */
+.cc .cart .rglass { left: 3%; right: 3%; top: 3%; bottom: 1%; z-index: 1; border-radius: 22px 22px 8px 8px; }
+.cdt .rglass { left: 5%; right: 5%; top: 4%; bottom: 3%; z-index: 1; border-radius: 18px 18px 8px 8px; }
+.cc .cart .rglass::before, .cdt .rglass::before { animation-duration: 4.2s; }
+.cc.lk .rglass { opacity: .6; }
+.cc .cart .rglass, .cdt .rglass { background: linear-gradient(160deg, rgba(255,255,255,.55) 0%, rgba(150,200,235,.16) 38%, rgba(120,180,225,.14) 65%, rgba(255,255,255,.4) 100%); box-shadow: 0 0 0 2.5px rgba(70,130,175,.75), inset 0 0 0 2px rgba(255,255,255,.95), inset 0 0 22px rgba(120,190,240,.45), inset 5px 0 12px rgba(255,255,255,.35), 0 4px 0 2px rgba(50,100,140,.35); }
+
+.starfly { position: fixed; z-index: 300; width: 32px; height: 32px; pointer-events: none; filter: drop-shadow(0 0 8px rgba(255,220,90,.95)) drop-shadow(0 0 16px rgba(255,200,60,.8)); transition: transform .72s cubic-bezier(.45,0,.2,1); }
+.starfly svg { width: 100%; height: 100%; }
+.rcard .rfig .stb.pop { animation: stpop .6s cubic-bezier(.2,1.6,.4,1); }
+@keyframes stpop { 0% { scale: 1.9; filter: brightness(2) drop-shadow(0 0 14px #FFE27A); } 100% { scale: 1; filter: none; } }
+.autoup { display: grid; place-items: center; text-align: center; padding: 6px 12px; border-radius: 14px; background: rgba(60,160,90,.18); color: #1F7A3C; font-weight: 900; font-size: 14px; line-height: 1.15; }
+.autoup small { font-weight: 800; font-size: 11px; opacity: .8; }
+
+.rbar .cpgoal:not(.up) { width: 32px !important; height: 32px !important; margin-top: -16px !important; right: -12px !important; box-shadow: 0 0 0 2.5px #8A5A00, 0 2px 0 2.5px rgba(0,0,0,.25), 0 0 8px 2px rgba(255,214,80,.9), 0 0 18px 5px rgba(255,200,60,.6); animation: gstar 1.5s ease-in-out infinite; }
+.rbar .cpgoal:not(.up) svg { width: 22px !important; height: 22px !important; filter: drop-shadow(0 0 3px #FFF3B0); }
+@keyframes gstar { 50% { box-shadow: 0 0 0 2.5px #8A5A00, 0 2px 0 2.5px rgba(0,0,0,.25), 0 0 12px 4px rgba(255,226,110,1), 0 0 26px 8px rgba(255,200,60,.8); } }
+
+.rbar .cpgoal:not(.up) { background: none !important; box-shadow: none !important; width: 36px !important; height: 36px !important; margin-top: -18px !important; right: -14px !important; animation: gstar2 1.5s ease-in-out infinite !important; }
+.rbar .cpgoal:not(.up) svg { width: 34px !important; height: 34px !important; filter: drop-shadow(0 0 3px #FFF3B0) drop-shadow(0 0 7px rgba(255,214,70,1)) drop-shadow(0 0 14px rgba(255,190,40,.9)); }
+@keyframes gstar2 { 50% { transform: scale(1.1); } }
+
+.rbar .cpgoal:not(.up) { width: 44px !important; height: 44px !important; margin-top: -22px !important; right: -18px !important; }
+.rbar .cpgoal:not(.up) svg { width: 42px !important; height: 42px !important; filter: drop-shadow(0 0 2px #FFFBD0) drop-shadow(0 0 6px #FFF0A0) drop-shadow(0 0 12px rgba(255,232,120,1)) drop-shadow(0 0 22px rgba(255,220,90,.9)); }
+.rbar .cpgoal:not(.up) svg path { fill: #FFE680; }
+
+.cc .cart .stb.on, .cdp .cdt .stb.on, .rcard .rfig .stb.on { fill: #FFE680; stroke: #7A4A08; animation: stglow2 2.2s ease-in-out infinite; }
+.cc .cart .stb { width: 25px; height: 25px; }
+.cdp .cdt .stb { width: 23px; height: 23px; }
+.rcard .rfig .stb { width: 28px; height: 28px; }
+@keyframes stglow2 { 0%, 100% { filter: drop-shadow(0 0 2px #FFFBD0) drop-shadow(0 0 6px #FFF0A0) drop-shadow(0 0 11px rgba(255,226,100,.95)); } 50% { filter: drop-shadow(0 0 3px #FFFFFF) drop-shadow(0 0 9px #FFF3A8) drop-shadow(0 0 18px rgba(255,220,90,1)); } }
+
+.cc { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.dragghost { position: fixed !important; z-index: 99999; pointer-events: none; margin: 0 !important; transform: translate(-50%, -75%) scale(.85) rotate(-3deg); filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); opacity: .96; transition: none; }
+.cdt.droptgt { outline: 3px solid #FFE680; outline-offset: 1px; transform: scale(1.07); box-shadow: 0 0 16px 4px rgba(255,226,110,.85); z-index: 2; }
 </style>
 
 <div class="menu" id="menu"></div>
@@ -4497,8 +4605,10 @@ CH.shield = critter({
     var asHero = heroes.length && Math.random() < (bonus ? 0.3 : 0.12);
     var pool = asHero ? heroes : POOL.filter(function (k) { return !TYPES[k].hero && unlocked(k); });
     var k = pool[rnd(pool.length)], c = asHero ? (bonus ? 20 + rnd(31) : 8 + rnd(13)) : (bonus ? 5 + rnd(3) : 2 + rnd(2)), b = S.cards[k] || 0;
+    var lv0 = asHero ? null : upLevel(k);
     S.cards[k] = b + c; saveCards();
-    return [{ k: k, n: c, before: b }];
+    if (!asHero) autoUp(k);
+    return [{ k: k, n: c, before: b, lv0: lv0 }];
   }
   var CHEST_SVG = '<svg viewBox="0 0 200 170" class="chsvg" aria-hidden="true">' +
     '<ellipse cx="100" cy="158" rx="78" ry="9" fill="rgba(0,0,0,.28)"/>' +
@@ -4539,14 +4649,78 @@ CH.shield = critter({
         fx.appendChild(e); setTimeout((function (el) { return function () { el.remove(); }; })(e), 1200);
       }
     }
+    function rtxt(v, need, nxt) { return (v >= need ? 'Upgrade bereit!' : 'Noch ' + (need - v) + ' Karte' + (need - v === 1 ? '' : 'n') + ' bis ' + nxt) + ' <em>' + Math.min(v, need) + '/' + need + '</em>'; }
+    function animTroop(el, an) {
+      var bar = el.querySelector('.rbar'), fill = bar && bar.querySelector('i'), tx = el.querySelector('.rtxt'), t0 = 700, i;
+      if (!fill || !an.ev.length) return;
+      an.ev.forEach(function (e, n) {
+        var gap = e.up ? 1900 : 520, at = t0; t0 += gap;
+        setTimeout(function () {
+          fill.style.transition = 'width ' + (e.up ? 420 : 380) + 'ms cubic-bezier(.3,1.2,.5,1)';
+          fill.style.width = Math.round(e.v / e.need * 100) + '%';
+          if (tx) tx.innerHTML = rtxt(e.v, e.need, stars(e.lv + 1));
+          bar.classList.remove('tick'); void bar.offsetWidth; bar.classList.add('tick');
+          if (!e.up) return;
+          bar.classList.add('rdy');
+          setTimeout(function () {
+            var g = bar.querySelector('.cpgoal'), slot = el.querySelectorAll('.rfig .stb')[e.lv];
+            if (g && slot) {
+              var a = g.getBoundingClientRect(), b = slot.getBoundingClientRect(), fs = document.createElement('div');
+              fs.className = 'starfly'; fs.innerHTML = GOAL_STAR;
+              fs.style.left = (a.left + a.width / 2 - 16) + 'px'; fs.style.top = (a.top + a.height / 2 - 16) + 'px';
+              document.body.appendChild(fs); g.style.visibility = 'hidden';
+              requestAnimationFrame(function () { requestAnimationFrame(function () {
+                fs.style.transform = 'translate(' + (b.left + b.width / 2 - a.left - a.width / 2) + 'px,' + (b.top + b.height / 2 - a.top - a.height / 2) + 'px) scale(1.15) rotate(360deg)';
+              }); });
+              setTimeout(function () {
+                fs.remove(); slot.setAttribute('class', 'stb on pop'); sparks();
+                /* Balken neu starten für die nächste Stufe */
+                var nx = e.lv + 1;
+                fill.style.transition = 'none'; fill.style.width = '0%'; bar.classList.remove('rdy'); void fill.offsetWidth;
+                if (nx >= 3) { bar.style.display = 'none'; if (tx) tx.innerHTML = '<span class="rmax">Maximale Stufe</span>'; }
+                else { bar.style.setProperty('--seg', segN(CARD_NEED[nx])); if (tx) tx.innerHTML = rtxt(0, CARD_NEED[nx], stars(nx + 1)); g.style.visibility = ''; }
+              }, 760);
+            }
+          }, 520);
+        }, at);
+      });
+    }
+    function animBar(el, an) {
+      if (an && an.ev) return animTroop(el, an);
+      if (!an || an.to <= an.from) return;
+      var bar = el.querySelector('.rbar'), fill = bar && bar.querySelector('i'), tx = el.querySelector('.rtxt'), steps = an.to - an.from, gap = Math.max(160, Math.min(520, 1500 / steps)), i;
+      if (!fill) return;
+      fill.style.transition = 'width ' + (gap * 0.8) + 'ms cubic-bezier(.3,1.2,.5,1)';
+      for (i = 1; i <= steps; i++) {
+        (function (n) {
+          setTimeout(function () {
+            var v = an.from + n;
+            fill.style.width = Math.round(v / an.need * 100) + '%';
+            if (tx) tx.innerHTML = rtxt(v, an.need, an.nxt);
+            bar.classList.remove('tick'); void bar.offsetWidth; bar.classList.add('tick');
+            if (v >= an.need) {
+              bar.classList.add('rdy');
+              var g = bar.querySelector('.cpgoal'); if (g) g.outerHTML = goalEnd(an.hero, true);
+            }
+          }, 700 + (n - 1) * gap);
+        })(i);
+      }
+    }
     function cardHtml(o) {
-      var t = TYPES[o.k], hero = !!t.hero, lv = hero ? heroLv(o.k) - 1 : upLevel(o.k), top = hero ? HERO_MAXLV - 1 : 3, need = (hero ? HERO_CARD_NEED : CARD_NEED)[Math.min(lv, top - 1)], after = o.before + o.n, sx = '', i;
+      var t = TYPES[o.k], hero = !!t.hero, lv = hero ? heroLv(o.k) - 1 : (o.lv0 != null ? o.lv0 : upLevel(o.k)), top = hero ? HERO_MAXLV - 1 : 3, need = (hero ? HERO_CARD_NEED : CARD_NEED)[Math.min(lv, top - 1)], after = o.before + o.n, sx = '', i;
       if (hero) sx = '<span class="rlv">Level ' + (lv + 1) + '</span>'; else for (i = 1; i <= 3; i++) sx += dstar(lv >= i);
       var info, nxt = hero ? 'Level ' + (lv + 2) : stars(lv + 1);
       if (lv >= top) info = '<span class="rmax">Maximale Stufe</span>';
       else {
-        info = '<span class="rbar"><i style="width:' + Math.round(Math.min(need, after) / need * 100) + '%"></i></span>' +
-          '<small>' + (after >= need ? 'Upgrade bereit!' : 'Noch ' + (need - after) + ' Karte' + (need - after === 1 ? '' : 'n') + ' bis ' + nxt) + ' <em>' + Math.min(after, need) + '/' + need + '</em></small>';
+        var v0 = Math.min(o.before, need), v1 = Math.min(after, need);
+        o.an = { from: v0, to: v1, need: need, hero: hero, nxt: nxt };
+        if (!hero) {
+          var sv = o.before, sl = lv, ev = [];
+          for (i = 0; i < o.n; i++) { sv++; if (sl < 3 && sv >= CARD_NEED[sl]) { ev.push({ up: true, v: CARD_NEED[sl], need: CARD_NEED[sl], lv: sl }); sv = 0; sl++; } else ev.push({ up: false, v: sv, need: sl < 3 ? CARD_NEED[sl] : 1, lv: sl }); }
+          o.an.ev = ev;
+        }
+        info = '<span class="rbar" style="--seg:' + segN(need) + '"><i style="width:' + Math.round(v0 / need * 100) + '%"></i>' + goalEnd(hero, v0 >= need) + '</span>' +
+          '<small class="rtxt">' + rtxt(v0, need, nxt) + '</small>';
         if (after >= need) {
           var a0 = hero ? stats({ type: o.k, level: 0, hl: lv + 1 }) : statsAt(o.k, lv), a1 = hero ? stats({ type: o.k, level: 0, hl: lv + 2 }) : statsAt(o.k, lv + 1), pk = hero ? null : perkAt(o.k, lv + 1);
           info += '<span class="rup"><b>' + nxt + ' Verbesserung</b>' +
@@ -4555,7 +4729,7 @@ CH.shield = critter({
             (pk ? '<span class="rperk">' + pk.name + ': ' + pk.desc + '</span>' : '') + '</span>';
         }
       }
-      return '<span class="rn">+' + o.n + '</span><span class="rfig">' + icon(o.k) + '</span><b>' + t.name + '</b><span class="rstars">' + sx + '</span>' + info;
+      return '<span class="rn">+' + o.n + '</span><span class="rfig cart"><span class="rplinth"></span><span class="cplat"></span>' + icon(o.k) + (hero ? '' : starRow(lv)) + '<span class="rglass"></span></span><b>' + t.name + '</b>' + (hero ? '<span class="rstars">' + sx + '</span>' : '') + info;
     }
     function stash(el, i) {
       var H = fx.clientHeight, sp = Math.min(62, (fx.clientWidth - 40) / Math.max(n, 1)), x = (i - (n - 1) / 2) * sp, y = H - 118 - (H * 0.14 + 100);
@@ -4566,6 +4740,7 @@ CH.shield = critter({
       el.className = 'rcard'; el.style.setProperty('--c', TYPES[o.k].color); el.innerHTML = cardHtml(o);
       if (shown.length) stash(shown[shown.length - 1], shown.length - 1);
       cards.appendChild(el); shown.push(el);
+      animBar(el, o.an);
       sparks();
       setHint(i < n - 1 ? 'Tippe für die nächste Truppe (' + (i + 1) + '/' + n + ')' : 'Tippen zum Weiter');
     }
@@ -4641,7 +4816,7 @@ CH.shield = critter({
   var UNLOCKS = [['guard', 'archer', 'bomb', 'crossbow', 'slappy', 'miner', 'spitter', 'shield'], ['healer', 'doris'], ['knallo'], ['mika']];
   var MAXT_KEY = 'knirps-arena-maxt';
   var DOLCHA_PRICE = 80000;
-  var DEV_ALL = false; /* Testmodus: auf false setzen, dann gelten die normalen Freischaltungen wieder */
+  var DEV_ALL = true; /* Testmodus: auf false setzen, dann gelten die normalen Freischaltungen wieder */
   function unlocked(k) { return DEV_ALL || (k !== 'hero' || S.ownD) && ((k !== 'doris' && k !== 'healer') || S.maxT >= ARENAS[1].ranks[0][0]) && (k !== 'knallo' || S.maxT >= ARENAS[2].ranks[0][0]) && (k !== 'mika' || S.maxT >= ARENAS[3].ranks[0][0]); }
   var NODES = [];
   ARENAS.forEach(function (a, ai) { a.ranks.forEach(function (r, ri) { NODES.push({ t: r[0], name: r[1], ai: ai, first: ri === 0 }); }); });
@@ -4665,6 +4840,15 @@ CH.shield = critter({
   try { var co = JSON.parse(localStorage.getItem(CARDS_KEY) || '{}'); Object.keys(co).forEach(function (k) { S.cards[k] = Math.max(0, +co[k] || 0); }); } catch (e) {}
   function saveCards() { try { localStorage.setItem(CARDS_KEY, JSON.stringify(S.cards)); } catch (e) {} }
   function upLevel(k) { return (TYPES[k] && !TYPES[k].hero && S.up[k]) || 0; }
+  /* Truppen verbessern sich kostenlos und sofort, sobald genug Karten da sind */
+  function autoUp(k) {
+    if (!TYPES[k] || TYPES[k].hero) return 0;
+    var n = 0;
+    while (upLevel(k) < 3 && (S.cards[k] || 0) >= CARD_NEED[upLevel(k)]) { S.cards[k] -= CARD_NEED[upLevel(k)]; S.up[k] = upLevel(k) + 1; n++; }
+    if (n) { saveUp(); saveCards(); }
+    return n;
+  }
+  Object.keys(S.cards).forEach(autoUp);
   var NAME_KEY = 'knirps-arena-name';
   S.name = 'Spieler'; S.editName = false;
   try { var nm = localStorage.getItem(NAME_KEY); if (nm && nm.trim()) S.name = nm.trim().slice(0, 16); } catch (e) {}
@@ -4808,6 +4992,64 @@ CH.shield = critter({
     renderMenu();
   }
 
+  /* Ziehen: Sammlung -> Deck (Tausch mit dem Knirps unter dem Finger) */
+  var dragSt = null, dragSuppress = false;
+  function dragTile(x, y) { var el = document.elementFromPoint(x, y); return el && el.closest ? el.closest('.cdt') : null; }
+  function dragEnd() {
+    if (!dragSt) return;
+    if (dragSt.timer) clearTimeout(dragSt.timer);
+    if (dragSt.ghost && dragSt.ghost.parentNode) dragSt.ghost.parentNode.removeChild(dragSt.ghost);
+    if (dragSt.el) dragSt.el.style.opacity = '';
+    document.querySelectorAll('.cdt.droptgt').forEach(function (n) { n.classList.remove('droptgt'); });
+    dragSt = null;
+  }
+  function dragStart() {
+    var d = dragSt; if (!d || d.on) return; d.on = true;
+    var r = d.el.getBoundingClientRect(), g = d.el.cloneNode(true);
+    g.removeAttribute('data-open'); g.className = d.el.className + ' dragghost'; g.style.width = r.width + 'px'; g.style.height = r.height + 'px';
+    g.style.left = d.x + 'px'; g.style.top = d.y + 'px';
+    document.body.appendChild(g); d.ghost = g; d.el.style.opacity = '.35';
+    try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
+  }
+  document.addEventListener('pointerdown', function (e) {
+    if (S.screen !== 'menu' || S.tab !== 'coll' || S.cmodal) return;
+    var c = e.target.closest && e.target.closest('.cc[data-open]');
+    if (!c || c.classList.contains('lk') || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    dragEnd();
+    dragSt = { el: c, key: c.getAttribute('data-open'), x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, on: false, ghost: null, timer: null, touch: e.pointerType !== 'mouse' };
+    if (dragSt.touch) dragSt.timer = setTimeout(dragStart, 230);
+  });
+  document.addEventListener('pointermove', function (e) {
+    var d = dragSt; if (!d) return;
+    d.x = e.clientX; d.y = e.clientY;
+    if (!d.on) {
+      var dist = Math.hypot(d.x - d.sx, d.y - d.sy);
+      if (d.touch) { if (dist > 10) dragEnd(); return; }
+      if (dist > 6) dragStart(); else return;
+    }
+    d.ghost.style.left = d.x + 'px'; d.ghost.style.top = d.y + 'px';
+    var t = dragTile(d.x, d.y), hero = !!TYPES[d.key].hero;
+    document.querySelectorAll('.cdt.droptgt').forEach(function (n) { n.classList.remove('droptgt'); });
+    if (t && t.classList.contains('cdh') === hero) t.classList.add('droptgt');
+  });
+  document.addEventListener('touchmove', function (e) { if (dragSt && dragSt.on && e.cancelable) e.preventDefault(); }, { passive: false });
+  document.addEventListener('contextmenu', function (e) { if (dragSt) e.preventDefault(); });
+  document.addEventListener('pointerup', function (e) {
+    var d = dragSt; if (!d) return;
+    if (!d.on) { dragEnd(); return; }
+    var t = dragTile(e.clientX, e.clientY), key = d.key, hero = !!TYPES[key].hero, done = false;
+    if (t && hero && t.classList.contains('cdh')) { S.heroKey = key; S.heroOn = true; done = true; }
+    else if (t && !hero && !t.classList.contains('cdh')) {
+      var ix = Array.prototype.indexOf.call(t.parentNode.querySelectorAll('.cdt:not(.cdh)'), t);
+      if (ix >= 0 && ix < S.deck.length) { S.deck[ix] = key; done = true; }
+      else if (S.deck.length < DECK_SIZE) { S.deck.push(key); done = true; }
+    }
+    dragEnd(); dragSuppress = true; setTimeout(function () { dragSuppress = false; }, 350);
+    if (done) { S.swapFor = null; saveDeck(); renderMenu(); }
+  });
+  document.addEventListener('pointercancel', dragEnd);
+  document.addEventListener('click', function (e) { if (dragSuppress) { dragSuppress = false; e.stopPropagation(); e.preventDefault(); } }, true);
+
   function segs(n, tot) {
     var h = '';
     for (var i = 0; i < (tot || 6); i++) h += '<i' + (i < n ? ' class="on"' : '') + '></i>';
@@ -4819,21 +5061,31 @@ CH.shield = critter({
     for (var i = 0; i < 3; i++) out += '<svg viewBox="0 0 24 24" class="stb ' + (i < n ? 'on' : 'off') + '" aria-hidden="true"><path d="M12 2.800l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.600 6.100 20.800l1.200-6.500L2.500 9.700l6.600-.9z"/></svg>';
     return out + '</span>';
   }
+  function canUp(k) {
+    var t = TYPES[k]; if (!t) return false;
+    var hero = !!t.hero, lv = hero ? heroLv(k) - 1 : upLevel(k), top = hero ? HERO_MAXLV - 1 : 3;
+    if (lv >= top) return false;
+    return (S.cards[k] || 0) >= (hero ? HERO_CARD_NEED : CARD_NEED)[lv];
+  }
+  function upArrow(k) { return canUp(k) ? '<span class="cuarr" aria-label="Verbesserung möglich"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="agr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D2FFA6"/><stop offset=".45" stop-color="#7DFF5C"/><stop offset="1" stop-color="#2EE063"/></linearGradient></defs><path d="M12 3l8 9h-5v9H9v-9H4z" fill="url(#agr)" stroke="#17A04A" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 5.6l4.6 5.2h-3.1" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg></span>' : ''; }
+  function segN(need) { return need <= 12 ? need : 10; }
+  var GOAL_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.5 6 20.9l1.3-6.7-5-4.7 6.8-.8z" fill="#FFC933" stroke="#6B3F06" stroke-width="1.8" stroke-linejoin="round"/></svg>', GOAL_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="agr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D2FFA6"/><stop offset=".45" stop-color="#7DFF5C"/><stop offset="1" stop-color="#2EE063"/></linearGradient></defs><path d="M12 3l8 9h-5v9H9v-9H4z" fill="url(#agr)" stroke="#17A04A" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 5.6l4.6 5.2h-3.1" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>';
+  function goalEnd(hero, rdy) { return '<em class="cpgoal' + (rdy ? ' up' : '') + '">' + (rdy ? GOAL_ARROW : hero ? CROWN.replace('#3A2500', '#FFC933') : GOAL_STAR) + '</em>'; }
   function cardBar(k) {
     var hero = !!TYPES[k].hero, lv = hero ? heroLv(k) - 1 : upLevel(k), top = hero ? HERO_MAXLV - 1 : 3, ic = '<em class="cpi">' + mi('cards') + '</em>';
     if (lv >= top) return '<span class="cprow">' + ic + '<span class="cpro max"><b>Max</b></span></span>';
     var need = (hero ? HERO_CARD_NEED : CARD_NEED)[lv], have = S.cards[k] || 0;
-    return '<span class="cprow">' + ic + '<span class="cpro' + (have >= need ? ' rdy' : '') + '"><i style="width:' + Math.min(100, Math.round(have / need * 100)) + '%"></i><b>' + have + '/' + need + '</b></span></span>';
+    return '<span class="cprow">' + ic + '<span class="cpro' + (have >= need ? ' rdy' : '') + '" style="--seg:' + segN(need) + '"><i style="width:' + Math.min(100, Math.round(have / need * 100)) + '%"></i><b>' + have + '/' + need + '</b>' + goalEnd(hero, have >= need) + '</span></span>';
   }
   function collHtml() {
     var tab = S.collTab || 'mini', list = tab === 'hero' ? HEROES : POOL, i;
     var deckTiles = '', sf = S.swapFor && S.deck.indexOf(S.swapFor) < 0 ? S.swapFor : null;
     for (i = 0; i < DECK_SIZE; i++) {
       var dk = S.deck[i];
-      deckTiles += dk ? '<button class="cdt' + (sf ? ' swap' : '') + '" ' + (sf ? 'data-swaptile="' + dk + '"' : 'data-open="' + dk + '"') + ' aria-label="' + TYPES[dk].name + '"><span class="ccost" aria-label="Kosten ' + TYPES[dk].cost + '">' + TYPES[dk].cost + '</span><span class="cplat"></span>' + CH[dk] + starRow(upLevel(dk)) + '</button>' : '<div class="cdt empty" aria-label="Frei"></div>';
+      deckTiles += dk ? '<button class="cdt' + (sf ? ' swap' : '') + '" ' + (sf ? 'data-swaptile="' + dk + '"' : 'data-open="' + dk + '"') + ' aria-label="' + TYPES[dk].name + '"><span class="ccost" aria-label="Kosten ' + TYPES[dk].cost + '">' + TYPES[dk].cost + '</span>' + upArrow(dk) + '<span class="cplat"></span>' + CH[dk] + starRow(upLevel(dk)) + '<span class="rglass"></span></button>' : '<div class="cdt empty" aria-label="Frei"></div>';
       if (i === 2) { /* Zeilenumbruch durch Grid */ }
     }
-    deckTiles += !S.heroKey ? '<div class="cdt cdh empty" aria-label="Held frei"></div>' : '<button class="cdt cdh" data-open="' + S.heroKey + '" aria-label="Held ' + TYPES[S.heroKey].name + ' ansehen"><span class="ccost hlv" aria-label="Level ' + heroLv(S.heroKey) + '">' + heroLv(S.heroKey) + '</span><span class="cplat"></span>' + CH[S.heroKey] + '</button>';
+    deckTiles += !S.heroKey ? '<div class="cdt cdh empty" aria-label="Held frei"></div>' : '<button class="cdt cdh" data-open="' + S.heroKey + '" aria-label="Held ' + TYPES[S.heroKey].name + ' ansehen"><span class="ccost hlv" aria-label="Level ' + heroLv(S.heroKey) + '">' + heroLv(S.heroKey) + '</span>' + upArrow(S.heroKey) + '<span class="cplat"></span>' + CH[S.heroKey] + '</button>';
     var rest = list.filter(function (key) { return TYPES[key].hero ? S.heroKey !== key : S.deck.indexOf(key) < 0; });
     var so = S.collSort || 'cosa', sk = so.slice(0, 3), sd = so.slice(3) === 'a' ? 1 : -1;
     if (tab !== 'hero' && sk) {
@@ -4847,7 +5099,7 @@ CH.shield = critter({
       var t = TYPES[key], lk = !unlocked(key), inD = false;
       return '<button class="cc' + (inD ? ' in' : '') + (lk ? ' lk' : '') + '" data-open="' + key + '">' +
         (lk ? '<span class="clock">' + mi('lock') + '</span>' : '<span class="ccost' + (t.hero ? ' hlv' : '') + '" aria-label="' + (t.hero ? 'Level ' + heroLv(key) : 'Kosten ' + t.cost) + '">' + (t.hero ? heroLv(key) : t.cost) + '</span>') +
-        '<span class="cart"><span class="cplat"></span>' + CH[key] + (t.hero ? '' : starRow(upLevel(key))) + '</span>' +
+        upArrow(key) + '<span class="cart"><span class="cplat"></span>' + CH[key] + (t.hero ? '' : starRow(upLevel(key))) + '<span class="rglass"></span></span>' +
         (lk ? '' : cardBar(key)) +
         (lk ? '<span class="clbl">Gesperrt</span>' : t.hero ? '<span class="clbl hh">' + t.name + '</span>' : '') + '</button>';
     }).join('');
@@ -4880,7 +5132,7 @@ CH.shield = critter({
       var hpips = '<span class="hpips" role="img" aria-label="Level ' + hl + ' von ' + HERO_MAXLV + '">';
       for (i = 1; i <= HERO_MAXLV; i++) hpips += '<i' + (i <= hl ? ' class="on"' : '') + '></i>';
       hpips += '</span>';
-      var hbar = hMax ? '' : '<div class="hbar"><span class="rbar"><i style="width:' + Math.min(100, Math.round(hHave / hNeed * 100)) + '%"></i></span><small>Heldenkarten <em>' + Math.min(hHave, hNeed) + '/' + hNeed + '</em></small></div>';
+      var hbar = hMax ? '' : '<div class="hbar"><span class="rbar" style="--seg:' + segN(hNeed) + '"><i style="width:' + Math.min(100, Math.round(hHave / hNeed * 100)) + '%"></i>' + goalEnd(true, hHave >= hNeed) + '</span><small>Heldenkarten <em>' + Math.min(hHave, hNeed) + '/' + hNeed + '</em></small></div>';
       extra = hbar + '<div class="upgrow"><div><small>Heldenlevel</small><b class="hlvbig">Level ' + hl + ' <em>/ ' + HERO_MAXLV + '</em></b>' + hpips + '</div>' +
         (lk ? '' : hMax ? '<span class="upgmax">Maximal</span>' : '<button class="upgbtn' + (hCan ? '' : ' cant') + '" data-hup="' + k + '">Verbessern<br><small>' + mi('coin') + HERO_UP_COSTS[hl - 1] + '</small></button>') + '</div>' +
         (S.upMsg ? '<p class="upgmsg">' + S.upMsg + '</p>' : '') +
@@ -4900,8 +5152,8 @@ CH.shield = critter({
       }
       var ul = upLevel(k), cHave = S.cards[k] || 0, cNeed = CARD_NEED[Math.min(ul, 2)], canU = cHave >= cNeed && S.coins >= UP_COSTS[Math.min(ul, 2)];
       var upg = '<div class="upgrow"><div><small>Stufe im Kampf</small><b>' + starRow(ul, 'big') + '</b>' +
-        (ul >= 3 ? '' : '<div class="cpro big' + (cHave >= cNeed ? ' rdy' : '') + '"><i style="width:' + Math.min(100, Math.round(cHave / cNeed * 100)) + '%"></i><b>' + cHave + '/' + cNeed + ' Karten</b></div>') + '</div>' +
-        (lk ? '' : ul >= 3 ? '<span class="upgmax">Maximal</span>' : '<button class="upgbtn' + (canU ? '' : ' cant') + '" data-upg="' + k + '">Verbessern<br><small>' + mi('coin') + UP_COSTS[ul] + '</small></button>') + '</div>' +
+        (ul >= 3 ? '' : '<div class="cpro big' + (cHave >= cNeed ? ' rdy' : '') + '" style="--seg:' + segN(cNeed) + '"><i style="width:' + Math.min(100, Math.round(cHave / cNeed * 100)) + '%"></i><b>' + cHave + '/' + cNeed + ' Karten</b>' + goalEnd(false, cHave >= cNeed) + '</div>') + '</div>' +
+        (lk ? '' : ul >= 3 ? '<span class="upgmax">Maximal</span>' : '<span class="autoup">Automatisch<br><small>kostenlos</small></span>') + '</div>' +
         (S.upMsg ? '<p class="upgmsg">' + S.upMsg + '</p>' : '');
       var pslots = '<div class="pslots" role="list" aria-label="Fähigkeiten">' + [1, 2, 3].map(function (n) {
         var pk = (PERKS[k] || [])[n - 1], locked = pk && ul < n, cls = 'pslot' + (pk ? (locked ? ' lock' : ' on') : '');
