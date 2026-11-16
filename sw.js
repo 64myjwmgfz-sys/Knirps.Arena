@@ -1,6 +1,6 @@
 // Offline-Cache: Netzwerk zuerst (neueste Version), sonst Cache.
-var CACHE = 'knirps-v1';
-var FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png'];
+var CACHE = 'knirps-v2';
+var FILES = ['cloud-config.js', './', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));
 });

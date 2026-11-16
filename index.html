@@ -14,6 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
+<script src="cloud-config.js"></script>
 <style>
 #ldr{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:linear-gradient(#3FC4DA,#0B5F7C);transition:opacity .45s ease;font-family:'Lilita One',system-ui,sans-serif;color:#fff}
 #ldr.out{opacity:0;pointer-events:none}
@@ -1217,6 +1218,21 @@ html, body { overscroll-behavior-x: none; }
 .accbtn { flex: none; width: 40px; height: 40px; border: 0; border-radius: 10px; cursor: pointer; display: grid; place-items: center; color: var(--m-ol); background: linear-gradient(#FFE27A, #FFB81F); box-shadow: 0 0 0 2.5px var(--m-ol); }
 .accbtn:active { transform: translateY(2px); }
 .accbtn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.clp { display: flex; flex-direction: column; gap: 10px; }
+.clt { font-family: var(--font-display); font-weight: 400; font-size: 18px; }
+.clm { margin: 0; font-weight: 800; font-size: 16px; overflow: hidden; text-overflow: ellipsis; }
+.clinp { font-size: 17px; width: 100%; box-sizing: border-box; }
+.cltabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: 14px; background: rgba(0,0,0,.28); }
+.cltabs button { padding: 9px 6px; border: 0; border-radius: 10px; background: transparent; color: #fff; font-family: var(--font-display); font-size: 16px; cursor: pointer; }
+.cltabs button.on { background: linear-gradient(#FFE27A, #FFB81F); color: var(--m-ol); }
+.clmsg { margin: 0; font-weight: 700; font-size: 13.5px; color: #FFB4A8; }
+.clmsg.ok { color: #9DF2B5; }
+.clrow { display: flex; gap: 8px; }
+.clbtn { flex: 1; padding: 12px 10px; border: 0; border-radius: 12px; cursor: pointer; font-family: var(--font-display); font-size: 17px; color: var(--m-ol); background: linear-gradient(#FFE27A, #FFB81F); box-shadow: 0 0 0 2.5px var(--m-ol); }
+.clbtn.alt { color: #fff; background: linear-gradient(#5C7A9A, #46607C); }
+.clbtn:active, .clapple:active { transform: translateY(2px); }
+.clapple { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 10px; border: 0; border-radius: 12px; cursor: pointer; background: #000; color: #fff; font-family: var(--font-body); font-weight: 800; font-size: 16px; box-shadow: 0 0 0 2.5px #fff; }
+.clapple svg { width: 20px; height: 20px; }
 .accbtn.dis { cursor: default; background: rgba(255,255,255,.14); color: #fff; opacity: .6; }
 
 .tab.soon { opacity: .75; }
@@ -4570,6 +4586,94 @@ CH.shield = critter({
     document.body.appendChild(d);
     setTimeout(function () { if (d.parentNode) d.remove(); }, 1600);
   }
+  /* ===== Konto & Cloud-Speicherstand (Firebase) =====
+     Die Webkonfiguration steht in cloud-config.js (window.KNIRPS_CLOUD). Ohne sie bleibt alles lokal. */
+  var CL = { cfg: null, ready: false, fb: null, auth: null, db: null, user: null, busy: false, mode: 'login', msg: '', ok: false, last: 0, mail: '', pushed: '', timer: 0 };
+  S.cl = CL;
+  function clSnap() {
+    var o = {}; try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf('knirps-arena-') === 0 && k.indexOf('knirps-arena-cl-') !== 0) o[k] = localStorage.getItem(k); } } catch (e) {}
+    var keys = Object.keys(o).sort(), r = {}; keys.forEach(function (k) { r[k] = o[k]; }); return JSON.stringify(r);
+  }
+  function clErr(e) {
+    var c = e && e.code || '';
+    return { 'auth/invalid-email': 'Diese E-Mail-Adresse ist ungültig.', 'auth/missing-password': 'Bitte ein Passwort eingeben.', 'auth/weak-password': 'Das Passwort ist zu schwach (mindestens 6 Zeichen).',
+      'auth/email-already-in-use': 'Für diese E-Mail gibt es schon ein Konto. Bitte anmelden.', 'auth/user-not-found': 'Kein Konto mit dieser E-Mail gefunden.', 'auth/wrong-password': 'Das Passwort stimmt nicht.',
+      'auth/invalid-credential': 'E-Mail oder Passwort stimmt nicht.', 'auth/too-many-requests': 'Zu viele Versuche. Bitte kurz warten.', 'auth/network-request-failed': 'Keine Verbindung. Bitte Internet prüfen.',
+      'auth/popup-closed-by-user': 'Anmeldung abgebrochen.', 'auth/operation-not-allowed': 'Diese Anmeldeart ist im Server noch nicht aktiviert.', 'permission-denied': 'Der Server erlaubt das Speichern noch nicht (Regeln prüfen).' }[c] || ('Das hat nicht geklappt (' + (c || 'Fehler') + ').');
+  }
+  function clRender() { if (S.screen === 'menu' && S.tab === 'acct' && !S.editName) { var a = document.activeElement; if (a && (a.id === 'clmail' || a.id === 'clpw')) return; renderMenu(); } }
+  function clLoadScript(src) { return new Promise(function (res, rej) { var s2 = document.createElement('script'); s2.src = src; s2.onload = res; s2.onerror = function () { rej(new Error('script')); }; document.head.appendChild(s2); }); }
+  function clInit() {
+    var cfg = window.KNIRPS_CLOUD; if (!cfg || !cfg.apiKey || !cfg.projectId) return;
+    CL.cfg = cfg; var base = 'https://www.gstatic.com/firebasejs/10.12.5/';
+    clLoadScript(base + 'firebase-app-compat.js').then(function () { return clLoadScript(base + 'firebase-auth-compat.js'); }).then(function () { return clLoadScript(base + 'firebase-firestore-compat.js'); }).then(function () {
+      CL.fb = window.firebase; CL.fb.initializeApp(cfg); CL.auth = CL.fb.auth(); CL.db = CL.fb.firestore(); CL.ready = true;
+      CL.auth.getRedirectResult().catch(function (e) { CL.msg = clErr(e); CL.ok = false; clRender(); });
+      CL.auth.onAuthStateChanged(function (u) { CL.user = u; if (u) clSyncIn(); clRender(); });
+      clRender();
+    }).catch(function () { CL.msg = 'Der Konto-Server ist gerade nicht erreichbar.'; CL.ok = false; clRender(); });
+  }
+  function clMaxT(json) { try { var o = JSON.parse(json); return Math.max(+o['knirps-arena-maxt'] || 0, +o['knirps-arena-trophies'] || 0); } catch (e) { return 0; } }
+  function clSyncIn() {
+    if (!CL.user || CL.busy) return; CL.busy = true;
+    var ref = CL.db.collection('users').doc(CL.user.uid);
+    ref.get().then(function (d) {
+      var local = clSnap(), cloud = d.exists ? d.data().data : null;
+      if (cloud && cloud !== local && clMaxT(cloud) >= clMaxT(local)) {
+        try { var o = JSON.parse(cloud); Object.keys(o).forEach(function (k) { localStorage.setItem(k, o[k]); }); } catch (e) {}
+        CL.pushed = cloud; CL.busy = false; location.reload(); return;
+      }
+      CL.pushed = cloud || ''; CL.busy = false; return clPush(true);
+    }).catch(function (e) { CL.busy = false; CL.msg = clErr(e); CL.ok = false; clRender(); });
+  }
+  function clPush(force) {
+    if (!CL.user || !CL.ready || CL.busy) return Promise.resolve();
+    var snap = clSnap(); if (!force && snap === CL.pushed) return Promise.resolve();
+    CL.busy = true;
+    return CL.db.collection('users').doc(CL.user.uid).set({ data: snap, updated: CL.fb.firestore.FieldValue.serverTimestamp(), name: S.name || '' }).then(function () {
+      CL.pushed = snap; CL.last = Date.now(); CL.busy = false; CL.msg = 'Spielstand gesichert.'; CL.ok = true; clRender();
+    }).catch(function (e) { CL.busy = false; CL.msg = clErr(e); CL.ok = false; clRender(); });
+  }
+  setInterval(function () { clPush(false); }, 8000);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) clPush(false); });
+  function clAction(a) {
+    if (a === 'mode-login' || a === 'mode-register') { CL.mail = ($('clmail') || {}).value || CL.mail; CL.mode = a === 'mode-login' ? 'login' : 'register'; CL.msg = ''; renderMenu(); return; }
+    if (!CL.ready) return;
+    if (a === 'logout') { CL.auth.signOut().then(function () { CL.msg = 'Abgemeldet.'; CL.ok = true; clRender(); }); return; }
+    if (a === 'sync') { clPush(true); return; }
+    if (a === 'apple') {
+      var pr = new CL.fb.auth.OAuthProvider('apple.com'); pr.addScope('email'); pr.addScope('name');
+      var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+      (standalone ? CL.auth.signInWithRedirect(pr) : CL.auth.signInWithPopup(pr)).catch(function (e) { CL.msg = clErr(e); CL.ok = false; clRender(); });
+      return;
+    }
+    var mail = (($('clmail') || {}).value || '').trim(), pw = ($('clpw') || {}).value || ''; CL.mail = mail;
+    if (!mail || !pw) { CL.msg = 'Bitte E-Mail und Passwort eingeben.'; CL.ok = false; renderMenu(); return; }
+    CL.msg = a === 'register' ? 'Konto wird erstellt …' : 'Anmeldung läuft …'; CL.ok = true; renderMenu();
+    (a === 'register' ? CL.auth.createUserWithEmailAndPassword(mail, pw) : CL.auth.signInWithEmailAndPassword(mail, pw)).then(function () { CL.msg = ''; }).catch(function (e) { CL.msg = clErr(e); CL.ok = false; renderMenu(); });
+  }
+  function clHtml() {
+    var h = '<div class="panel clp">';
+    if (!CL.cfg) {
+      return h + '<b class="clt">Konto &amp; Cloud</b><p class="msub" style="margin:6px 0 0">Der Konto-Server ist noch nicht eingerichtet. Dein Spielstand bleibt vorerst nur auf diesem Gerät.</p></div>';
+    }
+    if (!CL.ready) return h + '<b class="clt">Konto &amp; Cloud</b><p class="msub" style="margin:6px 0 0">' + (CL.msg || 'Verbinde mit dem Konto-Server …') + '</p></div>';
+    if (CL.user) {
+      return h + '<b class="clt">Angemeldet</b><p class="clm">' + ((CL.user.email || CL.user.displayName || 'Apple-Konto') + '').replace(/</g, '&lt;') + '</p>' +
+        '<p class="msub" style="margin:6px 0 10px">Dein Spielstand wird automatisch in der Cloud gesichert und ist auf jedem Gerät derselbe.' + (CL.last ? ' Zuletzt gesichert: ' + new Date(CL.last).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr.' : '') + '</p>' +
+        (CL.msg ? '<p class="clmsg' + (CL.ok ? ' ok' : '') + '">' + CL.msg + '</p>' : '') +
+        '<div class="clrow"><button class="clbtn" data-cl="sync">Jetzt sichern</button><button class="clbtn alt" data-cl="logout">Abmelden</button></div></div>';
+    }
+    var reg = CL.mode === 'register';
+    return h + '<div class="cltabs"><button class="' + (reg ? '' : 'on') + '" data-cl="mode-login">Anmelden</button><button class="' + (reg ? 'on' : '') + '" data-cl="mode-register">Registrieren</button></div>' +
+      '<input id="clmail" class="accinp clinp" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="E-Mail-Adresse" value="' + (CL.mail || '').replace(/"/g, '&quot;') + '">' +
+      '<input id="clpw" class="accinp clinp" type="password" autocomplete="' + (reg ? 'new-password' : 'current-password') + '" placeholder="Passwort (mind. 6 Zeichen)">' +
+      (CL.msg ? '<p class="clmsg' + (CL.ok ? ' ok' : '') + '">' + CL.msg + '</p>' : '') +
+      '<button class="clbtn big" data-cl="' + (reg ? 'register' : 'login') + '">' + (reg ? 'Konto erstellen' : 'Anmelden') + '</button>' +
+      '<button class="clapple" data-cl="apple"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.100-1.600-2.800-1.800-3.400-1.800-1.400-.1-2.800.9-3.500.9s-1.900-.8-3.100-.8c-1.600 0-3.100.9-3.900 2.400-1.700 2.900-.4 7.200 1.200 9.600.8 1.200 1.700 2.500 3 2.400 1.200 0 1.700-.8 3.100-.8s1.900.8 3.100.8c1.300 0 2.100-1.200 2.900-2.300.9-1.300 1.300-2.600 1.300-2.700 0 0-2.500-1-2.700-3.800zM14.100 5.600c.6-.8 1.100-1.900.9-3-.9 0-2.100.6-2.700 1.400-.6.700-1.100 1.800-1 2.900 1.100.1 2.200-.5 2.800-1.300z"/></svg>Mit Apple anmelden</button></div>';
+  }
+  clInit();
+
   function acctHtml() {
     var A = ARENAS[arenaIdxOf(S.trophies)];
     return '<button class="backbtn" data-tab="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button>' +
@@ -4577,9 +4681,7 @@ CH.shield = critter({
       '<div class="panel accf"><small class="accl">Spielername</small>' +
       (S.editName ? '<div class="accrow"><input id="nameinp" class="accinp" maxlength="16" value="' + S.name.replace(/"/g, '&quot;') + '" autocomplete="off" autocapitalize="words" spellcheck="false"><button class="accbtn" data-namesave="1" aria-label="Speichern">' + mi('check') + '</button></div>'
         : '<div class="accrow"><b class="accval">' + S.name.replace(/</g, '&lt;') + '</b><button class="accbtn" data-nameedit="1" aria-label="Spielernamen bearbeiten">' + mi('pencil') + '</button></div>') + '</div>' +
-      '<div class="panel accf off"><small class="accl">E-Mail-Adresse</small><div class="accrow"><b class="accval">Noch nicht hinterlegt</b><span class="accbtn dis" aria-hidden="true">' + mi('lock') + '</span></div></div>' +
-      '<div class="panel accf off"><small class="accl">Passwort</small><div class="accrow"><b class="accval">••••••••</b><span class="accbtn dis" aria-hidden="true">' + mi('lock') + '</span></div></div>' +
-      '<p class="msub" style="margin-top:-4px">E-Mail und Passwort lassen sich später ändern, sobald es Konten gibt.</p>' +
+      clHtml() +
       '<div class="sg">' +
       '<div class="sc"><b>' + S.trophies + '</b><span>Trophäen</span></div>' +
       '<div class="sc"><b>' + S.maxT + '</b><span>Höchste Trophäen</span></div>' +
@@ -4704,6 +4806,7 @@ CH.shield = critter({
   }
 
   document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target && (e.target.id === 'clmail' || e.target.id === 'clpw')) { e.preventDefault(); clAction(CL.mode); }
     if (e.key === 'Enter' && e.target && e.target.id === 'nameinp') { e.preventDefault(); saveName(e.target.value); }
     if (e.key === 'Escape' && e.target && e.target.id === 'nameinp') { S.editName = false; renderMenu(); }
   });
@@ -4746,6 +4849,8 @@ CH.shield = critter({
       var rm = e.target.closest('[data-remove]');
       if (rm) { var rk = S.deck.indexOf(rm.getAttribute('data-remove')); if (rk >= 0) S.deck.splice(rk, 1); saveDeck(); S.cmodal = null; renderMenu(); return; }
     }
+    var clb = e.target.closest('[data-cl]');
+    if (clb && S.screen === 'menu') { clAction(clb.getAttribute('data-cl')); return; }
     if (e.target.closest('[data-nameedit]') && S.screen === 'menu') {
       S.editName = true; renderMenu();
       var ni = $('nameinp'); if (ni) { ni.focus(); ni.select(); }
