@@ -1705,6 +1705,10 @@ html, body { overscroll-behavior-x: none; }
 @keyframes gin { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes gwp { from { transform: scale(0.96); } to { transform: scale(1.04); } }
 .unit.guarding::after { animation: gin 0.3s ease-out, gwp 0.9s ease-in-out 0.3s infinite alternate; }
+.chbar { overflow: hidden; border-radius: 3px; }
+.chbar::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--p, 0) * 100%); background: #FFC933; box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35); transition: width var(--tr, 0.3s ease-out), background 0.3s; }
+.chbar.full::before { background: #8CF5BE; }
+.chbar i, .chbar i.on, .chbar.full i { position: relative; z-index: 1; background: transparent !important; animation: none; transition: none; box-shadow: none; }
 </style>
 
 <div class="menu" id="menu"></div>
@@ -1822,7 +1826,7 @@ html, body { overscroll-behavior-x: none; }
     shield: { lv: 5, name: 'Strahlendes Bollwerk', desc: 'Das Bollwerk kommt schon nach 5 Treffern, hält 9 Sekunden, wirft 30 % des Schadens zurück und alle Gegner im 3×3-Feld um ihn greifen nur noch ihn an.', ab: { every: 5, secs: 9, reflect: 0.3, taunt: true } },
     doris:  { lv: 5, name: 'Kettenhusten', desc: 'Sie hustet schon nach 4 Zügen und die Qualmwolke macht 3,2-fachen Schaden.', ab: { every: 4, mult: 3.2 } },
     mika:   { lv: 5, name: 'Kampfgas', desc: 'Giftgas alle 8 Sekunden, Treffer mit 1,6-fachem Schaden und das Gift wirkt 7 Sekunden.', ab: { secs: 8, mult: 1.6, dotSecs: 7 } },
-    knallo: { lv: 5, name: 'Großer Knall', desc: 'Betäubt schon nach 6 Hieben und für 5,5 Sekunden.', ab: { every: 6, stunSecs: 5.5 } }
+    knallo: { lv: 5, name: 'Großer Knall', desc: 'Betäubt schon nach 6 Hieben und für 5,5 Sekunden. Der Knall entzieht dem Gegner außerdem 2–3 Knirpsaft.', ab: { every: 6, stunSecs: 5.5, drain: [2, 3] } }
   };
   function heroLv(k) { return Math.max(1, Math.min(HERO_MAXLV, (S.hlv && S.hlv[k]) || 1)); }
   function abOf(u) { var b = TYPES[u.type].ability, p = HERO_PERKS[u.type]; return b && p && (u.hl || 1) >= p.lv ? Object.assign({}, b, p.ab) : b; }
@@ -3606,11 +3610,14 @@ CH.shield = critter({
   }
 
   /* Aufladeleiste der Heldin: sechs Felder unter dem Lebensbalken */
-  function setCharge(u, n) {
+  function setCharge(u, n, frac) {
     var bar = partOf(u, '.chbar');
     if (!bar) return;
-    for (var i = 0; i < bar.children.length; i++) bar.children[i].className = i < n ? 'on' : '';
-    bar.classList.toggle('full', n >= bar.children.length);
+    var len = bar.children.length || 1;
+    for (var i = 0; i < len; i++) bar.children[i].className = i < n ? 'on' : '';
+    bar.classList.toggle('full', n >= len);
+    bar.style.setProperty('--tr', frac == null ? '0.3s ease-out' : ms(TICK) + 'ms linear');
+    bar.style.setProperty('--p', String(Math.max(0, Math.min(1, frac == null ? n / len : frac))));
   }
   function shadowJump(u, done) {
     var foes = S.runtime.filter(function (e) { return e.hp > 0 && e.team !== u.team && !(e.digT > 0); });
@@ -3882,16 +3889,23 @@ CH.shield = critter({
       t.el.appendChild(s);
     }
   }
-  function whipFx(A, B, big) {
-    var dx = B.x - A.x, dy = B.y - A.y, d = Math.max(30, Math.hypot(dx, dy)), a = Math.atan2(dy, dx), M = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
-    var amp = big ? 11 : 7, n = 5, p = 'M ' + (-d / 2) + ' 0', i;
-    for (i = 0; i < n; i++) { var x0 = -d / 2 + d * i / n, x1 = -d / 2 + d * (i + 1) / n; p += ' Q ' + ((x0 + x1) / 2) + ' ' + ((i % 2 ? 1 : -1) * amp * (1 - i / (n + 1))) + ' ' + x1 + ' 0'; }
-    var col = big ? '#FFD23F' : '#FFFDF2';
-    var el = mk('<svg width="' + (d + 20) + '" height="44" viewBox="' + (-d / 2 - 10) + ' -22 ' + (d + 20) + ' 44"><path d="' + p + '" fill="none" stroke="#1B2630" stroke-width="' + (big ? 7 : 5) + '" stroke-linecap="round" pathLength="100"/><path d="' + p + '" fill="none" stroke="' + col + '" stroke-width="' + (big ? 3.6 : 2.4) + '" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>', M.x, M.y);
+  function whipFx(A, B, big, u) {
+    var dx = B.x - A.x, dy = B.y - A.y, d = Math.max(34, Math.hypot(dx, dy)), a = Math.atan2(dy, dx), M = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
+    var amp = big ? 30 : 22, core = big ? '#A8692A' : '#8A5A2B', sw = big ? 4.2 : 3.4;
+    var p = 'M ' + (-d / 2) + ' 0 C ' + (-d / 6) + ' ' + (-amp * 1.7) + ' ' + (d / 6) + ' ' + (amp * 1.3) + ' ' + (d / 2) + ' 0';
+    var st = ' fill="none" stroke-linecap="round" pathLength="100" stroke-dasharray="85 100" stroke-dashoffset="85"';
+    var el = mk('<svg width="' + (d + 30) + '" height="' + (amp * 4 + 20) + '" viewBox="' + (-d / 2 - 15) + ' ' + (-amp * 2 - 10) + ' ' + (d + 30) + ' ' + (amp * 4 + 20) + '"><path d="' + p + '" stroke="#2E1B0E" stroke-opacity="0.85" stroke-width="' + (sw + 2.6) + '"' + st + '/><path d="' + p + '" stroke="' + core + '" stroke-width="' + sw + '"' + st + '/></svg>', 0, 0);
     el.style.transform = T(M.x, M.y, 1, a * 57.2958);
-    var path = el.querySelectorAll('path')[1];
-    if (path && !RM) anim(path, [{ strokeDashoffset: 100 }, { strokeDashoffset: 0 }], big ? 220 : 160, { easing: 'ease-out', fill: 'forwards' });
-    play(el, [{ opacity: 1 }, { opacity: 1, offset: 0.65 }, { opacity: 0 }], big ? 520 : 360);
+    el.style.filter = big ? 'drop-shadow(0 0 3px rgba(255,214,90,0.9))' : 'none';
+    var ext = big ? 240 : 170, life = big ? 620 : 440;
+    el.querySelectorAll('path').forEach(function (pt) {
+      if (!RM) anim(pt, [{ strokeDashoffset: 85 }, { strokeDashoffset: -15 }], ext, { easing: 'cubic-bezier(.4,0,.8,.5)', fill: 'forwards' });
+    });
+    var sv = el.querySelector('svg');
+    if (sv && !RM) anim(sv, [{ transform: 'translate(-50%,-50%) scaleY(1)' }, { transform: 'translate(-50%,-50%) scaleY(1)', offset: 0.35 }, { transform: 'translate(-50%,-50%) scaleY(0.12)' }], life * 0.8, { easing: 'ease-in', fill: 'forwards' });
+    play(el, [{ opacity: 1 }, { opacity: 1, offset: 0.7 }, { opacity: 0 }], life);
+    if (u && !RM) { u.el.querySelectorAll('.wpn').forEach(function (hw) { anim(hw, [{ opacity: 1 }, { opacity: 0, offset: 0.06 }, { opacity: 0, offset: 0.8 }, { opacity: 1 }], life, { easing: 'linear' }); }); }
+    return ext;
   }
   function whipAttack(u, t) {
     var ab = abOf(u), v = vec(u, t), post = [], P = ctr(u), A = { x: P.x + v.x * 14, y: P.y + v.y * 10 - 8 };
@@ -3902,26 +3916,36 @@ CH.shield = critter({
       var dmg = hurt(u, t, u.atk, post);
       lean(u, v, 560, 5, 0.42);
       wpn(u, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-62deg)', offset: 0.32 }, { transform: 'rotate(34deg)', offset: 0.48 }, { transform: 'rotate(0deg)' }], 560);
-      later(260, function () {
-        whipFx(A, v.B, false); fxStar(v.B, '#FFFDF2', 0.7, 220); fxPuff(v.B, '#E8E2D0', 3, 10);
-        showHit(t, v, dmg, 1.15); setCharge(u, Math.min(n, ab.every));
-        if (ready) { floatText(u, 'Bereit!', 'reflect'); fxRing(ctr(u), '#FFD866', 1.3, 360); }
+      later(240, function () {
+        var lt = whipFx(A, v.B, false, u);
+        later(lt, function () {
+          fxBump(v.B, v.a * 57.2958, 0.7, t.el); shake(1, 100);
+          showHit(t, v, dmg, 1.0); setCharge(u, Math.min(n, ab.every));
+          if (ready) floatText(u, 'Bereit!', 'reflect');
+          post.forEach(function (fn) { fn(); });
+        });
       });
-      post.forEach(function (fn) { later(260, fn); });
       return;
     }
     // Ult: grosser Knall mit Betaeubung
     u.stunReady = false;
     var ud = hurt(u, t, Math.round(u.atk * ab.mult), post);
-    later(0, function () { floatText(u, 'Knall!', 'reflect'); fxRing(ctr(u), '#FFD23F', 1.7, 440); });
+    later(0, function () { floatText(u, 'Knall!', 'reflect'); });
     lean(u, v, 960, 7, 0.55);
     try { limbsAttack(u, v, 'whip', 960, 0.58); } catch (e) {}
     wpn(u, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-110deg)', offset: 0.3 }, { transform: 'rotate(-150deg)', offset: 0.45 }, { transform: 'rotate(55deg)', offset: 0.58 }, { transform: 'rotate(0deg)' }], 960);
-    later(560, function () {
-      whipFx(A, v.B, true); fxStar(v.B, '#FFD23F', 1.3, 340); fxRing(v.B, '#FFFFFF', 1.8, 420); shake(5, 240);
-      showHit(t, v, ud, 1.8); setCharge(u, 0);
-      if (t.hp > 0) { stun(t, ab.stunSecs); floatText(t, 'Betäubt!', 'reflect'); }
-      post.forEach(function (fn) { fn(); });
+    later(540, function () {
+      var lt = whipFx(A, v.B, true, u);
+      later(lt, function () {
+        fxBump(v.B, v.a * 57.2958, 1.1, t.el); fxRing(v.B, '#FFE9A8', 0.9, 380); shake(2.5, 180);
+        showHit(t, v, ud, 1.4); setCharge(u, 0);
+        if (t.hp > 0) { stun(t, ab.stunSecs); floatText(t, 'Betäubt!', 'reflect'); }
+        if (ab.drain && t.hp > 0) {
+          var dn = ab.drain[0] + rnd(ab.drain[1] - ab.drain[0] + 1), pool = u.team === 'p' ? S.bot : S, got = Math.min(dn, Math.max(0, pool.gold));
+          if (got > 0) { pool.gold -= got; later(260, function () { floatText(t, '−' + got + ' Knirpsaft', 'reflect'); }); }
+        }
+        post.forEach(function (fn) { fn(); });
+      });
     });
   }
   function kickAttack(u, t) {
@@ -4531,20 +4555,20 @@ CH.shield = critter({
       if (u.guardT > 0) {
         u.guardT--;
         var ab = abOf(u);
-        if (u.guardVis) setCharge(u, Math.ceil(ab.every * u.guardT / Math.round(ab.secs * 1000 / TICK)));
+        if (u.guardVis) { var gtot = Math.round(ab.secs * 1000 / TICK); setCharge(u, Math.ceil(ab.every * u.guardT / gtot), Math.max(0, (u.guardT - 1) / gtot)); }
         if (u.guardT <= 0) { u.guardVis = false; if (u.guardAnim) { u.guardAnim.cancel(); u.guardAnim = null; } if (u.el) u.el.classList.remove('guarding'); setCharge(u, 0); }
       }
       var gab = abOf(u);
       if (gab && gab.kind === 'gas') {
         u.gasT = (u.gasT || 0) + 1;
         var gthr = Math.round(gab.secs * 1000 / TICK), seg = Math.min(gab.every, Math.floor(u.gasT / gthr * gab.every));
-        if (seg !== u.gasSeg) { u.gasSeg = seg; setCharge(u, seg); }
+        u.gasSeg = seg; setCharge(u, seg, Math.min(1, (u.gasT + 1) / gthr));
       }
       var pot = TYPES[u.type].potion, pthr = pot ? Math.round(pot.secs * 1000 / TICK) : 0;
       if (pot) {
         u.potT = Math.min(pthr, (u.potT || 0) + 1);
         var pseg = Math.min(pot.every, Math.floor(u.potT / pthr * pot.every));
-        if (pseg !== u.potSeg) { u.potSeg = pseg; setCharge(u, pseg); }
+        u.potSeg = pseg; setCharge(u, pseg, Math.min(1, (u.potT + 1) / pthr));
       }
       if (u.stunT > 0) { u.stunT--; if (u.stunT <= 0) unstun(u); return; }
       if (u.guardT > 0 && gab && gab.kind === 'guard') return;
@@ -5190,7 +5214,7 @@ CH.shield = critter({
         (lk ? '<span class="clock">' + mi('lock') + '</span>' : '<span class="ccost' + (t.hero ? ' hlv' : '') + '" aria-label="' + (t.hero ? 'Level ' + heroLv(key) : 'Kosten ' + t.cost) + '">' + (t.hero ? heroLv(key) : t.cost) + '</span>') +
         upArrow(key) + '<span class="cart"><span class="cplat"></span>' + CH[key] + (t.hero ? '' : starRow(upLevel(key))) + '<span class="rglass"></span></span>' +
         (lk ? '' : cardBar(key)) +
-        (lk ? '<span class="clbl">' + (inChests(key) ? 'In Kisten' : 'Ab ' + ARENAS[arenaOf(key)].n) + '</span>' : t.hero ? '<span class="clbl hh">' + t.name + '</span>' : '') + '</button>';
+        (lk ? '<span class="clbl">' + (inChests(key) ? 'In Kisten' : arenaOf(key) < 0 ? 'Kaufbar' : 'Ab ' + ARENAS[arenaOf(key)].n) + '</span>' : t.hero ? '<span class="clbl hh">' + t.name + '</span>' : '') + '</button>';
     }).join('');
     var got = list.filter(function (k) { return unlocked(k); }).length, dslots = '', dmenu = '';
     for (i = 0; i < DECK_SLOTS; i++) dslots += '<button class="dsl' + (i === S.dslot ? ' on' : '') + '" data-dslot="' + i + '" aria-label="Deck ' + (i + 1) + '">' + (i + 1) + '</button>';
