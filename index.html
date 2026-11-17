@@ -336,6 +336,13 @@ button:focus-visible { outline: 3px solid var(--you); outline-offset: 2px; }
   --m-grad: radial-gradient(120% 55% at 50% 0%, rgba(255, 255, 255, 0.2), transparent 62%), repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0 26px, transparent 26px 52px), linear-gradient(#1E9DB5, #12506F);
 }
 body.in-menu { background: var(--m-grad); background-color: #12506F; color: var(--m-text); }
+body.in-menu.in-pass { background:
+  radial-gradient(85% 28% at 50% 4%, rgba(170, 140, 255, 0.55), transparent 72%),
+  radial-gradient(circle at 12% 18%, rgba(255,255,255,.85) 0 1.4px, transparent 2.4px) 0 0 / 97px 131px,
+  radial-gradient(circle at 63% 41%, rgba(255,230,160,.8) 0 1.2px, transparent 2.2px) 0 0 / 143px 109px,
+  radial-gradient(circle at 81% 77%, rgba(220,190,255,.8) 0 1.2px, transparent 2.2px) 0 0 / 89px 157px,
+  repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 22px, transparent 22px 44px),
+  linear-gradient(#3C6FD0 0%, #3A47B0 38%, #2B2290 72%, #1A1366 100%); }
 .menu[hidden], .app[hidden] { display: none; }
 
 .menubtn { min-height: 38px; padding: 0 16px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); font-weight: 800; font-size: 14px; cursor: pointer; }
@@ -1209,6 +1216,100 @@ html, body { overscroll-behavior-x: none; }
 .mmenubtn { flex: none; width: 42px; align-self: stretch; border: 0; border-radius: 10px; cursor: pointer; color: #fff; background: linear-gradient(#18597A, #0E3F58); box-shadow: 0 0 0 3px var(--m-ol), inset 0 2px 0 rgba(255,255,255,.2), inset 0 -3px 0 rgba(0,0,0,.25); display: grid; place-items: center; }
 .mmenubtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
 .mmenubtn:active { transform: translateY(2px); }
+.mlvl { flex: none; display: flex; align-items: center; padding: 0; border: 0; background: none; cursor: pointer; color: #fff; font-family: inherit; position: relative; -webkit-tap-highlight-color: transparent; }
+.mlvl:active { transform: translateY(2px); }
+.passchip { position: absolute; right: 6px; top: calc(100% + 8px); z-index: 7; display: flex; align-items: center; gap: 7px; height: 50px; padding: 0 17px 0 8px; border: 1.5px solid rgba(255,255,255,.6); border-radius: 25px; cursor: pointer; font-family: inherit; color: #fff; font-weight: 900; font-size: 19px; letter-spacing: .02em; text-shadow: 0 1px 2px rgba(0,40,70,.55);
+  background: linear-gradient(160deg, rgba(255,255,255,.42), rgba(255,255,255,.12) 55%, rgba(120,200,255,.22));
+  -webkit-backdrop-filter: blur(9px) saturate(1.4); backdrop-filter: blur(9px) saturate(1.4);
+  box-shadow: 0 4px 12px rgba(0,50,90,.35), inset 0 1.5px 0 rgba(255,255,255,.75), inset 0 -2px 4px rgba(0,60,110,.2); -webkit-tap-highlight-color: transparent; }
+.passchip { overflow: visible; animation: pcfloat 2.6s ease-in-out infinite; }
+.passchip::before { content: ""; position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.75) 50%, transparent 65%) no-repeat; background-size: 60% 100%; background-position: -120% 0; animation: pcshine 3.4s ease-in-out infinite; }
+.passchip.hot { animation: pcfloat 2.6s ease-in-out infinite, pcglow 3.2s cubic-bezier(.45,0,.55,1) infinite; border-color: rgba(255,236,150,.95);
+  background: linear-gradient(160deg, rgba(255,238,150,.85), rgba(255,200,60,.5) 55%, rgba(255,160,30,.55)); }
+.passchip.hot svg { animation: pcwig 2.6s ease-in-out infinite; transform-origin: 50% 70%; }
+.passchip:active { animation: none; transform: translateY(1px) scale(.97); }
+@keyframes pcfloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes pcshine { 0%, 55% { background-position: -120% 0; } 100% { background-position: 220% 0; } }
+@keyframes pcglow { 0%, 100% { box-shadow: 0 4px 12px rgba(0,50,90,.35), 0 0 12px 3px rgba(255,200,50,.5), 0 0 26px 8px rgba(255,190,40,.18), inset 0 1.5px 0 rgba(255,255,255,.85), inset 0 -2px 6px rgba(255,150,20,.35); } 50% { box-shadow: 0 4px 12px rgba(0,50,90,.35), 0 0 20px 6px rgba(255,205,60,.85), 0 0 42px 14px rgba(255,190,40,.42), inset 0 1.5px 0 rgba(255,255,255,.9), inset 0 -2px 8px rgba(255,150,20,.5); } }
+@keyframes pcwig { 0%, 62%, 100% { transform: rotate(0); } 68% { transform: rotate(-14deg) scale(1.12); } 76% { transform: rotate(12deg) scale(1.12); } 84% { transform: rotate(-8deg); } 92% { transform: rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) { .passchip, .passchip.hot, .passchip.hot svg, .passchip::before { animation: none; } }
+.passchip svg { width: 40px; height: 40px; flex: none; filter: drop-shadow(0 1.5px 1.5px rgba(60,30,0,.45)); }
+.passchip .pbn { position: absolute; top: -9px; right: -6px; min-width: 25px; height: 25px; padding: 0 7px; display: grid; place-items: center; border-radius: 13px; background: #E8402F; font-size: 14px; font-weight: 900; border: 1.5px solid #fff; text-shadow: none; box-shadow: 0 2px 4px rgba(0,0,0,.3); }
+.pcols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
+.pcols.hd { position: relative; }
+.plab { position: relative; height: 40px; display: grid; place-items: center; border-radius: 20px; font-weight: 900; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: #fff; text-shadow: 0 1px 3px rgba(0,45,80,.6); overflow: hidden;
+  border: 1.5px solid rgba(255,255,255,.7); background: linear-gradient(160deg, rgba(255,255,255,.5), rgba(255,255,255,.14) 50%, rgba(110,200,255,.3));
+  -webkit-backdrop-filter: blur(10px) saturate(1.5); backdrop-filter: blur(10px) saturate(1.5);
+  box-shadow: 0 4px 12px rgba(0,50,90,.3), inset 0 1.5px 0 rgba(255,255,255,.85), inset 0 -3px 8px rgba(0,70,120,.22); }
+.plab::before { content: ""; position: absolute; left: 8%; right: 8%; top: 0; height: 46%; border-radius: 0 0 60% 60% / 0 0 100% 100%; background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0)); pointer-events: none; }
+.plab span { position: relative; }
+.plab.pm { border-color: rgba(222,190,255,.95); background: radial-gradient(ellipse at 50% 0%, rgba(215,150,255,.6), transparent 65%), linear-gradient(160deg, rgba(150,90,230,.85), rgba(88,36,170,.92)); text-shadow: 0 1px 3px rgba(40,5,80,.75); box-shadow: 0 4px 12px rgba(50,10,110,.45), 0 0 12px 1px rgba(170,100,255,.35), inset 0 1.5px 0 rgba(255,255,255,.7), inset 0 -3px 8px rgba(30,0,80,.5); }
+.phd { display: flex; justify-content: center; margin: 14px 0 16px; }
+.phd span { display: inline-block; position: relative; white-space: nowrap; font-family: var(--font-display); line-height: 1; }
+/* A: Sale-Band, schraeg, gold-orange */
+.phdA span { transform: rotate(-4deg); padding: 9px 30px 11px; font-size: 34px; color: #fff; -webkit-text-stroke: 6px #5A2A00; paint-order: stroke fill; text-shadow: 0 3px 0 rgba(90,42,0,.6);
+  background: linear-gradient(#FFE27A, #F7A823 55%, #E3780F); border-radius: 12px; box-shadow: 0 0 0 3.5px #5A2A00, 0 7px 0 3.5px #3A1C00, inset 0 3px 0 rgba(255,255,255,.65), inset 0 -4px 0 rgba(150,70,0,.35); }
+.phdA span::before, .phdA span::after { content: "\2605"; position: absolute; top: 50%; margin-top: -12px; font-size: 22px; line-height: 1; color: #FFF8D0; -webkit-text-stroke: 0; text-shadow: 0 0 0 #5A2A00, 0 2px 0 rgba(90,42,0,.7); }
+.phdA span::before { left: 9px; } .phdA span::after { right: 9px; }
+.plist { position: relative; margin-top: 12px; }
+.plist::after { content: ""; position: absolute; left: calc(50% - 2.5px); top: 0; bottom: 0; width: 5px; border-radius: 3px; pointer-events: none;
+  background: linear-gradient(90deg, #A8700E 0, #E8B02E 22%, #FFF0A8 45%, #F2BF3A 62%, #B8800F 100%); box-shadow: 0 0 0 1px #7A4D08, 0 1px 2px rgba(60,35,0,.5); }
+.prow { margin-top: 8px; position: relative; }
+.pdia { position: absolute; left: 50%; top: 50%; z-index: 4; width: 30px; height: 30px; margin: -15px 0 0 -15px; transform: rotate(45deg); border-radius: 6px; display: grid; place-items: center; pointer-events: none;
+  background: linear-gradient(135deg, #FFF3B0 0%, #F7C93C 42%, #D9961A 100%); box-shadow: 0 0 0 2px #7A4D08, inset 0 1.5px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(150,90,0,.45), 0 3px 5px rgba(60,35,0,.45); }
+.pdia span { transform: rotate(-45deg); font-weight: 900; font-size: 15px; line-height: 1; color: #5A3205; text-shadow: 0 1px 0 rgba(255,255,255,.65); }
+.prow.cur .pdia { box-shadow: 0 0 0 2px #7A4D08, inset 0 1.5px 0 rgba(255,255,255,.95), inset 0 -2px 3px rgba(150,90,0,.4), 0 3px 5px rgba(60,35,0,.45), 0 0 10px 2px rgba(255,225,120,.9); }
+.prow.lk .pdia { filter: saturate(.55) brightness(.9); }
+
+.pcell { position: relative; min-height: 88px; padding: 9px 6px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 1.5px solid rgba(255,255,255,.7); border-radius: 18px; font-family: inherit; color: #fff; text-align: center; overflow: hidden; text-shadow: 0 1px 3px rgba(0,45,80,.6);
+  background: linear-gradient(160deg, rgba(255,255,255,.5), rgba(255,255,255,.14) 50%, rgba(110,200,255,.3));
+  -webkit-backdrop-filter: blur(10px) saturate(1.5); backdrop-filter: blur(10px) saturate(1.5);
+  box-shadow: 0 5px 14px rgba(0,50,90,.32), inset 0 1.5px 0 rgba(255,255,255,.85), inset 0 -3px 8px rgba(0,70,120,.22); }
+.pcell::before { content: ""; position: absolute; left: 6%; right: 6%; top: 0; height: 44%; border-radius: 0 0 60% 60% / 0 0 100% 100%; pointer-events: none; background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0)); }
+.pcell > * { position: relative; }
+.pcell .pcic { width: 48px; height: 48px; display: grid; place-items: center; }
+.pcell .pcic svg { width: 100%; height: 100%; fill: none; stroke: none; filter: drop-shadow(0 3px 3px rgba(0,40,70,.4)); }
+.pcell .pcic .pcch { width: 54px; height: 54px; }
+.pcell .pcic .pcch svg { fill: initial; }
+.pcell b { font-size: 16px; font-weight: 900; line-height: 1.1; }
+.pcell small { font-size: 11.5px; font-weight: 800; opacity: .9; line-height: 1.1; }
+.pcell.prem { color: #fff; border-color: rgba(222,190,255,.95); text-shadow: 0 1px 3px rgba(40,5,80,.75);
+  background: radial-gradient(circle at 18% 28%, rgba(255,255,255,.9) 0 1.2px, transparent 2px), radial-gradient(circle at 82% 22%, rgba(255,255,255,.75) 0 1px, transparent 1.8px), radial-gradient(circle at 70% 74%, rgba(255,255,255,.6) 0 1px, transparent 1.8px), radial-gradient(circle at 30% 80%, rgba(240,200,255,.7) 0 1.2px, transparent 2px),
+    radial-gradient(ellipse at 50% 0%, rgba(215,150,255,.65), transparent 65%), linear-gradient(160deg, rgba(150,90,230,.82), rgba(88,36,170,.9) 55%, rgba(54,18,120,.95));
+  box-shadow: 0 5px 14px rgba(50,10,110,.5), 0 0 12px 1px rgba(170,100,255,.35), inset 0 1.5px 0 rgba(255,255,255,.7), inset 0 -3px 8px rgba(30,0,80,.5); }
+.pcell.prem::before { background: linear-gradient(rgba(255,255,255,.38), rgba(255,255,255,0)); }
+.pcell.lk, .pcell.prem.lk { background: linear-gradient(160deg, rgba(255,255,255,.34), rgba(255,255,255,.08) 50%, rgba(150,175,195,.3)); border-color: rgba(255,255,255,.45); color: rgba(255,255,255,.85); }
+.pcell.prem.lk { background: linear-gradient(160deg, rgba(160,130,200,.5), rgba(100,70,150,.55)); border-color: rgba(220,200,245,.5); filter: saturate(.6); }
+.pcell.lk .pcic svg { filter: grayscale(.85) brightness(1.05) drop-shadow(0 3px 3px rgba(0,40,70,.3)); opacity: .8; }
+.pcell.prem.pnoprem { filter: saturate(.75) brightness(.9); }
+.pcell.prem.rdy { box-shadow: 0 5px 14px rgba(50,10,110,.5), 0 0 16px 3px rgba(200,130,255,.75), inset 0 1.5px 0 rgba(255,255,255,.7), inset 0 -3px 8px rgba(30,0,80,.5); }
+.pcell.rdy { cursor: pointer; border-color: #FFE27A; animation: pready 2.6s ease-in-out infinite; }
+.pcell.done { opacity: .68; }
+.pcell .pck { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: #2F9E55; box-shadow: 0 0 0 2px #fff; display: grid; place-items: center; }
+.pcell .pck svg { width: 11px; height: 11px; fill: none; stroke: #fff; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+.pcell:active.rdy { transform: translateY(3px); }
+@keyframes pready { 0%, 100% { box-shadow: 0 5px 14px rgba(0,50,90,.32), 0 0 10px 2px rgba(255,200,50,.45), inset 0 1.5px 0 rgba(255,255,255,.85), inset 0 -3px 8px rgba(255,150,20,.3); } 50% { box-shadow: 0 5px 14px rgba(0,50,90,.32), 0 0 20px 6px rgba(255,205,60,.8), inset 0 1.5px 0 rgba(255,255,255,.9), inset 0 -3px 8px rgba(255,150,20,.45); } }
+.ppick { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(6, 30, 46, .6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.ppick .pp { width: 100%; max-width: 420px; max-height: 82vh; display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 20px; background: linear-gradient(#E4F8FA, #BDE8EE); box-shadow: 0 0 0 3px var(--m-ol), inset 0 2px 0 rgba(255,255,255,.8); color: #1B3A48; }
+.ppick h3 { margin: 0; font-size: 19px; font-weight: 900; text-align: center; }
+.ppick p { margin: 0; text-align: center; font-weight: 700; font-size: 12.5px; opacity: .8; }
+.ppick .pg { overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px 3px 6px; }
+.ppick .pk { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px 8px; border: 0; border-radius: 14px; font-family: inherit; color: #1B3A48; cursor: pointer; background: linear-gradient(#F3FCFD, #CDEDF2); box-shadow: 0 0 0 2.5px #4C9DB0, 0 3px 0 2.5px #3C7F91, inset 0 2px 0 rgba(255,255,255,.8); }
+.ppick .pk:active { transform: translateY(3px); }
+.ppick .pk .pkart { width: 64px; height: 64px; }
+.ppick .pk .pkart svg { width: 100%; height: 100%; }
+.ppick .pk b { font-size: 12.5px; font-weight: 900; line-height: 1.1; }
+.ppick .pk small { font-size: 10px; font-weight: 800; opacity: .7; }
+.ppick .pc { padding: 9px; border: 0; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 900; font-size: 14px; color: #1B3A48; background: rgba(255,255,255,.6); box-shadow: 0 0 0 2.5px #4C9DB0; }
+.pbuy { width: 100%; margin-top: 10px; padding: 11px 12px; border: 0; border-radius: 14px; cursor: pointer; font-family: inherit; font-weight: 900; font-size: 16px; color: #3A2200; background: linear-gradient(#FFD866, #E39A1B); box-shadow: 0 0 0 3px var(--m-ol), inset 0 2px 0 rgba(255,255,255,.4), inset 0 -3px 0 rgba(0,0,0,.15); }
+.pbuy.cant { opacity: .6; }
+.pall { width: 100%; margin-top: 8px; padding: 9px; border: 0; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 900; font-size: 15px; color: #fff; background: linear-gradient(#35B56A, #1E8248); box-shadow: 0 0 0 3px var(--m-ol); }
+.pall:disabled { opacity: .45; cursor: default; }
+.mlvl .lbar small { font-size: 9.5px; font-weight: 800; opacity: .8; letter-spacing: .04em; }
+.mlvl .lring { width: 38px; height: 38px; flex: none; position: relative; z-index: 2; filter: drop-shadow(0 2px 0 rgba(0,0,0,.28)); }
+.mlvl .lring text { font-weight: 900; font-size: 21px; fill: #fff; paint-order: stroke; stroke: #0A2F44; stroke-width: 3px; stroke-linejoin: round; font-family: inherit; }
+.mlvl .lbar { margin-left: -14px; height: 26px; padding: 0 11px 0 19px; display: flex; align-items: baseline; justify-content: center; gap: 3px; border-radius: 0 13px 13px 0; background: linear-gradient(#1C6C93, #0E3F58); box-shadow: 0 0 0 2.5px var(--m-ol), inset 0 2px 0 rgba(255,255,255,.22), inset 0 -3px 0 rgba(0,0,0,.18); align-self: center; padding-top: 5px; font-weight: 900; font-size: 14px; line-height: 1; white-space: nowrap; position: relative; z-index: 1; }
 .mpop { position: absolute; left: 6px; top: calc(100% + 8px); min-width: 190px; padding: 8px; display: flex; flex-direction: column; gap: 6px; border-radius: 14px; background: linear-gradient(#17607F, #0C3A52); box-shadow: 0 0 0 3px var(--m-ol), 0 10px 20px rgba(0,0,0,.35); animation: popin .16s ease-out; transform-origin: top left; }
 .mpop button { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 800; font-size: 16px; color: #fff; background: rgba(255,255,255,.08); text-align: left; }
 .mpop button:active { background: rgba(255,255,255,.2); }
@@ -5480,6 +5581,7 @@ CH.shield = critter({
     S.result = kind;
     var cg = (res === 'win' ? 10 : 0) + (kind === 'victory' ? 30 : 0);
     S.coins += cg; S.runCoins += cg; saveWallet();
+    addXp((res === 'win' ? 10 : 0) + (kind === 'victory' ? 40 : kind === 'over' ? 15 : 0));
     var gain = 0;
     if (kind === 'victory') gain = 15;
     if (kind === 'over') gain = -Math.min(5, S.trophies);
@@ -5596,6 +5698,92 @@ CH.shield = critter({
   if (DEV_ALL) { S.gems = Math.max(S.gems, 99999); S.coins = Math.max(S.coins, 99999); S.ownD = true; Object.keys(TYPES).forEach(function (k) { if (TYPES[k].hero) S.hlv[k] = HERO_MAXLV; else S.up[k] = 3; }); S.trophies = Math.max(S.trophies, 9999); S.maxT = Math.max(S.maxT, 9999);
     try { var db = document.createElement('div'); db.textContent = 'DEV'; db.style.cssText = 'position:fixed;left:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px));z-index:99999;font:700 10px system-ui;letter-spacing:1px;color:#fff;background:rgba(214,60,60,.85);padding:2px 6px;border-radius:6px;pointer-events:none'; document.body.appendChild(db); } catch (e) {} }
   function saveWallet() { try { localStorage.setItem(WALLET_KEY, JSON.stringify({ g: S.gems, c: S.coins, d: S.ownD ? 1 : 0 })); } catch (e) {} }
+  /* Spieler-Level: XP aus Runden und Matches, Level n -> n+1 braucht 100 + 40 * (n - 1) XP */
+  var XP_KEY = 'knirps-arena-xp';
+  S.xp = 0; try { S.xp = Math.max(0, +localStorage.getItem(XP_KEY) || 0); } catch (e) {}
+  function xpNeed(l) { return 100 + 40 * (l - 1); }
+  function lvlInfo() { var x = S.xp || 0, l = 1; while (x >= xpNeed(l)) { x -= xpNeed(l); l++; } return { l: l, cur: x, need: xpNeed(l) }; }
+  function addXp(n) { S.xp = (S.xp || 0) + n; try { localStorage.setItem(XP_KEY, String(S.xp)); } catch (e) {} }
+  function lvlRing(I) {
+    var R = 19, C = 2 * Math.PI * R, f = Math.max(0, Math.min(1, I.cur / I.need));
+    return '<svg class="lring" viewBox="0 0 46 46" aria-hidden="true"><defs><linearGradient id="lrg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F8DBA"/><stop offset="1" stop-color="#0D3A52"/></linearGradient></defs><circle cx="23" cy="23" r="22" fill="url(#lrg)" stroke="#072838" stroke-width="2"/><circle cx="23" cy="23" r="' + R + '" fill="none" stroke="#07293C" stroke-opacity=".7" stroke-width="5"/>' +
+      '<circle cx="23" cy="23" r="' + R + '" fill="none" stroke="#4CC3FF" stroke-width="5" stroke-linecap="round" stroke-dasharray="' + (C * f).toFixed(2) + ' ' + C.toFixed(2) + '" transform="rotate(-90 23 23)"/>' +
+      '<text x="23" y="23" text-anchor="middle" dominant-baseline="central">' + I.l + '</text></svg>';
+  }
+  /* ---------- Knirpspass: Stufe n schaltet sich mit Spieler-Level n frei; gratis- und Premium-Leiste ---------- */
+  var PASS_KEY = 'knirps-arena-pass', PASS_TIERS = 30, PASS_PRICE = 300;
+  S.pass = { p: 0, f: {}, q: {} };
+  try { var po = JSON.parse(localStorage.getItem(PASS_KEY) || '{}'); S.pass = { p: po.p ? 1 : 0, f: po.f || {}, q: po.q || {} }; } catch (e) {}
+  function savePass() { try { localStorage.setItem(PASS_KEY, JSON.stringify(S.pass)); } catch (e) {} }
+  var COIN_SVG = '<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="cng" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6B0"/><stop offset=".5" stop-color="#FFC62E"/><stop offset="1" stop-color="#D4800C"/></linearGradient></defs><circle cx="16" cy="16" r="14" fill="url(#cng)" stroke="#7A4308" stroke-width="2"/><circle cx="16" cy="16" r="10.300" fill="none" stroke="#B8700F" stroke-width="1.700"/><circle cx="16" cy="16" r="8.800" fill="#FFD84A" fill-opacity=".55"/><path d="M16 9.800l1.900 4 4.300.5-3.200 3 .9 4.300-3.900-2.200-3.900 2.200.9-4.300-3.200-3 4.300-.5z" fill="#FFF8D0" stroke="#B8700F" stroke-width="1.100" stroke-linejoin="round"/><path d="M6.500 12.500A10.500 10.500 0 0 1 14 5.800" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.800" stroke-linecap="round"/></svg>';
+  var GEM_SVG = '<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="gmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BEBFF"/><stop offset="1" stop-color="#2D8FE0"/></linearGradient></defs><path d="M9 5h14l6 8-13 15L3 13z" fill="url(#gmg)" stroke="#145C93" stroke-width="2" stroke-linejoin="round"/><path d="M3 13h26M9 5l7 8 7-8M16 13v15M9 5l-1 8 8 15M23 5l1 8-8 15" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.200" stroke-linejoin="round"/></svg>';
+  var CHEST_ICO2 = '<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="chg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D79A52"/><stop offset="1" stop-color="#8E5A28"/></linearGradient></defs><path d="M4 14V26a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V14z" fill="url(#chg)" stroke="#4A2A0E" stroke-width="2" stroke-linejoin="round"/><path d="M4 14C4 8 9 5 16 5s12 3 12 9z" fill="#E8B26A" stroke="#4A2A0E" stroke-width="2" stroke-linejoin="round"/><rect x="13.500" y="13" width="5" height="7" rx="1.200" fill="#FFD84A" stroke="#4A2A0E" stroke-width="1.500"/></svg>';
+  function passReward(t, prem) {
+    if (!prem && t === 1) return { k: 'char' };
+    if (!prem) {
+      if (t === PASS_TIERS) return { k: 'gem', n: 100 };
+      if (t % 5 === 0) return { k: 'chest', gold: false };
+      if (t % 3 === 0) return { k: 'gem', n: 8 + t };
+      return { k: 'coin', n: 50 + 10 * t };
+    }
+    if (t === PASS_TIERS) return { k: 'gem', n: 500 };
+    if (t % 5 === 0) return { k: 'chest', gold: true };
+    if (t % 2 === 0) return { k: 'gem', n: 15 + 2 * t };
+    return { k: 'coin', n: 150 + 20 * t };
+  }
+  function passGrant(r) {
+    if (r.k === 'coin') { S.coins += r.n; saveWallet(); return '+' + r.n.toLocaleString('de-DE') + ' Münzen'; }
+    if (r.k === 'gem') { S.gems += r.n; saveWallet(); return '+' + r.n.toLocaleString('de-DE') + ' Juwelen'; }
+    var d = drawChest(1, r.gold)[0];
+    return (d.isNew ? 'Neu freigeschaltet: ' : '+' + d.n + ' Karten: ') + TYPES[d.k].name;
+  }
+  function passReady() {
+    var L = lvlInfo().l, n = 0;
+    for (var t = 1; t <= PASS_TIERS && t <= L; t++) { if (!S.pass.f[t]) n++; if (S.pass.p && !S.pass.q[t]) n++; }
+    return n;
+  }
+  function passCands() { return KEYS.filter(function (k) { return !TYPES[k].summon && !unlocked(k); }); }
+  function pickHtml() {
+    var c = passCands();
+    return '<div class="ppick" data-pcancel="1"><div class="pp"><h3>Wähle deinen Charakter</h3><p>Er wird sofort für dich freigeschaltet.</p><div class="pg">' +
+      c.map(function (k) { return '<button class="pk" data-ppick="' + k + '"><span class="pkart">' + CH[k] + '</span><b>' + TYPES[k].name + '</b><small>' + (TYPES[k].hero ? 'Held' : 'Knirps') + '</small></button>'; }).join('') +
+      '</div><button class="pc" data-pcancel="1">Abbrechen</button></div></div>';
+  }
+  function passMsg(txt) {
+    var old = document.getElementById('soontoast'); if (old) old.remove();
+    var d = document.createElement('div'); d.id = 'soontoast'; d.className = 'soontoast'; d.textContent = txt;
+    document.body.appendChild(d);
+    setTimeout(function () { if (d.parentNode) d.remove(); }, 2200);
+  }
+  function passCell(t, prem, L) {
+    var r = passReward(t, prem), claimed = prem ? S.pass.q[t] : S.pass.f[t], reach = t <= L, has = !prem || S.pass.p;
+    var ico = r.k === 'coin' ? COIN_SVG : r.k === 'gem' ? GEM_SVG : r.k === 'char' ? (claimed && S.pass.c && CH[S.pass.c] ? '<span class="pcch">' + CH[S.pass.c] + '</span>' : '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="#7FD0E2" stroke="#2B7A90" stroke-width="2"/><text x="16" y="22.500" text-anchor="middle" font-size="19" font-weight="900" fill="#fff" stroke="#2B7A90" stroke-width=".8" font-family="inherit">?</text></svg>') : CHEST_ICO2;
+    var txt = r.k === 'chest' ? (r.gold ? 'Goldkiste' : 'Holzkiste') : r.k === 'char' ? (claimed && S.pass.c ? TYPES[S.pass.c].name : 'Charakter') : r.n.toLocaleString('de-DE');
+    var sub = r.k === 'coin' ? 'Münzen' : r.k === 'gem' ? 'Juwelen' : r.k === 'char' ? (claimed ? 'freigeschaltet' : 'deiner Wahl') : '1 Karte';
+    var cls = 'pcell' + (prem ? ' prem' : '') + (claimed ? ' done' : reach && has ? ' rdy' : !reach ? ' lk' : ' pnoprem');
+    var chk = claimed ? '<span class="pck"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span>' : '';
+    var icon = '<span class="pcic">' + ico + '</span>';
+    var open = !claimed && reach && has;
+    return '<' + (open ? 'button data-pclaim="' + (prem ? 'q' : 'f') + t + '"' : 'div') + ' class="' + cls + '">' + chk + icon + '<b>' + txt + '</b><small>' + (claimed && r.k !== 'char' ? 'abgeholt' : sub) + '</small></' + (open ? 'button' : 'div') + '>';
+  }
+  var PASS_ICON = '<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="pgg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE98A"/><stop offset=".55" stop-color="#FFC52E"/><stop offset="1" stop-color="#E8911A"/></linearGradient></defs>' +
+    '<path d="M4.5 7.5h23a2.5 2.5 0 0 1 2.500 2.500v3a3.200 3.200 0 0 0 0 6.400v3a2.500 2.500 0 0 1-2.500 2.500h-23A2.500 2.500 0 0 1 2 22.400v-3a3.200 3.200 0 0 0 0-6.400v-3A2.500 2.500 0 0 1 4.500 7.500z" fill="url(#pgg)" stroke="#7A4308" stroke-width="1.600" stroke-linejoin="round"/>' +
+    '<path d="M10.500 9.500v13" stroke="#B8700F" stroke-width="1.300" stroke-dasharray="1.800 2.200" stroke-linecap="round"/>' +
+    '<path d="M20 10.300l1.700 3.500 3.800.5-2.800 2.700.7 3.800-3.400-1.800-3.400 1.800.7-3.800-2.800-2.700 3.800-.5z" fill="#FFFBEA" stroke="#B8700F" stroke-width="1.100" stroke-linejoin="round"/>' +
+    '<path d="M5 10.500h4" stroke="#fff" stroke-opacity=".7" stroke-width="1.400" stroke-linecap="round"/></svg>';
+  function passChip() {
+    var n = passReady();
+    return '<button class="passchip' + (n ? ' hot' : '') + '" data-tab="pass" aria-label="Knirpspass' + (n ? ', ' + n + ' Belohnungen bereit' : '') + '">' + PASS_ICON + 'Pass' + (n ? '<span class="pbn">' + n + '</span>' : '') + '</button>';
+  }
+  function passHtml() {
+    var I = lvlInfo(), L = I.l, h =
+      '<button class="backbtn" data-tab="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button>' +
+      '<div class="phd phdA"><span>Knirpspass</span></div>' +
+      (S.pass.p ? '' : '<button class="pbuy' + (S.gems >= PASS_PRICE ? '' : ' cant') + '" data-pbuy="1">Premium freischalten · ' + PASS_PRICE + ' Juwelen</button>') +
+      '<div class="plist"><div class="pcols hd"><div class="plab"><span>Gratis</span></div><div class="plab pm"><span>Premium</span></div></div>';
+    for (var t = 1; t <= PASS_TIERS; t++) h += '<div class="pcols prow' + (t === L ? ' cur' : '') + (t > L ? ' lk' : '') + '">' + passCell(t, false, L) + passCell(t, true, L) + '<div class="pdia"><span>' + t + '</span></div></div>';
+    return h + '</div>';
+  }
   function saveTrophies() { S.maxT = Math.max(S.maxT, S.trophies); try { localStorage.setItem(TROPHY_KEY, String(S.trophies)); localStorage.setItem(MAXT_KEY, String(S.maxT)); } catch (e) {} }
   function rankOf(t) { var r = NODES[0].name; NODES.forEach(function (n) { if (t >= n.t && n.ai < PLAYABLE) r = n.name; }); return r; }
   S.screen = 'menu'; S.inGame = false; S.tab = 'home'; S.collSel = 'guard';
@@ -5850,7 +6038,7 @@ CH.shield = critter({
     }
     return       '<div class="ctabs"><button class="ctab' + (tab === 'hero' ? ' on' : '') + '" data-ctab="hero">' + mi('crown') + 'Helden</button><button class="ctab' + (tab === 'mini' ? ' on' : '') + '" data-ctab="mini">' + mi('swords') + 'Minis</button></div>' +
       '<div class="panel cdp"><div class="dhead"><button class="dmb" data-dmenu="1" aria-label="Deck-Menü"><i></i><i></i><i></i></button><div class="dslots">' + dslots + '</div></div>' + dmenu + (sf ? '<div class="cbanner"><span>Tippe auf die Figur, die durch ' + TYPES[sf].name + ' ersetzt wird.</span><button data-swapcancel="1">Abbrechen</button></div>' : '') + '<div class="cdeck">' + deckTiles + '</div><div class="davg" title="Durchschnittliche Knirpsaft-Kosten"><span class="dcoin"></span>Ø ' + avgCost + '</div></div>' +
-      '<div class="cpanel"><div class="chd"><span class="cbub">Deine Sammlung: ' + got + '/' + list.length + ' Figuren</span>' +
+      '<div class="cpanel"><div class="chd"><span class="cbub">Deine Sammlung: ' + got + '/' + list.length + (tab === 'hero' ? ' Helden' : ' Knirpse') + '</span>' +
       (tab === 'hero' ? '' : '<button class="cbub csb" data-csort="1">' + ({ cosd: 'Kosten absteigend', cosa: 'Kosten aufsteigend', lvld: 'Level absteigend', lvla: 'Level aufsteigend' }[so]) + '</button>') + '</div>' +
       '<div class="cgrid">' + (cards || '<p class="cempty">Alle Karten dieser Art sind schon in deinem Deck.</p>') + '</div></div>' + (S.cmodal ? cmodalHtml(S.cmodal) : '');
   }
@@ -6174,7 +6362,7 @@ CH.shield = critter({
   }
   function bodyFor(tab) {
     var o = S.tab; S.tab = tab;
-    try { return S.tab === 'coll' ? collHtml() : S.tab === 'rec' ? recHtml() : S.tab === 'rules' ? rulesHtml() : S.tab === 'shop' ? shopHtml() : S.tab === 'acct' ? acctHtml() : S.tab === 'ach' ? achHtml() : homeHtml(); }
+    try { return S.tab === 'coll' ? collHtml() : S.tab === 'rec' ? recHtml() : S.tab === 'rules' ? rulesHtml() : S.tab === 'shop' ? shopHtml() : S.tab === 'acct' ? acctHtml() : S.tab === 'pass' ? passHtml() : S.tab === 'ach' ? achHtml() : homeHtml(); }
     finally { S.tab = o; }
   }
   (function () {
@@ -6242,12 +6430,12 @@ CH.shield = critter({
     window.__swipe = goTab;
   })();
   function renderMenu() {
-    var body = bodyFor(S.tab);
+    var body = bodyFor(S.tab), LI = lvlInfo();
     var oldBody = $('menu').querySelector('.mbody'), sc = slideCls();
     $('menu').innerHTML =
-      '<div class="mtop"><button class="mmenubtn" data-mmenu="1" aria-label="Menü" aria-expanded="' + !!S.mpop + '">' + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' + pill('trophy', 'Trophäen', S.trophies) + pill('coin', 'Münzen', S.coins).replace('class="pill"', 'class="pill coinp"') + pill('gem', 'Juwelen', S.gems).replace('class="pill"', 'class="pill gemp"') +
-      (S.mpop ? '<div class="mpop" role="menu"><button data-tab="acct" role="menuitem">' + mi('user') + 'Konto</button><button data-tab="rules" role="menuitem">' + mi('book') + 'Spielregeln</button><button data-tab="ach" role="menuitem">' + mi('crown') + 'Erfolge</button></div>' : '') + '</div>' +
-      '<div class="mwrap"><div class="mbody' + sc + '">' + body + '</div></div>' + tabsHtml();
+      '<div class="mtop">' + '<button class="mlvl" data-mmenu="1" aria-label="Menü, Level ' + LI.l + ', noch ' + (LI.need - LI.cur) + ' XP bis zum nächsten Level" aria-expanded="' + !!S.mpop + '">' + lvlRing(LI) + '<span class="lbar">' + (LI.need - LI.cur) + '<small>XP</small></span></button>' + pill('trophy', 'Trophäen', S.trophies) + pill('coin', 'Münzen', S.coins).replace('class="pill"', 'class="pill coinp"') + pill('gem', 'Juwelen', S.gems).replace('class="pill"', 'class="pill gemp"') +
+      (S.tab === 'home' ? passChip() : '') + (S.mpop ? '<div class="mpop" role="menu"><button data-tab="acct" role="menuitem">' + mi('user') + 'Konto</button><button data-tab="rules" role="menuitem">' + mi('book') + 'Spielregeln</button><button data-tab="ach" role="menuitem">' + mi('crown') + 'Erfolge</button><button data-tab="pass" role="menuitem">' + mi('star') + 'Knirpspass</button></div>' : '') + '</div>' +
+      '<div class="mwrap"><div class="mbody' + sc + '">' + body + '</div></div>' + tabsHtml() + (S.ppick ? pickHtml() : '');
     if (sc && oldBody) {
       var wrap = $('menu').querySelector('.mwrap');
       oldBody.className = 'mbody out' + (sc === ' slidel' ? 'l' : 'r');
@@ -6255,6 +6443,7 @@ CH.shield = critter({
       setTimeout(function () { if (oldBody.parentNode) oldBody.remove(); }, 420);
     }
     document.body.classList.toggle('modal-open', !!S.cmodal && S.tab === 'coll');
+    document.body.classList.toggle('in-pass', S.tab === 'pass');
     if (S.tab === 'rec') setTimeout(function () { pathLayout(true); }, 0);
   }
 
@@ -6417,6 +6606,39 @@ CH.shield = critter({
     }
     if (e.target.closest('[data-namesave]') && S.screen === 'menu') { var nv = $('nameinp'); saveName(nv ? nv.value : S.name); return; }
     if (e.target.closest('[data-soon]') && S.screen === 'menu') { soonToast(); return; }
+    var pcl = e.target.closest('[data-pclaim]');
+    if (pcl && S.screen === 'menu') {
+      var pv = pcl.getAttribute('data-pclaim'), pt = +pv.slice(1), pp = pv.charAt(0) === 'q';
+      if (!pp && passReward(pt, false).k === 'char' && pt <= lvlInfo().l && !S.pass.f[pt]) {
+        if (!passCands().length) { S.pass.f[pt] = 1; savePass(); addXp(100); renderMenu(); passMsg('Du hast schon alle Charaktere: +100 XP'); }
+        else { S.ppick = 1; renderMenu(); }
+        return;
+      }
+      if (pt <= lvlInfo().l && !(pp ? S.pass.q[pt] : S.pass.f[pt]) && (!pp || S.pass.p)) { (pp ? S.pass.q : S.pass.f)[pt] = 1; savePass(); var gt = passGrant(passReward(pt, pp)); renderMenu(); passMsg(gt); }
+      return;
+    }
+    var ppk = e.target.closest('[data-ppick]');
+    if (ppk && S.screen === 'menu') {
+      var pk = ppk.getAttribute('data-ppick');
+      if (S.ppick && TYPES[pk] && !unlocked(pk)) { S.own[pk] = 1; saveOwn(); S.pass.f[1] = 1; S.pass.c = pk; savePass(); S.ppick = 0; renderMenu(); passMsg(TYPES[pk].name + ' freigeschaltet'); }
+      return;
+    }
+    if (e.target.closest('[data-pcancel]') && S.screen === 'menu' && S.ppick && (e.target.closest('.pc') || !e.target.closest('.pp'))) { S.ppick = 0; renderMenu(); return; }
+    if (e.target.closest('[data-pall]') && S.screen === 'menu') {
+      if (!S.pass.f[1] && lvlInfo().l >= 1 && passReward(1, false).k === 'char') { if (!passCands().length) { S.pass.f[1] = 1; savePass(); addXp(100); } else { S.ppick = 1; renderMenu(); return; } }
+      var Lv = lvlInfo().l, got = [];
+      for (var pt2 = 1; pt2 <= PASS_TIERS && pt2 <= Lv; pt2++) {
+        if (!S.pass.f[pt2]) { S.pass.f[pt2] = 1; got.push(passGrant(passReward(pt2, false))); }
+        if (S.pass.p && !S.pass.q[pt2]) { S.pass.q[pt2] = 1; got.push(passGrant(passReward(pt2, true))); }
+      }
+      savePass(); renderMenu(); if (got.length) passMsg(got.length + ' Belohnungen abgeholt'); return;
+    }
+    if (e.target.closest('[data-pbuy]') && S.screen === 'menu') {
+      if (S.pass.p) return;
+      if (S.gems >= PASS_PRICE) { S.gems -= PASS_PRICE; S.pass.p = 1; saveWallet(); savePass(); renderMenu(); passMsg('Premium freigeschaltet'); }
+      else passMsg('Dir fehlen ' + (PASS_PRICE - S.gems) + ' Juwelen.');
+      return;
+    }
     var mm = e.target.closest('[data-mmenu]');
     if (mm && S.screen === 'menu') { S.mpop = !S.mpop; renderMenu(); return; }
     if (S.mpop && S.screen === 'menu' && !e.target.closest('.mpop')) { S.mpop = false; renderMenu(); if (!e.target.closest('[data-tab]')) return; }
