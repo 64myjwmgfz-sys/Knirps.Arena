@@ -1718,6 +1718,7 @@ html, body { overscroll-behavior-x: none; }
     <div class="board" id="board" role="group" aria-label="Spielfeld">
       <div class="arena" id="arena"></div>
       <div class="tiles" id="tiles"></div>
+      <div class="fx" id="fxg" style="z-index:auto"></div>
       <div class="units" id="units"></div>
       <div class="fx" id="fx"></div>
     </div>
@@ -1783,8 +1784,8 @@ html, body { overscroll-behavior-x: none; }
                          desc: 'Bei jedem Angriff zieht sie an ihrer Zigarette: Der Ulti-Balken unter ihrem Lebensbalken füllt sich. Danach atmet sie aus und wirft die Zigarette auf den Gegner. Ist der Balken nach 5 Zügen voll, hustet sie stattdessen einmal kräftig: Eine dichte Qualmwolke zieht gezielt auf einen Gegner und richtet 2,5-mal so viel Schaden an wie ein Wurf.' },
               blurb: 'Zieht an der Zigarette, pustet aus und wirft sie auf Gegner. Nach 5 Zügen hustet sie eine Qualmwolke gezielt auf einen Gegner, die viel Schaden macht.' },
     miner:  { name: 'Tunnler', cost: 3, hp: 14, atk: 3, range: 1, ai: 5, mi: 5, color: '#F2C14E', fx: 'pick',
-              dig: { name: 'Tunnelgräber', desc: 'Zu Beginn jeder Runde gräbt er sich in einem geraden Tunnel durch seine Spalte bis in die hinterste Reihe der Gegner. Dort taucht er auf, steht dort schon jemand, direkt links oder rechts daneben, und knöpft sich zuerst die Fernkämpfer vor, zum Beispiel Bogenschützen. Beim Graben kann ihn niemand treffen.' },
-              blurb: 'Minenarbeiter mit Helmlampe. Gräbt sich geradeaus in den Rücken der Gegner und jagt Fernkämpfer.' },
+              dig: { name: 'Tunnelgräber', desc: 'Zu Beginn jeder Runde gräbt er sich in einem geraden Tunnel durch seine Spalte bis ganz ans Ende des Feldes. Dort taucht er auf. Steht dort schon jemand, wird er einfach zur Seite gestoßen. Beim Graben kann ihn niemand treffen.' },
+              blurb: 'Minenarbeiter mit Helmlampe. Gräbt sich geradeaus bis ans Ende des Feldes und haut mit der Spitzhacke zu.' },
     mika:   { name: 'Mika', cost: 0, hp: 50, atk: 8, range: 3, ai: 6, mi: 5, color: '#6B7A4A', fx: 'rifle', hero: true, role: 'Held',
               ability: { kind: 'gas', secs: 10, every: 5, mult: 1.3, dot: 0.4, dotSecs: 5, name: 'Giftgas', tag: 'sprüht alle 10 Sekunden Gas',
                          short: 'Alle 10 Sekunden sprüht er grünes Gas in Kreuzform auf 5 Felder, das lange Schaden macht.',
@@ -2404,7 +2405,7 @@ CH.shield = critter({
   };
   var token = 0;
 
-  var board = $('board'), tilesEl = $('tiles'), arenaEl = $('arena'), unitsEl = $('units'), fxEl = $('fx');
+  var board = $('board'), tilesEl = $('tiles'), arenaEl = $('arena'), unitsEl = $('units'), fxEl = $('fx'), fxgEl = $('fxg');
 
   /* ---------- 3D-Spielfeld: Perspektive und Trainingslager ---------- */
   // Das Feld wird wie bei einer schräg von vorn gesehenen Platte gezeichnet: hinten schmaler, vorn breiter.
@@ -3302,7 +3303,7 @@ CH.shield = critter({
     if (opts.delay) opts.delay = ms(opts.delay);
     try { return el.animate(frames, opts); } catch (e) { return null; }
   }
-  function wpn(u, frames, dur) { if (!RM) anim(partOf(u, '.wpn'), frames, dur); }
+  function wpn(u, frames, dur) { if (!RM && u.el) u.el.querySelectorAll('.wpn').forEach(function (w) { anim(w, frames, dur); }); } /* Schatten-Kopie und sichtbare Figur */
 
   /* Effekte auf der Spielfeld-Ebene */
   var SVG = {
@@ -3344,6 +3345,15 @@ CH.shield = critter({
     }
   };
 
+  /* wie mk, aber auf dem Boden: liegt hinter allen Figuren */
+  function mkg(svg, x, y) {
+    var d = document.createElement('div');
+    d.className = 'fxo';
+    d.innerHTML = svg;
+    d.style.transform = T(x, y, 1, 0);
+    fxgEl.appendChild(d);
+    return d;
+  }
   function mk(svg, x, y) {
     var d = document.createElement('div');
     d.className = 'fxo';
@@ -3379,6 +3389,19 @@ CH.shield = critter({
       var s = (size || 1) * (0.7 + Math.random() * 0.6), ox = (Math.random() - 0.5) * 8 * s, oy = (Math.random() - 0.5) * 5 * s, d = mk(DUSTSVG, 0, 0), dr = drift || { x: 0, y: -5 };
       play(d, [{ transform: T(P.x + ox, P.y + oy, 0.5 * s, 0), opacity: 1 }, { transform: T(P.x + ox + dr.x * 0.5, P.y + oy + dr.y * 0.5, 1.1 * s, 0), opacity: 0.85, offset: 0.4 }, { transform: T(P.x + ox + dr.x, P.y + oy + dr.y, 1.6 * s, 0), opacity: 0 }], (life || 480) * (0.85 + Math.random() * 0.3), { easing: 'ease-out' });
     }
+  }
+  /* Kleines Treffer-Zeichen: ein schlichtes Kreuz, poppt kurz auf und verblasst */
+  function fxMark(P, k) {
+    var s = k || 1, d = mk('<svg width="26" height="26" viewBox="-13 -13 26 26"><path d="M-7 -7 L7 7 M7 -7 L-7 7" stroke="#2A1A0E" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M-7 -7 L7 7 M7 -7 L-7 7" stroke="#FFF1CF" stroke-width="3" stroke-linecap="round" fill="none"/></svg>', P.x, P.y);
+    play(d, [{ transform: T(P.x, P.y, 0.4 * s, 0), opacity: 0 }, { transform: T(P.x, P.y, 1.15 * s, 0), opacity: 1, offset: 0.25 }, { transform: T(P.x, P.y - 4, 1 * s, 0), opacity: 1, offset: 0.65 }, { transform: T(P.x, P.y - 8, 0.9 * s, 0), opacity: 0 }], 420, { easing: 'ease-out' });
+  }
+  /* Schwungbogen der Spitzhacke: dünner Strich von oben hinter dem Kopf nach unten zum Ziel */
+  function fxSwing(S0, C0, E0) {
+    var xs = [S0.x, C0.x, E0.x], ys = [S0.y, C0.y, E0.y], x0 = Math.min.apply(0, xs) - 8, x1 = Math.max.apply(0, xs) + 8, y0 = Math.min.apply(0, ys) - 8, y1 = Math.max.apply(0, ys) + 8;
+    var pd = 'M ' + (S0.x - x0) + ' ' + (S0.y - y0) + ' Q ' + (C0.x - x0) + ' ' + (C0.y - y0) + ' ' + (E0.x - x0) + ' ' + (E0.y - y0), st = ' fill="none" stroke-linecap="round" pathLength="100" stroke-dasharray="60 100" stroke-dashoffset="60"';
+    var el = mk('<svg width="' + (x1 - x0) + '" height="' + (y1 - y0) + '" viewBox="0 0 ' + (x1 - x0) + ' ' + (y1 - y0) + '"><path d="' + pd + '" stroke="#FFF6DC" stroke-opacity="0.9" stroke-width="2.4"' + st + '/></svg>', (x0 + x1) / 2, (y0 + y1) / 2);
+    el.querySelectorAll('path').forEach(function (pt) { if (!RM) anim(pt, [{ strokeDashoffset: 60 }, { strokeDashoffset: -45 }], 150, { easing: 'ease-in', fill: 'forwards' }); });
+    play(el, [{ opacity: 1 }, { opacity: 1, offset: 0.6 }, { opacity: 0 }], 260);
   }
   /* Schlichter Aufprall: dünner Ring, ein paar kurze Linien, kein Cartoon-Stern */
   var THINRING = '<svg width="60" height="60" viewBox="-30 -30 60 60"><circle r="26" fill="none" stroke="#F2F6F9" stroke-width="2.600"/></svg>';
@@ -3995,22 +4018,27 @@ CH.shield = critter({
   /* Buddel: gräbt sich zur hintersten Reihe der Gegner */
   function digStarts() {
     S.runtime.filter(function (u) { return u.hp > 0 && TYPES[u.type].dig; }).forEach(function (u) {
-      var endY = u.team === 'p' ? 0 : ROWS - 1, dir = u.team === 'p' ? 1 : -1, sx = u.x, sy = u.y, i, x, y, best = null;
-      // Ziel: hinterste Reihe der Gegner, möglichst in der eigenen Spalte. Ist das Feld besetzt, taucht er links oder rechts daneben
-      // auf (nicht vor der Figur); erst wenn die ganze Reihe voll ist, geht es eine Reihe weiter nach vorn.
+      var endY = u.team === 'p' ? 0 : ROWS - 1, dir = u.team === 'p' ? 1 : -1, sx = u.x, sy = u.y, i, x, y, best = null, pushed = null;
+      // Gerader Tunnel in der eigenen Spalte bis ganz ans Ende. Steht dort schon jemand, wird er zur Seite gestoßen.
+      if (sy === endY) return;
+      var occ = S.runtime.filter(function (e) { return e !== u && e.hp > 0 && e.x === sx && e.y === endY; })[0];
+      if (!occ) best = { x: sx, y: endY };
+      else {
+        var sides = [];
+        for (i = 1; i < COLS && !sides.length; i++) [sx - i, sx + i].forEach(function (nx) { if (nx >= 0 && nx < COLS && !occupied(nx, endY)) sides.push(nx); });
+        if (sides.length) { best = { x: sx, y: endY }; pushed = { e: occ, nx: sides[rnd(sides.length)] }; }
+      }
+      // Notfall (Reihe komplett voll): wie bisher auf ein freies Feld in der hintersten möglichen Reihe
       var offs = [0, 1, -1, 2, -2, 3, -3, 4, -4];
       for (y = endY; y !== sy && !best; y += dir) {
         var cand = [];
         for (i = 0; i < offs.length; i++) { x = sx + offs[i]; if (x >= 0 && x < COLS && !occupied(x, y)) cand.push({ x: x, y: y, o: Math.abs(offs[i]) }); }
-        if (cand.length) {
-          var m0 = cand[0].o; /* nächstgelegene Spalte; bei Gleichstand links/rechts zufällig */
-          var near = cand.filter(function (c) { return c.o === m0; });
-          best = near[rnd(near.length)];
-        }
+        if (cand.length) { var m0 = cand[0].o, near = cand.filter(function (c) { return c.o === m0; }); best = near[rnd(near.length)]; }
       }
       if (!best) return;
       var rows = Math.abs(best.y - sy) + Math.abs(best.x - sx) * 0.6, dur = 800 + rows * 230, steps = Math.max(6, Math.round(rows * 2.4));
       u.x = best.x; u.y = best.y; u.digT = Math.ceil(dur / TICK) + 1; u.cd = 1;
+      if (pushed) { pushed.dx = Math.sign(pushed.nx - pushed.e.x); pushed.e.x = pushed.nx; pushed.e.lastX = -1; }
       var el = u.el; if (!el) return;
       try { setFacing(u, u.team === 'p' ? 'B' : 'F', 1); } catch (e) {}
       el.style.visibility = 'hidden';
@@ -4019,9 +4047,9 @@ CH.shield = critter({
       for (i = 1; i <= steps; i++) {
         (function (k) {
           later(k * dur / (steps + 1), function () {
-            var f = k / steps, P = ctr({ x: sx + (best.x - sx) * f, y: sy + (best.y - sy) * f, type: u.type }), d = mk(SVG.mound, P.x, P.y + 10);
+            var f = k / steps, P = ctr({ x: sx + (best.x - sx) * f, y: sy + (best.y - sy) * f, type: u.type }), d = mkg(SVG.mound, P.x, P.y + 10);
             play(d, [{ transform: T(P.x, P.y + 12, 0.5, 0), opacity: 0 }, { transform: T(P.x, P.y + 4, 1, (k % 2 ? 6 : -6)), opacity: 1, offset: 0.2 }, { transform: T(P.x, P.y + 8, 0.9, 0), opacity: 0 }], 600);
-            var hl = mk(SVG.hole, P.x, P.y + 14);
+            var hl = mkg(SVG.hole, P.x, P.y + 14);
             play(hl, [{ transform: T(P.x, P.y + 14, 0.6, 0), opacity: 0 }, { transform: T(P.x, P.y + 14, 1, 0), opacity: 0.9, offset: 0.12 }, { transform: T(P.x, P.y + 14, 1, 0), opacity: 0.8, offset: 0.7 }, { transform: T(P.x, P.y + 14, 1, 0), opacity: 0 }], 3200);
             fxPuff({ x: P.x, y: P.y + 8 }, '#8A5A32', 3, 14);
           });
@@ -4030,6 +4058,7 @@ CH.shield = critter({
       later(dur, function () {
         el.style.transition = 'none'; place(u); void el.offsetWidth; el.style.transition = ''; el.style.visibility = '';
         var P = ctr(u);
+        if (pushed && pushed.e.el) { place(pushed.e); if (!RM) anim(tokOf(pushed.e), [{ transform: T(0, 0, 1, 0) }, { transform: T(-pushed.dx * 4, -8, 1, pushed.dx * 16) + ' scale(0.95,1.08)', offset: 0.4 }, { transform: T(0, 0, 1, 0) }], 420, { easing: 'ease-out' }); }
         fxPuff(P, '#8A5A32', 12, 34); fxPuff(P, '#B07C4A', 8, 22); fxRing(P, '#D9B07A', 1.4, 340); shake(5, 260);
         floatText(u, 'Tunnler!', 'reflect');
         if (!RM) anim(tokOf(u), [{ transform: T(0, 26, 0.4, 0), opacity: 0 }, { transform: T(0, -10, 1.1, 0) + ' scale(0.9,1.2)', opacity: 1, offset: 0.55 }, { transform: T(0, 0, 1, 0) }], 520, { easing: 'ease-out' });
@@ -4138,13 +4167,16 @@ CH.shield = critter({
       hitAt = 200;
       later(hitAt, function () { fxSlash(v); showHit(t, v, dmg, k); });
     } else if (kind === 'stab') {
-      // Dolchstich: kurzes Ausholen, schneller Stoß
-      bodyLunge(u, v, 360, 18, 5, 0.5);
-      wpn(u, [{ transform: 'translate(0,0)' }, { transform: 'translate(' + (-v.x * 2) + 'px,' + (-v.y * 2) + 'px)', offset: 0.3 },
-              { transform: 'translate(' + (v.x * 6) + 'px,' + (v.y * 6) + 'px) scale(1.1)', offset: 0.5 },
-              { transform: 'translate(' + (v.x * 6) + 'px,' + (v.y * 6) + 'px) scale(1.1)', offset: 0.62 }, { transform: 'translate(0,0)' }], 360);
-      hitAt = 180;
-      later(hitAt, function () { fxSlash(v); fxStar(v.B, '#FFFDF2', 0.5, 200); showHit(t, v, dmg, k); });
+      // Dolchstich: kurz ducken, mit dem Dolch voran zum Gegner hinschießen, zustechen und zurückspringen
+      var sa = v.a * 57.2958 + 90;
+      bodyLunge(u, v, 420, 34, 6, 0.46);
+      wpn(u, [{ transform: 'translate(0,0) rotate(0deg) scale(1)' },
+              { transform: 'translate(' + (-v.x * 6) + 'px,' + (-v.y * 6) + 'px) rotate(' + sa + 'deg) scale(1)', offset: 0.28 },
+              { transform: 'translate(' + (v.x * 20) + 'px,' + (v.y * 20) + 'px) rotate(' + sa + 'deg) scale(1.5)', offset: 0.46 },
+              { transform: 'translate(' + (v.x * 20) + 'px,' + (v.y * 20) + 'px) rotate(' + sa + 'deg) scale(1.5)', offset: 0.62 },
+              { transform: 'translate(0,0) rotate(0deg) scale(1)' }], 420);
+      hitAt = 190;
+      later(hitAt, function () { fxBump(v.B, v.a * 57.2958, 0.6, t.el); showHit(t, v, dmg, 1.0); });
     } else if (kind === 'bash') {
       // Schildstoß: Schild zurückziehen, dann kräftig nach vorn stoßen
       bodyLunge(u, v, 480, 24, 5, 0.5);
@@ -4182,12 +4214,21 @@ CH.shield = critter({
         shake(4, 220); showHit(t, v, dmg, 1.7 * k);
       });
     } else if (kind === 'pick') {
-      // Spitzhacke: weit ausholen, von oben einschlagen
-      bodyLunge(u, v, 520, 20, 7, 0.5);
-      wpn(u, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-75deg) translate(-3px,-8px)', offset: 0.35 }, { transform: 'rotate(50deg) translate(' + (v.x * 6) + 'px,' + (v.y * 6) + 'px)', offset: 0.52 },
-              { transform: 'rotate(50deg)', offset: 0.66 }, { transform: 'rotate(0deg)' }], 520);
-      hitAt = 270;
-      later(hitAt, function () { fxSlash(v); fxPuff(v.B, '#8A5A32', 7, 20); fxStar(v.B, '#FFE7A8', 0.6, 220); showHit(t, v, dmg, 1.2); });
+      // Spitzhacke: hoch über den Kopf, mit Wucht einhacken, kurz stecken lassen, dann herausziehen
+      bodyLunge(u, v, 600, 14, 6, 0.5);
+      wpn(u, [{ transform: 'rotate(0deg) translate(0,0) scale(1)' },
+              { transform: 'rotate(-130deg) translate(-3px,-14px) scale(1.3)', offset: 0.3 },
+              { transform: 'rotate(-140deg) translate(-3px,-15px) scale(1.3)', offset: 0.4 },
+              { transform: 'rotate(75deg) translate(' + (v.x * 16) + 'px,' + (v.y * 16) + 'px) scale(1.6)', offset: 0.52 },
+              { transform: 'rotate(75deg) translate(' + (v.x * 16) + 'px,' + (v.y * 16) + 'px) scale(1.6)', offset: 0.68 },
+              { transform: 'rotate(40deg) translate(' + (v.x * 5) + 'px,' + (v.y * 5) + 'px) scale(1.1)', offset: 0.82 },
+              { transform: 'rotate(0deg) translate(0,0) scale(1)' }], 600);
+      hitAt = 310;
+      later(170, function () {
+        var PU = ctr(u), BB = v.B;
+        fxSwing({ x: PU.x + (BB.x - PU.x) * 0.05 - 4, y: PU.y - 24 }, { x: PU.x + (BB.x - PU.x) * 0.7, y: PU.y - 30 }, { x: BB.x, y: BB.y - 2 });
+      });
+      later(hitAt, function () { fxMark({ x: v.B.x, y: v.B.y - 6 }, 0.55); shake(1.2, 110); showHit(t, v, dmg, 1.0); });
     } else if (kind === 'xbow') {
       // Magie-Armbrust: aufladen, blauer Pfeil durchschlägt alle Gegner in der Schusslinie bis zum Kartenrand
       var gx = t.x - u.x, gy = t.y - u.y, gl = Math.hypot(gx, gy) || 1, ux = gx / gl, uy = gy / gl, others = [];
