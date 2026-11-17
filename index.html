@@ -5741,7 +5741,7 @@ CH.shield = critter({
   }
   function chest3d(gold) { return '<div class="c2 ' + (gold ? 'gold' : 'wood') + '">' + (gold ? cube3dHtml() : chestSvg(gold, true)) + '</div>'; }
   var tickAC = null;
-  function tick(f) {
+  function chime(f) {
     try {
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       if (!tickAC) tickAC = new AC();
@@ -6000,12 +6000,12 @@ CH.shield = critter({
         taps++; sparks();
         var rl = fx.querySelector('.rar'), up = false;
         try { if (navigator.vibrate) navigator.vibrate(taps < 3 ? 22 + taps * 14 : [30, 40, 70]); } catch (e) {}
-        tick(520 + taps * 170);
+        chime(520 + taps * 170);
         if (taps <= 3) { if (rar === 0 && Math.random() < 0.30) { rar = 1; up = true; } else if (rar === 1 && Math.random() < 0.17) { rar = 2; up = true; } }
         if (up) {
           fx.classList.remove('r0', 'r1', 'r2'); fx.classList.add('r' + rar);
           if (rl) { rl.textContent = rar === 1 ? 'EPISCH!' : 'LEGENDÄR!'; rl.classList.remove('pop'); void rl.offsetWidth; rl.classList.add('pop'); }
-          tick(880 + rar * 220); setTimeout(function () { tick(1320 + rar * 260); }, 110);
+          chime(880 + rar * 220); setTimeout(function () { chime(1320 + rar * 260); }, 110);
           try { if (navigator.vibrate) navigator.vibrate([30, 30, 80]); } catch (e) {}
           var fl2 = fx.querySelector('.flashw'); if (fl2 && fl2.animate && !RM) fl2.animate([{ opacity: 0 }, { opacity: .9, offset: .15 }, { opacity: 0 }], { duration: 600 });
           burst();
