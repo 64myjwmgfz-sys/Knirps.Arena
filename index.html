@@ -1842,8 +1842,8 @@ html, body { overscroll-behavior-x: none; }
               blurb: 'Boxtrainer mit Fade-Frisur. Schlägt mit Handschuhen abwechselnd links und rechts zu und ruft alle 7 Sekunden ein kleines Dolch-Mädchen aufs Feld. Mit Sternen ruft er schneller und mehr.' },
     girl:   { name: 'Dolch-Mädchen', cost: 0, hp: 14, atk: 2, range: 1, ai: 4, mi: 4, color: '#D9779F', front: true, fx: 'dagger', summon: true,
               blurb: 'Klein, flink und schwach. Wird von Coach Nabil gerufen.' },
-    slappy: { name: 'Slappy', cost: 3, hp: 26, atk: 2, range: 1, ai: 4, mi: 4, color: '#E8584C', front: true, fx: 'fish',
-              ability: { kind: 'combo', every: 5, hits: 8, name: 'Fisch-Combo', tag: 'Combo nach 5 Schlägen',
+    slappy: { name: 'Slappy', cost: 3, hp: 26, atk: 1.4, range: 1, ai: 3, mi: 4, color: '#E8584C', front: true, fx: 'fish',
+              ability: { kind: 'combo', every: 5, hits: 8, mult: 1.5, name: 'Fisch-Combo', tag: 'Combo nach 5 Schlägen',
                          short: 'Nach 5 Schlägen haut er mit dem Fisch 8-mal in Folge zu und ist dabei unverwundbar.',
                          desc: 'Jeder Schlag mit dem Fisch füllt den Ulti-Balken unter seinem Lebensbalken. Ist er nach 5 Schlägen voll, startet Slappy eine wilde Combo und klatscht dem Gegner 8-mal hintereinander den Fisch um die Ohren. Solange die Combo läuft, ist er unverwundbar.' },
               blurb: 'Frecher Knirps mit Fisch. Nach 5 Schlägen haut er 8-mal in Folge zu und ist dabei unverwundbar.' },
@@ -3081,7 +3081,7 @@ CH.shield = critter({
     if (ab && ab.kind === 'cough') ur.push([ab.name, Math.round(a.atk * ab.mult), Math.round(b.atk * ab.mult)]);
     if (ab && ab.kind === 'gas') { ur.push(['Gas-Treffer', Math.round(a.atk * ab.mult), Math.round(b.atk * ab.mult)]); ur.push(['Gas pro Sek.', Math.max(1, Math.round(a.atk * ab.dot)), Math.max(1, Math.round(b.atk * ab.dot))]); }
     if (ab && ab.kind === 'whipstun') ur.push(['Ult-Hieb', Math.round(a.atk * ab.mult), Math.round(b.atk * ab.mult)]);
-    if (ab && ab.kind === 'combo') ur.push(['Combo gesamt', a.atk * ab.hits, b.atk * ab.hits]);
+    if (ab && ab.kind === 'combo') ur.push(['Combo gesamt', Math.max(2, Math.round(a.atk * ab.mult)) * ab.hits, Math.max(2, Math.round(b.atk * ab.mult)) * ab.hits]);
     if (t.opener) ur.push([t.opener.label || t.opener.name, a.atk * t.opener.mult, b.atk * t.opener.mult]);
     if (t.potion) ur.push(['Heiltrank', Math.round(t.potion.heal * LV[fu.level]), Math.round(t.potion.heal * LV[fu.level + 1])]);
     ur.forEach(function (r) { h2 += upRow(r[0], r[1], r[2]); });
@@ -3729,7 +3729,7 @@ CH.shield = critter({
   /* Reaktion des Getroffenen */
   function hitReact(t, v, k) {
     var tok = tokOf(t);
-    if (!tok) return;
+    if (!tok || t.away) return;
     var s = RM ? 0 : 7 * (k || 1);
     anim(tok, [
       { transform: T(0, 0, 1, 0), filter: 'brightness(1)' },
@@ -3773,6 +3773,7 @@ CH.shield = critter({
     setTimeout(function () { el.remove(); }, ms(1250));
   }
   function showHit(t, v, amt, k) {
+    if (t.away) return; /* Dolcha ist schon weggesprungen: der Treffer geht ins Leere */
     if (!amt && t.invul) { floatText(t, 'Unverwundbar!', 'reflect'); if (t.el) fxRing(ctr(t), '#FFD866', 1.3, 260); return; }
     setHp(t);
     hitReact(t, v, k);
@@ -3830,12 +3831,12 @@ CH.shield = critter({
     }
     if (!dest) { done && done(); return; }
     var el = u.el, pink = 'rgba(232,130,184,0.5)', P0 = ctr(u);
-    u.digT = 1; u.lockId = null;
+    u.digT = 1; u.lockId = null; u.away = true;
     fxPuff(P0, pink, 5, 16);
     var out = el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, fill: 'forwards' });
     later(200, function () {
-      if (u.hp <= 0) { out.cancel(); done && done(); return; }
-      u.x = dest.x; u.y = dest.y; u.mdx = 0; u.mdy = dir; u.cd = 0;
+      if (u.hp <= 0) { u.away = false; out.cancel(); done && done(); return; }
+      u.away = false; u.x = dest.x; u.y = dest.y; u.mdx = 0; u.mdy = dir; u.cd = 0;
       el.style.transition = 'none'; place(u); void el.offsetWidth; el.style.transition = '';
       try { faceVec(u, vec(u, far)); } catch (e) {}
       fxPuff(ctr(u), pink, 6, 18);
@@ -3867,7 +3868,7 @@ CH.shield = critter({
 
   /* Schaden verteilen. Goldo lädt bei Treffern auf und schützt sich danach. */
   function hurt(src, t, dmg, post) {
-    if (t.invul) return 0;
+    if (t.invul || t.away) return 0;
     var ab = abOf(t), out = dmg;
     if (ab && ab.kind === 'guard') {
       if (t.guardT > 0) {
@@ -3887,7 +3888,7 @@ CH.shield = critter({
   }
   /* Schaden erst beim sichtbaren Treffer abziehen (Pfeil ist noch unterwegs): hurt() rechnet alles aus, die Lebenspunkte werden zurueckgesetzt und beim Aufprall abgezogen */
   function hurtLate(src, t, dmg, post) { var h0 = t.hp, d = hurt(src, t, dmg, post); t.hp = h0; return d; }
-  function applyLate(t, d) { if (t.hp > 0) t.hp = Math.max(0, t.hp - (d || 0)); }
+  function applyLate(t, d) { if (t.hp > 0 && !t.away) t.hp = Math.max(0, t.hp - (d || 0)); }
   function reflectFx(src, t, n) {
     if (!src.el) return;
     setHp(src);
@@ -4137,13 +4138,61 @@ CH.shield = critter({
 
   /* Slappy: Fischschlag, nach 5 Schlägen eine 8-fach-Combo */
   function fishSwing(u, v, dur) {
-    try { limbsAttack(u, v, 'fish', dur); } catch (e) {}
-    bodyLunge(u, v, dur, 20, 5, 0.5);
-    wpn(u, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-80deg) translate(-3px,-6px)', offset: 0.32 }, { transform: 'rotate(55deg) translate(' + (v.x * 6) + 'px,' + (v.y * 6) + 'px)', offset: 0.5 },
-            { transform: 'rotate(55deg)', offset: 0.62 }, { transform: 'rotate(0deg)' }], dur);
+    u.slapDir = -(u.slapDir || 1); var d = u.slapDir;
+    try { limbsAttack(u, v, 'slap', dur); } catch (e) {}
+    bodyLunge(u, v, dur, 12, 4, 0.6);
+    /* Backpfeife: Fisch seitlich weit ausholen, kurz halten, dann quer durchziehen (abwechselnd links/rechts) */
+    wpn(u, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(' + (-d * 55) + 'deg) translate(' + (-d * 4) + 'px,-3px)', offset: 0.32 }, { transform: 'rotate(' + (-d * 65) + 'deg) translate(' + (-d * 5) + 'px,-3px)', offset: 0.46 },
+            { transform: 'rotate(' + (d * 70) + 'deg) translate(' + (v.x * 5) + 'px,' + (v.y * 5) + 'px)', offset: 0.6 }, { transform: 'rotate(' + (d * 60) + 'deg)', offset: 0.72 }, { transform: 'rotate(0deg)' }], dur);
+  }
+  /* Slappy-Treffer: magisches Blau (angelehnt an Nabils Treffer), drei Varianten zur Auswahl (window.HITVAR_S) */
+  var FS_GLOW = '<svg width="70" height="70" viewBox="-35 -35 70 70"><defs><radialGradient id="fsg"><stop offset="0" stop-color="#fff" stop-opacity=".97"/><stop offset=".3" stop-color="#7FD8FF" stop-opacity=".88"/><stop offset=".65" stop-color="#2F8CF0" stop-opacity=".38"/><stop offset="1" stop-color="#2F8CF0" stop-opacity="0"/></radialGradient></defs><circle r="35" fill="url(#fsg)"/></svg>';
+  var FS_SPARK = '<svg width="18" height="6" viewBox="0 0 18 6"><defs><linearGradient id="fss"><stop offset="0" stop-color="#2F8CF0" stop-opacity="0"/><stop offset="1" stop-color="#D6F4FF"/></linearGradient></defs><rect y="1.3" width="18" height="3.4" rx="1.7" fill="url(#fss)"/></svg>';
+  var FS_TWINKLE = function (c) { return '<svg width="22" height="22" viewBox="-11 -11 22 22"><path d="M0 -10Q1.4 -1.4 10 0Q1.4 1.4 0 10Q-1.4 1.4 -10 0Q-1.4 -1.4 0 -10Z" fill="' + c + '" stroke="#2F8CF0" stroke-width="1"/></svg>'; };
+  var FS_RUNE = '<svg width="60" height="60" viewBox="-30 -30 60 60"><circle r="22" fill="none" stroke="#2F8CF0" stroke-width="4.4"/><circle r="22" fill="none" stroke="#D6F4FF" stroke-width="1.6" stroke-dasharray="6 5"/><circle r="14" fill="none" stroke="#7FD8FF" stroke-width="1.4" stroke-dasharray="3 4"/><path d="M0 -29V-23M0 23V29M-29 0H-23M23 0H29" stroke="#D6F4FF" stroke-width="2.6" stroke-linecap="round"/></svg>';
+  function fishHit(v, big) {
+    if (RM) return;
+    var V = window.HITVAR_S || 'A', B = v.B, Y = B.y - 4, s = big ? 1.3 : 1, i, a, r, d, n;
+    var tt = v.T && v.T.el && v.T.el.querySelector('.tok');
+    if (V === 'A') {
+      /* Leuchtkugel + Funkenstrahlen wie bei Nabil, aber blau */
+      d = mk(FS_GLOW, 0, 0);
+      play(d, [{ transform: T(B.x, Y, 0.5 * s, 0), opacity: 1 }, { transform: T(B.x, Y, 2.2 * s, 0), opacity: 0 }], 440, { easing: 'ease-out' });
+      for (i = 0; i < (big ? 18 : 14); i++) {
+        a = Math.random() * 6.283; r = (32 + Math.random() * 26) * s; d = mk(FS_SPARK, 0, 0);
+        play(d, [{ transform: T(B.x + Math.cos(a) * 6, Y + Math.sin(a) * 6, 1.5, a * 57.2958), opacity: 1 }, { transform: T(B.x + Math.cos(a) * r, Y + Math.sin(a) * r, 1.0, a * 57.2958), opacity: 0 }], 360 + Math.random() * 120, { easing: 'ease-out' });
+      }
+    } else if (V === 'B') {
+      /* Leuchtkugel + funkelnde Sterne, die nach oben treiben */
+      d = mk(FS_GLOW, 0, 0);
+      play(d, [{ transform: T(B.x, Y, 0.4 * s, 0), opacity: 1 }, { transform: T(B.x, Y, 1.7 * s, 0), opacity: 0 }], 380, { easing: 'ease-out' });
+      for (i = 0; i < (big ? 9 : 6); i++) {
+        var sx = B.x + (Math.random() - 0.5) * 34 * s, sc = 0.7 + Math.random() * 0.7;
+        d = mk(FS_TWINKLE(i % 2 ? '#FFFFFF' : '#BFEFFF'), 0, 0);
+        play(d, [{ transform: T(B.x, Y, 0.2, 0), opacity: 1 }, { transform: T(sx, Y - 8 - Math.random() * 10, sc * 1.2, 40), opacity: 1, offset: 0.35 }, { transform: T(sx + (Math.random() - 0.5) * 10, Y - 34 - Math.random() * 22, sc * 0.4, 120), opacity: 0 }], 560 + Math.random() * 240, { easing: 'ease-out', delay: Math.random() * 90 });
+      }
+    } else {
+      /* drehender Zauberring mit Leuchten */
+      d = mk(FS_RUNE, 0, 0);
+      play(d, [{ transform: T(B.x, Y, 0.5 * s, -60), opacity: 0 }, { transform: T(B.x, Y, 1.25 * s, 0), opacity: 1, offset: 0.3 }, { transform: T(B.x, Y, 1.5 * s, 50), opacity: 0 }], 520, { easing: 'ease-out' });
+      d = mk(FS_GLOW, 0, 0);
+      play(d, [{ transform: T(B.x, Y, 0.4 * s, 0), opacity: 1 }, { transform: T(B.x, Y, 1.3 * s, 0), opacity: 0 }], 300, { easing: 'ease-out' });
+      for (i = 0; i < 6; i++) {
+        a = i / 6 * 6.283 + 0.3; d = mk(FS_SPARK, 0, 0);
+        play(d, [{ transform: T(B.x + Math.cos(a) * 14, Y + Math.sin(a) * 14, 1.2, a * 57.2958), opacity: 1 }, { transform: T(B.x + Math.cos(a) * 40 * s, Y + Math.sin(a) * 40 * s, 1, a * 57.2958), opacity: 0 }], 380, { easing: 'ease-out' });
+      }
+    }
+  }
+  /* Combo: Fisch wird blitzschnell abwechselnd von links nach rechts und zurueck geschlagen */
+  function fishFlip(u, v, idx, dur, L) {
+    u.slapDir = idx % 2 ? 1 : -1;
+    try { limbsAttack(u, v, 'slap', dur); } catch (e) {}
+    bodyLunge(u, v, dur, L || 9, 3, 0.6);
+    var d = idx % 2 ? 1 : -1;
+    wpn(u, [{ transform: 'rotate(' + (-d * 60) + 'deg)' }, { transform: 'rotate(' + (d * 62) + 'deg) translate(' + (v.x * 5) + 'px,' + (v.y * 5) + 'px)', offset: 0.6 }, { transform: 'rotate(' + (d * 40) + 'deg)', offset: 0.85 }, { transform: 'rotate(' + (d * 20) + 'deg)' }], dur);
   }
   function fishFx(v, big) {
-    fxSlash(v); fxStar(v.B, '#BFEFFF', big ? 0.85 : 0.6, 240); fxPuff(v.B, '#8FD6F2', big ? 7 : 4, big ? 22 : 14);
+    fishHit(v, big);
   }
   function fishAttack(u, t) {
     var ab = abOf(u), v = vec(u, t), k = u.level >= 3 ? 1.25 : 1, post = [], i;
@@ -4152,35 +4201,44 @@ CH.shield = critter({
       var n = u.nAtk, ready = n >= ab.every;
       if (ready) u.comboReady = true;
       var dmg = hurt(u, t, u.atk, post);
-      fishSwing(u, v, 460);
-      later(230, function () {
+      fishSwing(u, v, 480);
+      later(290, function () {
         fishFx(v, false); showHit(t, v, dmg, k); setCharge(u, Math.min(n, ab.every));
         if (ready) { floatText(u, 'Bereit!', 'reflect'); fxRing(ctr(u), '#FFD866', 1.3, 360); }
       });
-      post.forEach(function (fn) { later(230, fn); });
+      post.forEach(function (fn) { later(290, fn); });
       return;
     }
     // Combo
     u.comboReady = false; u.nAtk = 0;
-    var step = 110, t0 = 160, last = t0;
+    var step = 130, t0 = 200, last = t0;
     u.invul = true; if (u.el) u.el.classList.add('invul');
     later(0, function () { floatText(u, 'Combo!', 'reflect'); fxRing(ctr(u), '#FFD866', 1.8, 480); fxStar(ctr(u), '#FFF3C4', 1, 300); });
-    var ds = [];
-    for (i = 0; i < ab.hits && t.hp > 0; i++) ds.push(hurt(u, t, u.atk, post));
-    ds.forEach(function (d, idx) {
-      var final = idx === ds.length - 1, at = t0 + idx * step; last = at;
-      later(at - 70, function () { fishSwing(u, v, 150); });
+    /* Jeder Schlag sucht sich sein Ziel erst im Moment des Treffers: Schaden kommt erst beim sichtbaren Schlag, wandert das Ziel oder stirbt, nimmt er den naechsten Gegner in Reichweite */
+    var N = ab.hits, cur = t, cdm = Math.max(2, Math.round(u.atk * (ab.mult || 1))), last = t0 + (N - 1) * step;
+    function alive(e) { return e && e.hp > 0 && !e.dying && !e.away && !(e.digT > 0) && e.team !== u.team; }
+    function pickT() {
+      if (alive(cur) && dist(u, cur) <= u.range + 0.5) return cur;
+      var c = S.runtime.filter(function (e) { return alive(e) && dist(u, e) <= u.range + 1.6; }).sort(function (a, b) { return dist(u, a) - dist(u, b) || a.hp - b.hp; })[0] || null;
+      if (c && c !== cur) { cur = c; try { faceVec(u, vec(u, c)); } catch (e0) {} }
+      return c;
+    }
+    for (i = 0; i < N; i++) (function (idx) {
+      var final = idx === N - 1, at = t0 + idx * step;
+      later(at - 84, function () { var tg = pickT(); if (tg) fishFlip(u, vec(u, tg), idx, 140, dist(u, tg) > u.range + 0.3 ? 22 : 9); });
       later(at, function () {
-        fishFx(v, final);
-        setCharge(u, Math.max(0, Math.round(ab.every * (1 - (idx + 1) / ab.hits))));
-        showHit(t, v, d, final ? 2.4 : 0.9 + idx * 0.1);
+        var tg = pickT(); if (!tg) return;
+        var vv = vec(u, tg), pp = [], d = hurt(u, tg, cdm, pp);
+        fishFx({ B: { x: vv.B.x + (Math.random() - 0.5) * 18, y: vv.B.y + (Math.random() - 0.5) * 12 }, a: vv.a, x: vv.x, y: vv.y }, final);
+        if (!final) fishFx({ B: { x: vv.B.x + (Math.random() - 0.5) * 22, y: vv.B.y - 6 + (Math.random() - 0.5) * 14 }, a: vv.a, x: vv.x, y: vv.y }, false);
+        setCharge(u, Math.max(0, Math.round(ab.every * (1 - (idx + 1) / N))));
+        showHit(tg, vv, d, final ? 2.4 : 0.9 + idx * 0.1);
+        pp.forEach(function (fn) { fn(); });
         if (final) shake(9, 380);
       });
-    });
-    // letzter Treffer als Finisher darstellen
+    })(i);
     later(last + 40, function () { setCharge(u, 0); u.vis = 0; });
     later(last + 200, function () { u.invul = false; if (u.el) u.el.classList.remove('invul'); });
-    post.forEach(function (fn) { later(last, fn); });
     u.extraCd = 0;
   }
 
@@ -4836,7 +4894,7 @@ CH.shield = critter({
     return out;
   }
   var STANCE = { slash: [400, 0.5], stab: [360, 0.5], bash: [480, 0.5], thrust: [480, 0.5], smash: [700, 0.6], ram: [560, 0.55], pick: [520, 0.52],
-                 xbow: [560, 0.46], arrow: [500, 0.45], sling: [330, 0.45], bolt: [800, 0.6], flame: [900, 0.6], bomb: [900, 0.58], toss: [560, 0.55], whip: [560, 0.46], fish: [460, 0.5],
+                 xbow: [560, 0.46], arrow: [500, 0.45], sling: [330, 0.45], bolt: [800, 0.6], flame: [900, 0.6], bomb: [900, 0.58], toss: [560, 0.55], whip: [560, 0.46], fish: [480, 0.6], slap: [480, 0.6],
                  rifle: [770, 0.2], kick: [520, 0.5] };
   function limbsAttack(u, v, kind, dur, hOver) {
     if (RM || !u.el) return;
@@ -4869,6 +4927,12 @@ CH.shield = critter({
     else if (kind === 'pick') { overhead(160, 15); counter(30, 1); }
     else if (kind === 'whip') { overhead(165, 25); counter(20, 1); }
     else if (kind === 'fish') { overhead(130, 30); counter(26, 1); }
+    else if (kind === 'slap') {
+      /* Backpfeife: Arm geht seitlich weit aus, dann quer durch von einer Seite zur anderen */
+      var sd = u.slapDir || 1;
+      W([[h * 0.62, R(sd * sw * 78)], [h * 0.88, R(sd * sw * 84)], [hh, R(-sd * sw * 62)], [hr, R(-sd * sw * 62)], [1, 'none']]);
+      A2([[h * 0.6, R(-sd * sa * 18)], [hh, R(sd * sa * 12)], [1, 'none']]);
+    }
     else if (kind === 'smash') {
       overhead(165, 25);
       A2([[h * 0.62, R(sw * 165)], [h * 0.88, R(sw * 171)], [hh, R(sw * 25)], [hr, R(sw * 25)], [1, 'none']]);
@@ -5678,6 +5742,7 @@ CH.shield = critter({
     g.removeAttribute('data-open'); g.className = d.el.className + ' dragghost'; g.style.width = r.width + 'px'; g.style.height = r.height + 'px';
     g.style.left = d.x + 'px'; g.style.top = d.y + 'px';
     document.body.appendChild(g); d.ghost = g; d.el.style.opacity = '.35';
+    document.querySelectorAll('.mbody').forEach(function (m) { m.dataset.sy = m.scrollTop; }); d.lock = true;
     try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
   }
   document.addEventListener('pointerdown', function (e) {
@@ -6124,6 +6189,10 @@ CH.shield = critter({
     }, { passive: true });
     document.addEventListener('touchmove', function (e) {
       if (!st || busy) return;
+      if (dragSt && dragSt.on) { /* Karte wird gerade ins Deck gezogen: Seite nicht mitwischen */
+        if (st.dir === 'h') { st.cur.style.transition = ''; st.cur.style.transform = ''; st.cur.style.willChange = ''; resetNb(); }
+        st = null; if (e.cancelable) e.preventDefault(); return;
+      }
       var t = e.touches[0], dx = t.clientX - x0, dy = t.clientY - y0;
       if (!st.dir) {
         if (Math.abs(dx) < 7 && Math.abs(dy) < 7) return;
