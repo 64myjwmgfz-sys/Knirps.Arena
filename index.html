@@ -1793,7 +1793,7 @@ html, body { overscroll-behavior-x: none; }
                          desc: 'Der Ulti-Balken unter seinem Lebensbalken füllt sich mit der Zeit. Alle 10 Sekunden wirft er eine Gasgranate. Das giftgrüne Gas breitet sich auf 5 Feldern in Kreuzform aus: Gegner darin erleiden sofort 1,3-fachen Schaden und danach 5 Sekunden lang jede Sekunde Giftschaden, solange sie im Gas stehen.' },
               blurb: 'Soldat mit Gewehr. Soldat mit Gewehr in der linken Hand. Grüßt zu Rundenbeginn seine Kameraden und sprüht alle 10 Sekunden giftgrünes Gas in Kreuzform, das dauerhaft Schaden macht.' },
     spitter: { name: 'Zirkustante', cost: 3, hp: 20, atk: 6, range: 3, ai: 7, mi: 5, color: '#D8352F', fx: 'flame',
-              blurb: 'Spuckt aus bis zu 3 Feldern einen Feuerball auf genau einen Gegner. Kein Flächenschaden.' },
+              blurb: 'Spuckt aus bis zu 3 Feldern einen Feuerball auf einen Gegner. Ab Stufe 3 trifft er im Kreuz (Ziel plus 4 Nachbarfelder).' },
     timo:   { name: 'Timo', cost: 2, hp: 17, atk: 3, range: 2, ai: 5, mi: 4, color: '#2F6FD6', fx: 'kick',
               opener: { ball: true, label: 'Torschuss', mult: 3, name: 'Torschuss', desc: 'Zu Beginn jeder Runde legt er sich einen Fußball vor die Füße und schießt ihn auf den nächsten Gegner in seiner Reihe. Der Ball trifft nur eine Person und macht mäßigen Schaden: das Dreifache seines normalen Angriffs. Steht kein Gegner in der Reihe, rollt der Ball ins Leere.' },
               blurb: 'Fußballer mit Stollenschuhen. Zu Rundenbeginn schießt er einen Ball auf den nächsten Gegner in seiner Reihe, danach tritt er Bälle aus der Distanz.' },
@@ -1819,7 +1819,8 @@ html, body { overscroll-behavior-x: none; }
   var CROWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.5 5 8l4.5 4.5L12 6l2.5 6.5L19 8l1.5 10.5z" fill="#3A2500"/></svg>';
   var LV = [1, 1.35, 1.9, 2.7];
   /* 3 Fähigkeiten-Slots je Mini (für ★, ★★, ★★★); null = noch leer. Bisher nur bei Bogi belegt. */
-  var PERKS = { archer: [null, { name: 'Doppelschuss', desc: 'Schießt 2 Pfeile gleichzeitig, wenn zwei Gegner in Reichweite sind. Sonst nur einen.' }, null] };
+  var PERKS = { archer: [null, { name: 'Doppelschuss', desc: 'Schießt 2 Pfeile gleichzeitig, wenn zwei Gegner in Reichweite sind. Sonst nur einen.' }, null],
+    spitter: [null, null, { name: 'Flammenmeer', desc: 'Jeder Feuerball macht Flächenschaden im Kreuz: das Ziel und die 4 Nachbarfelder werden getroffen.' }] };
   /* Helden-Level: aktuell bis Level 5 (später bis 15). Je Level mehr Leben und Angriff; auf Level 5 (später 10, 15) kommt eine Verstärkung der Fähigkeit. */
   var HERO_MAXLV = 5, HERO_UP_COSTS = [400, 1200, 3000, 7500], HERO_CARD_NEED = [10, 25, 50, 100], HERO_PERK_LVS = [5, 10, 15];
   function heroMul(lv) { return { hp: 1 + 0.10 * (lv - 1), atk: 1 + 0.125 * (lv - 1) }; }
@@ -4164,6 +4165,7 @@ CH.shield = critter({
     var A = { x: v.A.x + v.x * 16, y: v.A.y + v.y * 12 - 4 };
     var post = [], aoeHit = null, tx0 = t.x, ty0 = t.y;
     var isAoe = !!(def.aoe && ((u.nAtk = (u.nAtk || 0) + 1) % (def.aoe.every + 1) === 0));
+    if (kind === 'flame' && u.level >= 3) isAoe = true; /* Flammenmeer: jeder Feuerball trifft im Kreuz */
     if (isAoe) {
       aoeHit = S.runtime.filter(function (e) { return e.hp > 0 && e.team !== u.team && Math.abs(e.x - t.x) + Math.abs(e.y - t.y) <= 1; });
       aoeHit.forEach(function (e) { e.dmgOut = hurt(u, e, dmg, post); });
@@ -4305,27 +4307,56 @@ CH.shield = critter({
               { transform: 'rotate(-18deg) translate(0,-5px) scale(1.2)', filter: 'brightness(1.7)', offset: 0.6 }, { transform: 'rotate(12deg) translate(0,1px)', filter: 'brightness(1.2)', offset: 0.68 }, { transform: 'rotate(0deg) translate(0,0)', filter: 'brightness(1)' }], 900);
       later(560, function () { for (var q = 0; q < 6; q++) spark(q, 14 + q * 8, 8, 330, q * 25); fxPuff(A, '#FFB02E', 3, 14); fly(A, v.B, ff, SVG.fireball, 0, true); });
       hitAt = 560 + ff;
+      /* schlichte Comic-Flamme: eine runde Form, innen gelb, mit dunkler Kontur; wiegt sich leicht und verglimmt */
+      var bigFlame = function (X, Y, w, dl, dur) {
+        var H = w * 1.25;
+        var fl = mk('<svg width="' + w + '" height="' + H + '" viewBox="0 0 40 50"><path d="M20 48C8 47 3 38 7 28C9 22 13 19 14 12C15 8 14 5 13 2C22 5 28 12 28 20C31 18 32 15 32 12C37 20 38 30 34 39C31 45 26 48 20 48Z" fill="#FF7A1F" stroke="#B8400F" stroke-width="2.4" stroke-linejoin="round"/>' +
+          '<path d="M20 45C13 44 10 38 13 32C15 29 17 27 17 23C22 26 26 31 26 37C26 42 24 45 20 45Z" fill="#FFD04A"/></svg>', X, Y - H / 2);
+        var Yc = Y - H / 2;
+        play(fl, [{ transform: T(X, Yc + H * 0.3, 0.25, 0), opacity: 0 }, { transform: T(X, Yc, 1.05, 0), opacity: 1, offset: 0.14 }, { transform: T(X, Yc, 0.96, -3), opacity: 1, offset: 0.3 },
+          { transform: T(X, Yc, 1.06, 3), opacity: 1, offset: 0.46 }, { transform: T(X, Yc, 0.97, -2), opacity: 1, offset: 0.62 }, { transform: T(X, Yc, 1.03, 2), opacity: 1, offset: 0.78 },
+          { transform: T(X, Yc + H * 0.12, 0.5, 0), opacity: 0, offset: 1 }], dur, { easing: 'ease-in-out', delay: dl });
+      };
+      /* Eine zusammenhaengende Flamme in Kreuzform: fuenf ueberlappende Flammenformen, per "Gooey"-Filter zu einer Masse verschmolzen */
+      var crossFire = function (cx0, cy0, dur) {
+        var wv = Math.abs(proj(cx0 + 1, cy0).x - proj(cx0, cy0).x), gid = 'cg' + Math.floor(Math.random() * 1e6);
+        var drop = function (cx, cy, w, hh) {
+          var q = proj(cx + 0.5, cy + 0.5), x = q.x, y = q.y + wv * 0.28;
+          return '<path class="cfl" style="transform-box:fill-box;transform-origin:50% 100%" d="M' + (x - w / 2).toFixed(1) + ' ' + y.toFixed(1) + 'C' + (x - w / 2).toFixed(1) + ' ' + (y + w * 0.42).toFixed(1) + ' ' + (x + w / 2).toFixed(1) + ' ' + (y + w * 0.42).toFixed(1) + ' ' + (x + w / 2).toFixed(1) + ' ' + y.toFixed(1) +
+            'C' + (x + w / 2).toFixed(1) + ' ' + (y - hh * 0.4).toFixed(1) + ' ' + (x + w * 0.16).toFixed(1) + ' ' + (y - hh * 0.62).toFixed(1) + ' ' + x.toFixed(1) + ' ' + (y - hh).toFixed(1) +
+            'C' + (x - w * 0.16).toFixed(1) + ' ' + (y - hh * 0.62).toFixed(1) + ' ' + (x - w / 2).toFixed(1) + ' ' + (y - hh * 0.4).toFixed(1) + ' ' + (x - w / 2).toFixed(1) + ' ' + y.toFixed(1) + 'Z"/>';
+        };
+        var cells = [[0, 0, 1.0], [1, 0, 0.8], [-1, 0, 0.8], [0, 1, 0.8], [0, -1, 0.8]];
+        var mkShapes = function (sc) { return cells.map(function (c) { return drop(cx0 + c[0], cy0 + c[1], wv * (c[2] === 1 ? 1.0 : 0.92) * sc, wv * (c[2] === 1 ? 1.35 : 0.92) * sc); }).join(''); };
+        var el = document.createElement('div'); el.className = 'fxgrid';
+        el.innerHTML = '<svg viewBox="0 0 360 780" preserveAspectRatio="none"><defs><filter id="' + gid + '" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="5"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/></filter></defs>' +
+          '<g class="cfx" style="transform-box:fill-box;transform-origin:50% 100%"><g filter="url(#' + gid + ')" fill="#FF7A1F">' + mkShapes(1) + '</g><g filter="url(#' + gid + ')" fill="#FFD04A">' + mkShapes(0.5) + '</g></g></svg>';
+        fxEl.appendChild(el);
+        if (RM) { setTimeout(function () { el.remove(); }, 800); return; }
+        play(el, [{ opacity: 0 }, { opacity: 0.94, offset: 0.1 }, { opacity: 0.94, offset: 0.8 }, { opacity: 0 }], dur, { easing: 'ease-out' });
+        el.querySelector('.cfx').animate([{ transform: 'scale(0.92,0.2)' }, { transform: 'scale(1.03,1.06)', offset: 0.14 }, { transform: 'scale(1,0.98)', offset: 0.4 }, { transform: 'scale(1,1.02)', offset: 0.7 }, { transform: 'scale(0.96,0.6)' }], { duration: ms(dur), easing: 'ease-out', fill: 'forwards' });
+        el.querySelectorAll('.cfl').forEach(function (n, i) {
+          var a = 1 + (i % 2 ? 0.1 : -0.06), b = 1 + (i % 2 ? -0.08 : 0.1);
+          n.animate([{ transform: 'scaleY(1)' }, { transform: 'scaleY(' + a + ')', offset: 0.2 }, { transform: 'scaleY(' + b + ')', offset: 0.4 }, { transform: 'scaleY(' + a + ')', offset: 0.6 }, { transform: 'scaleY(' + b + ')', offset: 0.8 }, { transform: 'scaleY(1)' }], { duration: ms(dur), easing: 'linear' });
+        });
+        setTimeout(function () { el.remove(); }, ms(dur) + 100);
+      };
+      var burn = function (B, sc, dl) {
+        var w = tilePx({ x: tx0, y: ty0 }).w * 0.72 * sc;
+        later(dl, function () { bigFlame(B.x, B.y + 12, w, 0, 1300); });
+      };
       later(hitAt, function () {
         var B = v.B;
-        // heller Feuerschein am Boden, kurz
-        var gl = mk('<svg width="90" height="60" viewBox="-45 -30 90 60"><defs><radialGradient id="brg"><stop offset="0" stop-color="#FFD04A" stop-opacity=".85"/><stop offset=".6" stop-color="#FF7A1F" stop-opacity=".4"/><stop offset="1" stop-color="#FF7A1F" stop-opacity="0"/></radialGradient></defs><ellipse rx="42" ry="24" fill="url(#brg)"/></svg>', B.x, B.y + 6);
-        play(gl, [{ transform: T(B.x, B.y + 6, 0.6, 0), opacity: 0 }, { transform: T(B.x, B.y + 6, 1, 0), opacity: 1, offset: 0.2 }, { transform: T(B.x, B.y + 6, 1.05, 0), opacity: 0.8, offset: 0.7 }, { transform: T(B.x, B.y + 6, 0.9, 0), opacity: 0 }], 1500, { easing: 'ease-out' });
-        // kleiner Brand: drei flackernde Flammen
-        [[-11, 7, 0.55], [10, 8, 0.5], [0, 3, 0.7]].forEach(function (f, n) {
-          var fl = mk(SVG.fireball, B.x + f[0], B.y + f[1]), s0 = f[2], X = B.x + f[0], Y = B.y + f[1];
-          play(fl, [{ transform: T(X, Y, s0 * 0.4, 0), opacity: 0 }, { transform: T(X, Y - 4, s0 * 1.1, 0), opacity: 1, offset: 0.15 },
-                    { transform: T(X, Y - 6, s0 * 0.85, 0), opacity: 1, offset: 0.35 }, { transform: T(X, Y - 7, s0 * 1.15, 0), opacity: 0.95, offset: 0.55 },
-                    { transform: T(X, Y - 8, s0 * 0.9, 0), opacity: 0.8, offset: 0.75 }, { transform: T(X, Y - 11, s0 * 0.4, 0), opacity: 0 }], 1400, { easing: 'ease-in-out', delay: n * 70 });
-        });
-        // aufsteigende Glut und etwas Rauch
-        for (var q = 0; q < 6; q++) {
-          (function (n) {
-            var ex = B.x + (n - 2.5) * 6, em = mk(SVG.dot(n % 2 ? '#FF9A3A' : '#FFD04A', 2.2), ex, B.y + 2);
-            play(em, [{ transform: T(ex, B.y + 2, 1, 0), opacity: 1 }, { transform: T(ex + (n % 2 ? 5 : -5), B.y - 22 - n * 3, 0.4, 0), opacity: 0 }], 1100, { easing: 'ease-out', delay: 120 + n * 90 });
-          })(q);
+        if (isAoe) {
+          /* Stufe 3 (Flammenmeer): EINE grosse Flamme in Kreuzform ueber Ziel und die 4 Nachbarfelder */
+          fxGrid(tx0, ty0, 1300, '#FF9A3A', '#FF7A1F', true);
+          crossFire(tx0, ty0, 1800);
+          shake(4, 220);
+          aoeHit.forEach(function (e) { showHit(e, vec(u, e), e.dmgOut, 1.1 * k); });
+        } else {
+          burn(B, 1, 0);
+          shake(k > 1 ? 3 : 1.8, 140); showHit(t, v, dmg, 1.1 * k);
         }
-        fxPuff(B, '#6B5A4E', 3, 12);
-        shake(k > 1 ? 3 : 1.8, 140); showHit(t, v, dmg, 1.1 * k);
       });
     } else if (kind === 'bolt') {
       // Zauber aufladen, Blitzkugel schießen
