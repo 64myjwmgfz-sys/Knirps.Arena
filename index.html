@@ -198,6 +198,7 @@ button:focus-visible { outline: 3px solid var(--you); outline-offset: 2px; }
 .kflying #app, .kflying .boardwrap, .kflying .board, .kflying .units { overflow: visible !important; }
 .unit .warm, .unit .arm2, .unit .lgl, .unit .lgr, .unit .tok svg { transition: rotate 0.15s, translate 0.15s, scale 0.15s; }
 .unit.noready .warm, .unit.noready .arm2, .unit.noready .lgl, .unit.noready .lgr, .unit.noready .tok svg { rotate: 0deg !important; translate: 0 0 !important; scale: 1 !important; }
+.unit.noready .tok svg, .unit.noready .shd svg { scale: var(--flip, 1) var(--crouch, 0.97) !important; }
 .unit .tok svg { rotate: calc(var(--sw, 1) * -3deg); }
 .unit .lgl { translate: -0.9px 0; }
 .unit .lgr { translate: 0.9px 0; }
@@ -3988,6 +3989,7 @@ CH.shield = critter({
     later(260 + fl, function () { fxStar(v.B, '#FFFDF2', 0.6, 220); showHit(t, v, dmg, 1); post.forEach(function (fn) { fn(); }); });
   }
   function gasAttack(u, t) {
+    u.noAim = 4;
     var ab = abOf(u), v = vec(u, t), post = [];
     var plus = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]].map(function (d) { return { x: t.x + d[0], y: t.y + d[1] }; })
       .filter(function (p) { return p.x >= 0 && p.x < COLS && p.y >= 0 && p.y < ROWS; });
@@ -4150,6 +4152,7 @@ CH.shield = critter({
 
   function attack(u, t) {
     var def = TYPES[u.type], kind = def.fx || 'slash';
+    u.noAim = 4;
     try { faceVec(u, vec(u, t)); } catch (e) {}
     if (kind !== 'fish') { try { limbsAttack(u, vec(u, t), kind); } catch (e) {} }
     if (kind === 'smoke') return smokeAttack(u, t);
@@ -4420,6 +4423,7 @@ CH.shield = critter({
 
   function healFx(u, a, amt, grp) {
     var v = vec(u, a), fl = 260 + v.d * 0.9, A = { x: v.A.x + v.x * 14, y: v.A.y - 6 };
+    u.noAim = 5;
     try { faceVec(u, v); } catch (e) {}
     try { limbsAttack(u, v, 'toss', 560, 0.55); } catch (e) {}
     lean(u, v, 560, 4, 0.42);
@@ -4656,7 +4660,14 @@ CH.shield = critter({
       if (u.stunT > 0) { u.stunT--; if (u.stunT <= 0) unstun(u); return; }
       if (u.guardT > 0 && gab && gab.kind === 'guard') return;
       if (u.digT > 0) { u.digT--; return; }
-      if (u.cd > 0) { u.cd--; return; }
+      if (u.cd > 0) {
+        /* schon beim Warten zum Ziel drehen, damit sie nicht erst im Moment des Wurfs herumschnellen */
+        var aimT = S.runtime.filter(function (e) { return e.id === u.lockId && e.hp > 0 && !(e.digT > 0); })[0] ||
+          S.runtime.filter(function (e) { return e.hp > 0 && e.team !== u.team && !(e.digT > 0) && dist(u, e) <= u.range; }).sort(function (a, b) { return dist(u, a) - dist(u, b); })[0];
+        if (u.noAim > 0) u.noAim--;
+        else if (aimT && dist(u, aimT) <= u.range) { try { faceVec(u, vec(u, aimT)); } catch (e) {} }
+        u.cd--; return;
+      }
       var foes = S.runtime.filter(function (e) { return e.hp > 0 && e.team !== u.team && !(e.digT > 0); });
       if (!foes.length) return;
       if (pot && u.potT >= pthr) {
