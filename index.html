@@ -2615,11 +2615,13 @@ CH.shield = critter({
     S.botName = NAMES[rnd(NAMES.length)];
     var B = { deck: shuffle(POOL.slice()).slice(0, DECK_SIZE), heroKey: hk, gold: 0, team: [] };
     var p = botSpot(B.team, hk);
-    B.team.push({ id: S.nextId++, type: hk, level: 0, team: 'e', x: p[0], y: p[1] });
+    B.team.push({ id: S.nextId++, type: hk, level: 0, hl: botHeroLvl(), team: 'e', x: p[0], y: p[1] });
     return B;
   }
 
   // Neue Bot-Figuren starten auf Stufe 0
+  /* Heldenstufe des Gegners: zufaellig, je hoeher die Arena desto hoeher (Arena 1: 1-2, 2: 1-3, 3: 2-4, ab 4: 3-5) */
+  function botHeroLvl() { var ai = Math.min(S.arenaIdx || 0, 3), lo = [1, 1, 2, 3][ai], hi = [2, 3, 4, 5][ai]; return lo + rnd(hi - lo + 1); }
   function botLvl() { return 0; } /* neue Bot-Figuren starten immer auf Stufe 0 und werden bis zur Arena-Obergrenze (botCap) bezahlt verbessert */
 
   function botCap() { return [0, 1, 2, 3][Math.min(S.arenaIdx || 0, 3)]; } /* höchste Sternstufe der Bots je Arena */
