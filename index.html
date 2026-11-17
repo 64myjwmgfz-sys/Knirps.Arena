@@ -1,5 +1,20 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);}body{margin:0;-webkit-text-size-adjust:100%;}[hidden]{display:none!important}</style>
 <title>Knirps-Arena</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0B5F7C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Knirps-Arena">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<script src="cloud-config.js?v=2"></script>
 <style>
 #ldr{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:linear-gradient(#3FC4DA,#0B5F7C);transition:opacity .45s ease;font-family:'Lilita One',system-ui,sans-serif;color:#fff}
 #ldr.out{opacity:0;pointer-events:none}
@@ -5991,3 +6006,6 @@ CH.shield = critter({
   showScreen('menu');
 })();
 </script>
+<script>try{if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}}catch(e){}</script>
+</body>
+</html>
