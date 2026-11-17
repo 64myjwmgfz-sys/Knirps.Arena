@@ -4843,7 +4843,7 @@ CH.shield = critter({
   var MAXT_KEY = 'knirps-arena-maxt';
   var DOLCHA_PRICE = 80000;
   var DEV_ALL = false; /* Testmodus: auf false setzen, dann gelten die normalen Freischaltungen wieder */
-  function unlocked(k) { return DEV_ALL || arenaOf(k) === 0 || !!(S.own && S.own[k]) || (k === 'hero' && S.ownD); }
+  function unlocked(k) { return DEV_ALL || arenaOf(k) === 0 || !!(S.own && S.own[k]) || (k === 'hero' && S.ownD) || !!(S.cards && S.cards[k] > 0) || !!(S.up && S.up[k] > 0) || !!(S.hlv && S.hlv[k] > 1); }
   var NODES = [];
   ARENAS.forEach(function (a, ai) { a.ranks.forEach(function (r, ri) { NODES.push({ t: r[0], name: r[1], ai: ai, first: ri === 0 }); }); });
   function arenaIdxOf(t) { var k = 0; ARENAS.forEach(function (a, i) { if (i < PLAYABLE && t >= a.ranks[0][0]) k = i; }); return k; }
@@ -5366,10 +5366,15 @@ CH.shield = critter({
     var ref = CL.db.collection('users').doc(CL.user.uid);
     ref.get().then(function (d) {
       var local = clSnap(), cloud = d.exists ? d.data().data : null;
-      if (cloud && cloud !== local && clMaxT(cloud) >= clMaxT(local)) {
+      var covered = false;
+      if (cloud) { try { var co2 = JSON.parse(cloud); covered = Object.keys(co2).every(function (k) { return localStorage.getItem(k) === co2[k]; }); } catch (e) { covered = false; } }
+      var looped = false; try { looped = sessionStorage.getItem('knirps-cl-reload') === '1'; } catch (e) {}
+      if (cloud && cloud !== local && !covered && !looped && clMaxT(cloud) >= clMaxT(local)) {
+        try { sessionStorage.setItem('knirps-cl-reload', '1'); } catch (e) {}
         try { var o = JSON.parse(cloud); Object.keys(o).forEach(function (k) { localStorage.setItem(k, o[k]); }); } catch (e) {}
         CL.pushed = cloud; CL.busy = false; location.reload(); return;
       }
+      try { sessionStorage.removeItem('knirps-cl-reload'); } catch (e) {}
       CL.pushed = cloud || ''; CL.busy = false; return clPush(true);
     }).catch(function (e) { CL.busy = false; CL.msg = clErr(e); CL.ok = false; clRender(); });
   }
