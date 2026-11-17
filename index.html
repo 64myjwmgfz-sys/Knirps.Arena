@@ -5032,7 +5032,7 @@ CH.shield = critter({
   }
 
   /* Ziehen: Sammlung -> Deck (Tausch mit dem Knirps unter dem Finger) */
-  var dragSt = null, dragSuppress = false;
+  var dragSt = null, colSuppress = false;
   function dragTile(x, y) { var el = document.elementFromPoint(x, y); return el && el.closest ? el.closest('.cdt') : null; }
   function dragEnd() {
     if (!dragSt) return;
@@ -5083,11 +5083,11 @@ CH.shield = critter({
       if (ix >= 0 && ix < S.deck.length) { S.deck[ix] = key; done = true; }
       else if (S.deck.length < DECK_SIZE) { S.deck.push(key); done = true; }
     }
-    dragEnd(); dragSuppress = true; setTimeout(function () { dragSuppress = false; }, 350);
+    dragEnd(); colSuppress = true; setTimeout(function () { colSuppress = false; }, 350);
     if (done) { S.swapFor = null; saveDeck(); renderMenu(); }
   });
   document.addEventListener('pointercancel', dragEnd);
-  document.addEventListener('click', function (e) { if (dragSuppress) { dragSuppress = false; e.stopPropagation(); e.preventDefault(); } }, true);
+  document.addEventListener('click', function (e) { if (colSuppress) { colSuppress = false; e.stopPropagation(); e.preventDefault(); } }, true);
 
   function segs(n, tot) {
     var h = '';
@@ -5100,13 +5100,13 @@ CH.shield = critter({
     for (var i = 0; i < 3; i++) out += '<svg viewBox="0 0 24 24" class="stb ' + (i < n ? 'on' : 'off') + '" aria-hidden="true"><path d="M12 2.800l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.600 6.100 20.800l1.200-6.500L2.500 9.700l6.600-.9z"/></svg>';
     return out + '</span>';
   }
-  function canUp(k) {
+  function canUpCard(k) {
     var t = TYPES[k]; if (!t) return false;
     var hero = !!t.hero, lv = hero ? heroLv(k) - 1 : upLevel(k), top = hero ? HERO_MAXLV - 1 : 3;
     if (lv >= top) return false;
     return (S.cards[k] || 0) >= (hero ? HERO_CARD_NEED : CARD_NEED)[lv];
   }
-  function upArrow(k) { return canUp(k) ? '<span class="cuarr" aria-label="Verbesserung möglich"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="agr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D2FFA6"/><stop offset=".45" stop-color="#7DFF5C"/><stop offset="1" stop-color="#2EE063"/></linearGradient></defs><path d="M12 3l8 9h-5v9H9v-9H4z" fill="url(#agr)" stroke="#17A04A" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 5.6l4.6 5.2h-3.1" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg></span>' : ''; }
+  function upArrow(k) { return canUpCard(k) ? '<span class="cuarr" aria-label="Verbesserung möglich"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="agr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D2FFA6"/><stop offset=".45" stop-color="#7DFF5C"/><stop offset="1" stop-color="#2EE063"/></linearGradient></defs><path d="M12 3l8 9h-5v9H9v-9H4z" fill="url(#agr)" stroke="#17A04A" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 5.6l4.6 5.2h-3.1" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg></span>' : ''; }
   function segN(need) { return need <= 12 ? need : 10; }
   var GOAL_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.5 6 20.9l1.3-6.7-5-4.7 6.8-.8z" fill="#FFC933" stroke="#6B3F06" stroke-width="1.8" stroke-linejoin="round"/></svg>', GOAL_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="agr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D2FFA6"/><stop offset=".45" stop-color="#7DFF5C"/><stop offset="1" stop-color="#2EE063"/></linearGradient></defs><path d="M12 3l8 9h-5v9H9v-9H4z" fill="url(#agr)" stroke="#17A04A" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 5.6l4.6 5.2h-3.1" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>';
   function goalEnd(hero, rdy) { return '<em class="cpgoal' + (rdy ? ' up' : '') + '">' + (rdy ? GOAL_ARROW : hero ? CROWN.replace('#3A2500', '#FFC933') : GOAL_STAR) + '</em>'; }
