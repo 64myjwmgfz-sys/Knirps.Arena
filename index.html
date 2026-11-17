@@ -1702,6 +1702,9 @@ html, body { overscroll-behavior-x: none; }
 .lv.champ b { font-weight: 400; font-size: 13px; line-height: 1; color: #4A2A00; }
 
 .unit .lv.champ { left: auto; right: 88%; bottom: auto; top: calc(6% + 3.5px - 9px); z-index: 4; margin-right: -4px; }
+@keyframes gin { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes gwp { from { transform: scale(0.96); } to { transform: scale(1.04); } }
+.unit.guarding::after { animation: gin 0.3s ease-out, gwp 0.9s ease-in-out 0.3s infinite alternate; }
 </style>
 
 <div class="menu" id="menu"></div>
@@ -1766,9 +1769,9 @@ html, body { overscroll-behavior-x: none; }
               ability: { every: 6, heal: 16, tp: true, name: 'Schattensprung', tag: 'heilt sich und springt zum fernsten Gegner', short: 'Nach 6 Angriffen heilt sie sich um 16 und teleportiert sich hinter den am weitesten entfernten Gegner.', desc: 'Nach 6 Angriffen heilt sie sich selbst um 16 Trefferpunkte und teleportiert sich hinter die am weitesten entfernte gegnerische Truppe. Die Aufladung füllt sich im Kampf unter ihrem Lebensbalken.' },
               blurb: 'Schnelle Dolchstiche mit mäßigem Schaden. Nach 6 Angriffen heilt sie sich um 16 Trefferpunkte und teleportiert sich hinter den fernsten Gegner.' },
     shield: { name: 'Goldo',       cost: 0, hp: 108, atk: 7, range: 1, ai: 8,  mi: 5, color: '#E0A82E', front: true, fx: 'bash', hero: true, role: 'Held',
-              ability: { kind: 'guard', every: 12, reflect: 0.15, reduce: 0.95, secs: 7, name: 'Goldbollwerk', tag: 'schützt sich nach 12 Treffern',
-                         short: 'Nach 12 erhaltenen Treffern erleidet er 7 Sekunden lang 95 % weniger Schaden und wirft 15 % davon zurück.',
-                         desc: 'Jeder Treffer lädt die Leiste unter seinem Lebensbalken auf. Nach 12 Treffern leuchtet sein goldenes Schild: 7 Sekunden lang erleidet er 95 % weniger Schaden und wirft 15 % des Schadens auf den Angreifer zurück.' },
+              ability: { kind: 'guard', every: 6, reflect: 0.15, reduce: 0.95, secs: 7, name: 'Goldbollwerk', tag: 'schützt sich nach 6 Treffern',
+                         short: 'Nach 6 erhaltenen Treffern hält er 7 Sekunden lang sein Schild vor, erleidet 95 % weniger Schaden und wirft 15 % davon zurück – dabei greift er nicht an.',
+                         desc: 'Jeder Treffer lädt die Leiste unter seinem Lebensbalken auf. Nach 6 Treffern erscheint sein goldenes Schild: 7 Sekunden lang hält er es vor sich, erleidet 95 % weniger Schaden und wirft 15 % des Schadens auf den Angreifer zurück. Währenddessen greift er nicht an.' },
               blurb: 'Zäher Held mit goldenem Schild. Kräftige Schläge, aber langsam.' },
     doris:  { name: 'Doris',       cost: 0, hp: 52, atk: 10, range: 3, ai: 7, mi: 4, color: '#D9962B', fx: 'smoke', hero: true, role: 'Heldin',
               ability: { kind: 'cough', every: 5, mult: 2.5, name: 'Raucherhusten', tag: 'hustet nach 5 Zügen',
@@ -1816,7 +1819,7 @@ html, body { overscroll-behavior-x: none; }
   function heroMul(lv) { return { hp: 1 + 0.10 * (lv - 1), atk: 1 + 0.125 * (lv - 1) }; }
   var HERO_PERKS = {
     hero:   { lv: 5, name: 'Schattenrausch', desc: 'Schattensprung lädt schon nach 5 Angriffen auf und heilt sie um 28 statt 16.', ab: { every: 5, heal: 28 } },
-    shield: { lv: 5, name: 'Strahlendes Bollwerk', desc: 'Das Bollwerk kommt schon nach 10 Treffern, hält 9 Sekunden und wirft 30 % des Schadens zurück.', ab: { every: 10, secs: 9, reflect: 0.3 } },
+    shield: { lv: 5, name: 'Strahlendes Bollwerk', desc: 'Das Bollwerk kommt schon nach 5 Treffern, hält 9 Sekunden, wirft 30 % des Schadens zurück und alle Gegner im 3×3-Feld um ihn greifen nur noch ihn an.', ab: { every: 5, secs: 9, reflect: 0.3, taunt: true } },
     doris:  { lv: 5, name: 'Kettenhusten', desc: 'Sie hustet schon nach 4 Zügen und die Qualmwolke macht 3,2-fachen Schaden.', ab: { every: 4, mult: 3.2 } },
     mika:   { lv: 5, name: 'Kampfgas', desc: 'Giftgas alle 8 Sekunden, Treffer mit 1,6-fachem Schaden und das Gift wirkt 7 Sekunden.', ab: { secs: 8, mult: 1.6, dotSecs: 7 } },
     knallo: { lv: 5, name: 'Großer Knall', desc: 'Betäubt schon nach 6 Hieben und für 5,5 Sekunden.', ab: { every: 6, stunSecs: 5.5 } }
@@ -3365,6 +3368,27 @@ CH.shield = critter({
       { transform: T(P.x, P.y, 1.05 * k, 8), opacity: 1, offset: 0.4 },
       { transform: T(P.x, P.y, 1.3 * k, 18), opacity: 0 }], dur || 300);
   }
+  /* Minimalistischer Staub: weiche, helle Wölkchen ohne Umriss */
+  var DUSTSVG = '<svg width="30" height="30" viewBox="-15 -15 30 30"><defs><radialGradient id="dsg"><stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/><stop offset=".55" stop-color="#FAF5E6" stop-opacity=".9"/><stop offset="1" stop-color="#F0E8D0" stop-opacity="0"/></radialGradient></defs><circle r="15" fill="url(#dsg)"/></svg>';
+  function fxDust(P, n, size, life, drift) {
+    for (var i = 0; i < n; i++) {
+      var s = (size || 1) * (0.7 + Math.random() * 0.6), ox = (Math.random() - 0.5) * 8 * s, oy = (Math.random() - 0.5) * 5 * s, d = mk(DUSTSVG, 0, 0), dr = drift || { x: 0, y: -5 };
+      play(d, [{ transform: T(P.x + ox, P.y + oy, 0.5 * s, 0), opacity: 1 }, { transform: T(P.x + ox + dr.x * 0.5, P.y + oy + dr.y * 0.5, 1.1 * s, 0), opacity: 0.85, offset: 0.4 }, { transform: T(P.x + ox + dr.x, P.y + oy + dr.y, 1.6 * s, 0), opacity: 0 }], (life || 480) * (0.85 + Math.random() * 0.3), { easing: 'ease-out' });
+    }
+  }
+  /* Schlichter Aufprall: dünner Ring, ein paar kurze Linien, kein Cartoon-Stern */
+  var THINRING = '<svg width="60" height="60" viewBox="-30 -30 60 60"><circle r="26" fill="none" stroke="#F2F6F9" stroke-width="2.600"/></svg>';
+  var TICKSVG = '<svg width="14" height="4" viewBox="0 0 14 4"><rect width="14" height="3" y="0.500" rx="1.500" fill="#F2F6F9"/></svg>';
+  function fxBump(P, rot, k, tel) {
+    var s = k || 1, a = (rot || 0) / 57.2958, i;
+    var r = mk(THINRING, 0, 0);
+    play(r, [{ transform: T(P.x, P.y, 0.25 * s, 0), opacity: 0.95 }, { transform: T(P.x, P.y, 1.15 * s, 0), opacity: 0 }], 300, { easing: 'ease-out' });
+    for (i = -2; i <= 2; i++) {
+      var aa = a + i * 0.55, d0 = 12 * s, d1 = 30 * s, t = mk(TICKSVG, 0, 0);
+      play(t, [{ transform: T(P.x + Math.cos(aa) * d0, P.y + Math.sin(aa) * d0, s, aa * 57.2958), opacity: 0.95 }, { transform: T(P.x + Math.cos(aa) * d1, P.y + Math.sin(aa) * d1, 0.6 * s, aa * 57.2958), opacity: 0 }], 260, { easing: 'ease-out' });
+    }
+    if (tel && tel.animate) { try { tel.animate([{ filter: 'brightness(1)' }, { filter: 'brightness(1.6)', offset: 0.2 }, { filter: 'brightness(1)' }], { duration: 220, easing: 'ease-out' }); } catch (e) {} }
+  }
   /* Leuchtblitz ohne Cartoon-Stern (Mündungsfeuer) */
   var GLOWSVG = '<svg width="70" height="70" viewBox="-35 -35 70 70"><defs><radialGradient id="pgl"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#9FEAFF" stop-opacity=".6"/><stop offset="1" stop-color="#4FD0FF" stop-opacity="0"/></radialGradient></defs><circle r="35" fill="url(#pgl)"/></svg>';
   function fxGlow(P, k, dur) {
@@ -3513,16 +3537,16 @@ CH.shield = critter({
     var tok = tokOf(t), el = t.el;
     if (!el) return;
     if (!v) { var ang = (200 + Math.random() * 140) * Math.PI / 180; v = { x: Math.cos(ang), y: Math.sin(ang) }; }
-    var C = ctr(t), tp = tilePx(t), dd = tp.w * 3.4, ox = v.x * dd, oy = v.y * dd, sg = v.x >= 0 ? 1 : -1;
+    var C = ctr(t), tp = tilePx(t), dd = tp.w * 3.4, ox = v.x * dd, oy = v.y * dd, sg = v.x >= 0 ? 1 : -1; if (Math.abs(v.x) < 0.05) sg = 1;
     el.classList.add('dying');
     el.style.zIndex = 90;
     if (!RM && tok) {
       var base = partOf(t, '.base'), P0 = { x: C.x, y: C.y + tp.w * 0.28 };
       if (base) anim(base, [{ opacity: 1 }, { opacity: 0 }], 160, { fill: 'forwards' });
-      // Einschlag: Staub, Stern, Ring, kurze Erschütterung
-      fxStar(C, '#FFFDF2', 1.1, 280); fxRing(C, '#FFFFFF', 1.8, 360); fxPuff(P0, 'rgba(238,230,205,0.95)', 10, tp.w * 0.55); fxPuff(P0, 'rgba(190,176,146,0.9)', 6, tp.w * 0.35); shake(3, 150);
+      // Einschlag: nur ein kleines Staubwölkchen am Boden
+      fxDust(P0, 7, 1.3, 520, { x: 0, y: -4 }); shake(2, 120);
       var rc = el.getBoundingClientRect(), sx = rc.left + rc.width / 2, sy = rc.top + rc.height / 2,
-          W = window.innerWidth, H = window.innerHeight, dx = v.x, dy = v.y - 0.45, dl = Math.hypot(dx, dy) || 1;
+          W = window.innerWidth, H = window.innerHeight, dx = (Math.abs(v.x) > 0.05 ? (v.x > 0 ? 1 : -1) : (sx < W / 2 ? -1 : 1)), dy = -0.18, dl = Math.hypot(dx, dy) || 1;
       dx /= dl; dy /= dl;
       var Lx = dx > 0.001 ? (W - sx) / dx : dx < -0.001 ? -sx / dx : 1e9, Ly = dy > 0.001 ? (H - sy) / dy : dy < -0.001 ? -sy / dy : 1e9;
       var L = Math.min(Lx, Ly) + Math.max(rc.width, rc.height) * 1.2 + 40, hump = Math.min(160, L * 0.16), N = 9, fr = [];
@@ -3533,13 +3557,14 @@ CH.shield = critter({
       fr.unshift({ transform: T(-v.x * 4, -v.y * 4 + 2, 1, 0) + ' scale(1.14,0.84)', opacity: 1, offset: 0.06 });
       fr.unshift({ transform: T(0, 0, 1, 0), opacity: 1, offset: 0 });
       anim(tok, fr, 1150, { fill: 'forwards', easing: 'linear' });
-      // Staubspur
-      [0.1, 0.2, 0.32, 0.46].forEach(function (f, i) {
+      // Staubspur: kleine, helle Wölkchen folgen der Flugbahn und werden kleiner
+      for (var di = 0; di < 22; di++) (function (i) {
+        var f = 0.02 + i * 0.0335;
         later(1150 * (0.08 + 0.92 * f), function () {
           var e2 = 1 - Math.pow(1 - f, 1.7), qq = { x: C.x + dx * L * e2, y: C.y + dy * L * e2 - hump * Math.sin(Math.PI * f) * 0.7 };
-          fxPuff(qq, 'rgba(238,230,205,0.85)', 4, tp.w * 0.22); if (i % 2 === 0) fxStar(qq, '#FFFFFF', 0.45, 200);
+          fxDust(qq, 2, Math.max(0.8, 1.5 - i * 0.025), 750, { x: -dx * 5, y: -dy * 5 - 3 });
         });
-      });
+      })(di);
       document.body.classList.add('kflying'); setTimeout(function () { document.body.classList.remove('kflying'); }, ms(1250));
     } else el.classList.add('dead');
     setTimeout(function () { el.remove(); }, ms(1250));
@@ -3655,9 +3680,7 @@ CH.shield = critter({
     return out;
   }
   function reflectFx(src, t, n) {
-    fxRing(ctr(t), '#FFD866', 1.5, 300);
     if (!src.el) return;
-    fxStar(ctr(src), '#FFE27A', 0.5, 220);
     setHp(src);
     if (src.hp <= 0 && !src.dying) { src.dying = true; kill(src); }
   }
@@ -3668,7 +3691,8 @@ CH.shield = critter({
     t.guardVis = true;
     t.el.classList.add('guarding');
     var P = ctr(t);
-    fxRing(P, '#FFD866', 2.2, 520); fxStar(P, '#FFE27A', 0.9, 360); floatText(t, 'Bollwerk!', 'reflect');
+    try { var gw = partOf(t, '.wpn'); if (gw && gw.animate && !RM) { if (t.guardAnim) t.guardAnim.cancel(); t.guardAnim = gw.animate([{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(0,-10px) scale(1.7)' }], { duration: 260, fill: 'forwards', easing: 'ease-out' }); } } catch (e) {}
+    floatText(t, 'Bollwerk!', 'reflect');
   }
   function fxGrid(cx0, cy0, dur) {
     var el = document.createElement('div'), polys = '';
@@ -4098,13 +4122,13 @@ CH.shield = critter({
       hitAt = 180;
       later(hitAt, function () { fxSlash(v); fxStar(v.B, '#FFFDF2', 0.5, 200); showHit(t, v, dmg, k); });
     } else if (kind === 'bash') {
-      // Schildstoß
-      bodyLunge(u, v, 480, 16, 5, 0.5);
-      wpn(u, [{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(' + (-v.x * 2) + 'px,' + (-v.y * 2) + 'px) scale(0.9)', offset: 0.3 },
-              { transform: 'translate(' + (v.x * 7) + 'px,' + (v.y * 7) + 'px) scale(1.35)', offset: 0.5 },
-              { transform: 'translate(' + (v.x * 7) + 'px,' + (v.y * 7) + 'px) scale(1.35)', offset: 0.65 }, { transform: 'translate(0,0) scale(1)' }], 480);
+      // Schildstoß: Schild zurückziehen, dann kräftig nach vorn stoßen
+      bodyLunge(u, v, 480, 24, 5, 0.5);
+      wpn(u, [{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(' + (-v.x * 4) + 'px,' + (-v.y * 4) + 'px) scale(0.86)', offset: 0.32 },
+              { transform: 'translate(' + (v.x * 14) + 'px,' + (v.y * 14) + 'px) scale(1.5)', offset: 0.5 },
+              { transform: 'translate(' + (v.x * 14) + 'px,' + (v.y * 14) + 'px) scale(1.5)', offset: 0.64 }, { transform: 'translate(0,0) scale(1)' }], 480);
       hitAt = 240;
-      later(hitAt, function () { fxStar(v.B, '#C8D3DE', 0.9 * k, 280); shake(1.5, 140); showHit(t, v, dmg, 1.2 * k); });
+      later(hitAt, function () { fxBump(v.B, v.a * 57.2958, 0.9 * k, t.el); shake(1.2, 120); showHit(t, v, dmg, 1.0 * k); });
     } else if (kind === 'thrust') {
       // Speerstoß über zwei Felder
       bodyLunge(u, v, 480, 24, 4, 0.5);
@@ -4386,7 +4410,7 @@ CH.shield = critter({
       A2([[h * 0.6, R(sa * 24) + ' ' + Tr(0, -1)], [hh, R(sa * 10)], [1, 'none']]);
     }
     else if (kind === 'bash') {
-      W([[h * 0.6, R(sw * 16) + ' ' + Tr(0, 0.8)], [hh, R(-sw * 10) + ' ' + Tr(v.x * 2.2, v.y * 2.2)], [hr, R(-sw * 4)], [1, 'none']]);
+      W([[h * 0.5, R(sw * 12) + ' ' + Tr(-v.x * 2.4, -v.y * 2.4)], [hh, R(-sw * 12) + ' ' + Tr(v.x * 4.6, v.y * 4.6)], [hr, R(-sw * 6) + ' ' + Tr(v.x * 3, v.y * 3)], [1, 'none']]);
       counter(18, 0);
     }
     else if (kind === 'bomb') {
@@ -4508,7 +4532,7 @@ CH.shield = critter({
         u.guardT--;
         var ab = abOf(u);
         if (u.guardVis) setCharge(u, Math.ceil(ab.every * u.guardT / Math.round(ab.secs * 1000 / TICK)));
-        if (u.guardT <= 0) { u.guardVis = false; if (u.el) u.el.classList.remove('guarding'); setCharge(u, 0); }
+        if (u.guardT <= 0) { u.guardVis = false; if (u.guardAnim) { u.guardAnim.cancel(); u.guardAnim = null; } if (u.el) u.el.classList.remove('guarding'); setCharge(u, 0); }
       }
       var gab = abOf(u);
       if (gab && gab.kind === 'gas') {
@@ -4523,6 +4547,7 @@ CH.shield = critter({
         if (pseg !== u.potSeg) { u.potSeg = pseg; setCharge(u, pseg); }
       }
       if (u.stunT > 0) { u.stunT--; if (u.stunT <= 0) unstun(u); return; }
+      if (u.guardT > 0 && gab && gab.kind === 'guard') return;
       if (u.digT > 0) { u.digT--; return; }
       if (u.cd > 0) { u.cd--; return; }
       var foes = S.runtime.filter(function (e) { return e.hp > 0 && e.team !== u.team && !(e.digT > 0); });
@@ -4550,6 +4575,7 @@ CH.shield = critter({
           return;
         }
       }
+      foes.some(function (e) { var ea = e.guardT > 0 ? abOf(e) : null; if (ea && ea.taunt && dist(u, e) <= 1) { u.lockId = e.id; return true; } });
       var hunt = !!TYPES[u.type].dig;
       var t = foes.filter(function (e) { return e.id === u.lockId; })[0] || foes.sort(function (a, b) { if (hunt) { var pd = (a.range >= 2 ? 0 : 1) - (b.range >= 2 ? 0 : 1); if (pd) return pd; } return dist(u, a) - dist(u, b) || a.hp - b.hp; })[0];
       u.lockId = t.id;
