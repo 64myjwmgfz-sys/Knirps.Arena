@@ -1683,6 +1683,25 @@ html, body { overscroll-behavior-x: none; }
 .cc { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .dragghost { position: fixed !important; z-index: 99999; pointer-events: none; margin: 0 !important; transform: translate(-50%, -75%) scale(.85) rotate(-3deg); filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); opacity: .96; transition: none; }
 .cdt.droptgt { outline: 3px solid #FFE680; outline-offset: 1px; transform: scale(1.07); box-shadow: 0 0 16px 4px rgba(255,226,110,.85); z-index: 2; }
+
+.rnew { position: absolute; left: 50%; top: -16px; transform: translateX(-50%) rotate(-3deg); z-index: 6; padding: 5px 14px; border-radius: 12px; background: linear-gradient(#FFF0A0, #FFC933); color: #5A3606; font-weight: 800; font-size: 14px; white-space: nowrap; box-shadow: 0 3px 0 #8A5A00, 0 0 16px 3px rgba(255,226,110,.9); animation: rnewp 1.1s ease-in-out infinite; }
+@keyframes rnewp { 50% { transform: translateX(-50%) rotate(-3deg) scale(1.07); } }
+
+.rnew { position: relative !important; left: auto !important; top: auto !important; display: block; width: max-content; margin: 6px auto 10px; transform: rotate(-3deg); padding: 8px 20px; font-size: 22px; border-radius: 16px; animation: rnewp2 1.1s ease-in-out infinite; }
+@keyframes rnewp2 { 50% { transform: rotate(-3deg) scale(1.07); } }
+
+.unit.hlvu .hpbar { left: 30%; right: 10%; }
+.hlvb { position: absolute; left: 6%; top: calc(6% - 7px); z-index: 3; min-width: 20px; height: 20px; padding: 0 4px; box-sizing: border-box; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(#FFF0A0, #FFC933); color: #4A2A00; font-family: var(--font-display); font-size: 13px; line-height: 1; box-shadow: 0 0 0 2px #1B2630, 0 1px 0 2px rgba(0,0,0,.3); opacity: 0; transition: opacity .2s; pointer-events: none; }
+.board.battle .hlvb { opacity: 1; }
+.unit.dying .hlvb { opacity: 0 !important; }
+
+.unit.hlvu .hpbar { left: 10%; right: 10%; }
+.hlvb { display: none !important; }
+.lv.champ { display: flex; align-items: center; gap: 2px; padding: 0 6px 0 4px; height: 18px; border-radius: 9px; }
+.lv.champ svg { width: 13px; height: 13px; }
+.lv.champ b { font-weight: 400; font-size: 13px; line-height: 1; color: #4A2A00; }
+
+.unit .lv.champ { left: auto; right: 88%; bottom: auto; top: calc(6% + 3.5px - 9px); z-index: 4; margin-right: -4px; }
 </style>
 
 <div class="menu" id="menu"></div>
@@ -2845,10 +2864,10 @@ CH.shield = critter({
       faceVars(u);
       (function () { var s = STANCE_P[u.type] || [3, 0.97, 1.2, 1.2, 0]; el.style.setProperty('--lean', s[0]); el.style.setProperty('--crouch', s[1]); el.style.setProperty('--spread', s[2]); el.style.setProperty('--stag', s[3]); el.style.setProperty('--bx', s[4]); })();
       el.style.setProperty('--ph', '-' + (Math.random() * 2.8).toFixed(2) + 's');
-      el.className = 'unit l' + u.level + (t.ability || t.aoe ? ' champ' : '') + ' ' + (u.team === 'p' ? 'mine' : 'foe') + (S.phase === 'battle' && u.team === 'e' ? ' reveal' : '') +
+      el.className = 'unit l' + u.level + (t.hero ? ' hlvu' : '') + (t.ability || t.aoe ? ' champ' : '') + ' ' + (u.team === 'p' ? 'mine' : 'foe') + (S.phase === 'battle' && u.team === 'e' ? ' reveal' : '') +
         (S.sel && S.sel.kind === 'unit' && S.sel.id === u.id ? ' picked' : '') + (S.pop === u.id ? ' pop' : '');
       el.innerHTML = '<div class="base"></div><div class="shd">' + icon(skey(u)) + '</div><div class="tok" style="--c:' + t.color + '">' + icon(skey(u)) + '</div>' +
-        (t.hero ? '<span class="lv champ" aria-label="' + t.role + '">' + CROWN + '</span>' : u.level ? '<span class="lv l' + u.level + '" aria-label="' + u.level + ' von 3 Sternen">' + stars(u.level) + '</span>' : '') +
+        (t.hero ? '<span class="lv champ" aria-label="Level ' + (u.hl || 1) + '">' + CROWN + '<b>' + (u.hl || 1) + '</b></span>' : u.level ? '<span class="lv l' + u.level + '" aria-label="' + u.level + ' von 3 Sternen">' + stars(u.level) + '</span>' : '') +
         '<span class="hpbar"><i></i></span>' + chbarHtml(t, u) + '<span class="hit"></span>';
       unitsEl.appendChild(el);
       u.el = el; faceVars(u);
@@ -4600,15 +4619,18 @@ CH.shield = critter({
 
   /* ---------- Kisten ---------- */
   function drawChest(n, bonus) {
-    /* Aus einer Kiste kommt genau eine Karte: meistens eine Truppe (Holzkiste 2-3, Goldkiste 5-7), selten ein Held (Holzkiste 8-20, Goldkiste 20-50) */
-    var heroes = HEROES.filter(function (k) { return unlocked(k); });
-    var asHero = heroes.length && Math.random() < (bonus ? 0.3 : 0.12);
-    var pool = asHero ? heroes : POOL.filter(function (k) { return !TYPES[k].hero && unlocked(k); });
-    var k = pool[rnd(pool.length)], c = asHero ? (bonus ? 20 + rnd(31) : 8 + rnd(13)) : (bonus ? 5 + rnd(3) : 2 + rnd(2)), b = S.cards[k] || 0;
+    /* Aus einer Kiste kommt genau eine Karte: meistens eine Truppe (Holzkiste 2-3, Goldkiste 5-7), seltener ein Held (Holzkiste 8-20, Goldkiste 20-50).
+       Neue Figuren (Arena erreicht, noch nicht im Besitz) kommen beim ersten Ziehen immer nur mit 1 Karte. */
+    var heroes = HEROES.filter(function (k) { return unlocked(k) || inChests(k); });
+    var asHero = heroes.length && Math.random() < (bonus ? 0.22 : 0.08);
+    var pool = asHero ? heroes : POOL.filter(function (k) { return !TYPES[k].hero && (unlocked(k) || inChests(k)); });
+    var k = pool[rnd(pool.length)], isNew = !unlocked(k), b = S.cards[k] || 0;
+    var c = isNew ? 1 : asHero ? (bonus ? 20 + rnd(31) : 8 + rnd(13)) : (bonus ? 5 + rnd(3) : 2 + rnd(2));
     var lv0 = asHero ? null : upLevel(k);
-    S.cards[k] = b + c; saveCards();
+    if (isNew) { S.own[k] = 1; saveOwn(); }
+    S.cards[k] = isNew ? 0 : b + c; saveCards(); /* die erste Karte schaltet nur frei, der Balken startet bei 0 */
     if (!asHero) autoUp(k);
-    return [{ k: k, n: c, before: b, lv0: lv0 }];
+    return [{ k: k, n: c, before: b, lv0: lv0, isNew: isNew }];
   }
   var CHEST_SVG = '<svg viewBox="0 0 200 170" class="chsvg" aria-hidden="true">' +
     '<ellipse cx="100" cy="158" rx="78" ry="9" fill="rgba(0,0,0,.28)"/>' +
@@ -4707,7 +4729,7 @@ CH.shield = critter({
       }
     }
     function cardHtml(o) {
-      var t = TYPES[o.k], hero = !!t.hero, lv = hero ? heroLv(o.k) - 1 : (o.lv0 != null ? o.lv0 : upLevel(o.k)), top = hero ? HERO_MAXLV - 1 : 3, need = (hero ? HERO_CARD_NEED : CARD_NEED)[Math.min(lv, top - 1)], after = o.before + o.n, sx = '', i;
+      var t = TYPES[o.k], hero = !!t.hero, lv = hero ? heroLv(o.k) - 1 : (o.lv0 != null ? o.lv0 : upLevel(o.k)), top = hero ? HERO_MAXLV - 1 : 3, need = (hero ? HERO_CARD_NEED : CARD_NEED)[Math.min(lv, top - 1)], nn = o.isNew ? 0 : o.n, after = o.before + nn, sx = '', i;
       if (hero) sx = '<span class="rlv">Level ' + (lv + 1) + '</span>'; else for (i = 1; i <= 3; i++) sx += dstar(lv >= i);
       var info, nxt = hero ? 'Level ' + (lv + 2) : stars(lv + 1);
       if (lv >= top) info = '<span class="rmax">Maximale Stufe</span>';
@@ -4716,7 +4738,7 @@ CH.shield = critter({
         o.an = { from: v0, to: v1, need: need, hero: hero, nxt: nxt };
         if (!hero) {
           var sv = o.before, sl = lv, ev = [];
-          for (i = 0; i < o.n; i++) { sv++; if (sl < 3 && sv >= CARD_NEED[sl]) { ev.push({ up: true, v: CARD_NEED[sl], need: CARD_NEED[sl], lv: sl }); sv = 0; sl++; } else ev.push({ up: false, v: sv, need: sl < 3 ? CARD_NEED[sl] : 1, lv: sl }); }
+          for (i = 0; i < nn; i++) { sv++; if (sl < 3 && sv >= CARD_NEED[sl]) { ev.push({ up: true, v: CARD_NEED[sl], need: CARD_NEED[sl], lv: sl }); sv = 0; sl++; } else ev.push({ up: false, v: sv, need: sl < 3 ? CARD_NEED[sl] : 1, lv: sl }); }
           o.an.ev = ev;
         }
         info = '<span class="rbar" style="--seg:' + segN(need) + '"><i style="width:' + Math.round(v0 / need * 100) + '%"></i>' + goalEnd(hero, v0 >= need) + '</span>' +
@@ -4729,7 +4751,7 @@ CH.shield = critter({
             (pk ? '<span class="rperk">' + pk.name + ': ' + pk.desc + '</span>' : '') + '</span>';
         }
       }
-      return '<span class="rn">+' + o.n + '</span><span class="rfig cart"><span class="rplinth"></span><span class="cplat"></span>' + icon(o.k) + (hero ? '' : starRow(lv)) + '<span class="rglass"></span></span><b>' + t.name + '</b>' + (hero ? '<span class="rstars">' + sx + '</span>' : '') + info;
+      return (o.isNew ? '<span class="rnew">Neu freigeschaltet!</span>' : '') + (o.isNew ? '' : '<span class="rn">+' + o.n + '</span>') + '<span class="rfig cart"><span class="rplinth"></span><span class="cplat"></span>' + icon(o.k) + (hero ? '' : starRow(lv)) + '<span class="rglass"></span></span><b>' + t.name + '</b>' + (hero ? '<span class="rstars">' + sx + '</span>' : '') + info;
     }
     function stash(el, i) {
       var H = fx.clientHeight, sp = Math.min(62, (fx.clientWidth - 40) / Math.max(n, 1)), x = (i - (n - 1) / 2) * sp, y = H - 118 - (H * 0.14 + 100);
@@ -4813,11 +4835,15 @@ CH.shield = critter({
     { n: 'Arena 4', name: '???', soon: true, ranks: [[900, 'Bald']] }
   ];
   var PLAYABLE = 4;
-  var UNLOCKS = [['guard', 'archer', 'bomb', 'crossbow', 'slappy', 'miner', 'spitter', 'shield'], ['healer', 'doris'], ['knallo'], ['mika']];
+  var UNLOCKS = [['guard', 'archer', 'bomb', 'crossbow', 'slappy', 'miner', 'shield'], ['healer', 'doris'], ['knallo'], ['spitter', 'mika']];
+  var OWN_KEY = 'knirps-arena-own';
+  function arenaOf(k) { for (var g = 0; g < UNLOCKS.length; g++) if (UNLOCKS[g].indexOf(k) >= 0) return g; return -1; }
+  /* in Kisten ziehbar: Arena erreicht (Gruppe 0 = von Anfang an im Besitz) */
+  function inChests(k) { var g = arenaOf(k); return g > 0 && k !== 'hero' && S.maxT >= ARENAS[g].ranks[0][0]; }
   var MAXT_KEY = 'knirps-arena-maxt';
   var DOLCHA_PRICE = 80000;
-  var DEV_ALL = true; /* Testmodus: auf false setzen, dann gelten die normalen Freischaltungen wieder */
-  function unlocked(k) { return DEV_ALL || (k !== 'hero' || S.ownD) && ((k !== 'doris' && k !== 'healer') || S.maxT >= ARENAS[1].ranks[0][0]) && (k !== 'knallo' || S.maxT >= ARENAS[2].ranks[0][0]) && (k !== 'mika' || S.maxT >= ARENAS[3].ranks[0][0]); }
+  var DEV_ALL = false; /* Testmodus: auf false setzen, dann gelten die normalen Freischaltungen wieder */
+  function unlocked(k) { return DEV_ALL || arenaOf(k) === 0 || !!(S.own && S.own[k]) || (k === 'hero' && S.ownD); }
   var NODES = [];
   ARENAS.forEach(function (a, ai) { a.ranks.forEach(function (r, ri) { NODES.push({ t: r[0], name: r[1], ai: ai, first: ri === 0 }); }); });
   function arenaIdxOf(t) { var k = 0; ARENAS.forEach(function (a, i) { if (i < PLAYABLE && t >= a.ranks[0][0]) k = i; }); return k; }
@@ -4849,6 +4875,19 @@ CH.shield = critter({
     return n;
   }
   Object.keys(S.cards).forEach(autoUp);
+  S.own = {};
+  function saveOwn() { try { localStorage.setItem(OWN_KEY, JSON.stringify(S.own)); } catch (e) {} }
+  try {
+    var oo = localStorage.getItem(OWN_KEY);
+    if (oo) S.own = JSON.parse(oo) || {};
+    else { /* bestehender Spielstand: alles, was schon Karten/Stufen/Deckplätze hat, bleibt im Besitz */
+      Object.keys(S.cards).forEach(function (k) { if (S.cards[k] > 0) S.own[k] = 1; });
+      Object.keys(S.up).forEach(function (k) { if (S.up[k] > 0) S.own[k] = 1; });
+      Object.keys(S.hlv).forEach(function (k) { if (S.hlv[k] > 1) S.own[k] = 1; });
+      try { var sd = JSON.parse(localStorage.getItem('knirps-arena-decks') || '{}'); (sd.decks || []).forEach(function (d) { (d.cards || []).forEach(function (k) { S.own[k] = 1; }); if (d.heroKey) S.own[d.heroKey] = 1; }); } catch (e2) {}
+      saveOwn();
+    }
+  } catch (e) {}
   var NAME_KEY = 'knirps-arena-name';
   S.name = 'Spieler'; S.editName = false;
   try { var nm = localStorage.getItem(NAME_KEY); if (nm && nm.trim()) S.name = nm.trim().slice(0, 16); } catch (e) {}
@@ -5101,7 +5140,7 @@ CH.shield = critter({
         (lk ? '<span class="clock">' + mi('lock') + '</span>' : '<span class="ccost' + (t.hero ? ' hlv' : '') + '" aria-label="' + (t.hero ? 'Level ' + heroLv(key) : 'Kosten ' + t.cost) + '">' + (t.hero ? heroLv(key) : t.cost) + '</span>') +
         upArrow(key) + '<span class="cart"><span class="cplat"></span>' + CH[key] + (t.hero ? '' : starRow(upLevel(key))) + '<span class="rglass"></span></span>' +
         (lk ? '' : cardBar(key)) +
-        (lk ? '<span class="clbl">Gesperrt</span>' : t.hero ? '<span class="clbl hh">' + t.name + '</span>' : '') + '</button>';
+        (lk ? '<span class="clbl">' + (inChests(key) ? 'In Kisten' : 'Ab ' + ARENAS[arenaOf(key)].n) + '</span>' : t.hero ? '<span class="clbl hh">' + t.name + '</span>' : '') + '</button>';
     }).join('');
     var got = list.filter(function (k) { return unlocked(k); }).length, dslots = '', dmenu = '';
     for (i = 0; i < DECK_SLOTS; i++) dslots += '<button class="dsl' + (i === S.dslot ? ' on' : '') + '" data-dslot="' + i + '" aria-label="Deck ' + (i + 1) + '">' + (i + 1) + '</button>';
