@@ -3316,10 +3316,10 @@ CH.shield = critter({
       var o = v ? [[-14, -10, 30], [16, 8, 26], [4, -22, 22]] : [[12, -8, 28], [-16, 10, 28], [0, 20, 20]];
       return '<svg width="' + sz + '" height="' + sz + '" viewBox="-50 -50 100 100"><circle r="40" fill="url(#smk)"/>' + o.map(function (c) { return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '" fill="url(#smk)"/>'; }).join('') + '</svg>';
     },
-    magic: '<svg width="52" height="26" viewBox="-26 -13 52 26"><circle r="12" cx="4" fill="#4D9BFF" opacity=".28"/><path d="M-22,0 H12" stroke="#1B2630" stroke-width="6" stroke-linecap="round"/><path d="M-22,0 H12" stroke="#A8CEFF" stroke-width="3" stroke-linecap="round"/><path d="M10,-7 L23,0 L10,7Z" fill="#DCEAFF" stroke="#1B2630" stroke-width="2.200" stroke-linejoin="round"/><path d="M-22,0 L-26,-5 M-22,0 L-26,5" stroke="#2F6FE0" stroke-width="3" stroke-linecap="round"/><circle cx="-8" cy="-6" r="1.800" fill="#fff"/><circle cx="-2" cy="6" r="1.500" fill="#fff"/></svg>',
+    magic: '<svg width="64" height="34" viewBox="-32 -17 64 34"><defs><radialGradient id="mgg"><stop offset="0" stop-color="#E9FCFF" stop-opacity=".9"/><stop offset=".5" stop-color="#7FE3FF" stop-opacity=".35"/><stop offset="1" stop-color="#7FE3FF" stop-opacity="0"/></radialGradient><linearGradient id="mgh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#8EE6FF"/></linearGradient><linearGradient id="mgs" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5CD8FF" stop-opacity="0"/><stop offset=".6" stop-color="#BDF2FF"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient></defs><ellipse cx="2" rx="31" ry="15" fill="url(#mgg)"/><ellipse cx="2" rx="22" ry="8" fill="#7FE3FF" opacity=".28"/><path d="M-26,0 H14" stroke="#38B8F2" stroke-width="8" stroke-linecap="round" opacity=".55"/><path d="M-26,0 H14" stroke="url(#mgs)" stroke-width="4.200" stroke-linecap="round"/><path d="M-22,0 H12" stroke="#fff" stroke-width="1.600" stroke-linecap="round"/><path d="M10,-9 L27,0 L10,9 L14,0Z" fill="url(#mgh)" stroke="#3AA9E6" stroke-width="1.800" stroke-linejoin="round"/><path d="M-22,0 L-30,-8 M-22,0 L-30,8" stroke="#8EE6FF" stroke-width="3.500" stroke-linecap="round"/><path d="M-22,0 L-30,-8 M-22,0 L-30,8" stroke="#fff" stroke-width="1.200" stroke-linecap="round"/><circle cx="-8" cy="-7" r="1.800" fill="#fff"/><circle cx="2" cy="7" r="1.500" fill="#fff"/><circle cx="18" cy="-1" r="2.200" fill="#fff"/></svg>',
     hole: '<svg width="40" height="20" viewBox="-20 -10 40 20"><ellipse rx="17" ry="7" fill="#3B2414" stroke="#1B2630" stroke-width="2"/><ellipse rx="11" ry="4" cy="1" fill="#24150B"/></svg>',
     mound: '<svg width="34" height="22" viewBox="-17 -11 34 22"><path d="M-15,9 Q-12,-8 0,-9 Q12,-8 15,9Z" fill="#8A5A32" stroke="#1B2630" stroke-width="2" stroke-linejoin="round"/><path d="M-8,3 Q-4,-4 2,-3" fill="none" stroke="#B07C4A" stroke-width="2" stroke-linecap="round"/></svg>',
-    bigbolt: '<svg width="104" height="39" viewBox="-90 -32 170 64"><defs><radialGradient id="bbg"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#9FD0FF" stop-opacity=".6"/><stop offset="1" stop-color="#7A5CFF" stop-opacity="0"/></radialGradient><linearGradient id="bbs" x1="0" x2="1"><stop offset="0" stop-color="#8E6BFF" stop-opacity="0"/><stop offset=".4" stop-color="#7FB8FF"/><stop offset="1" stop-color="#fff"/></linearGradient><filter id="bbb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter></defs><ellipse cx="-10" cy="0" rx="82" ry="22" fill="url(#bbg)" opacity=".75"/><path d="M-86,-2 Q-60,-16 -30,-5 M-86,3 Q-60,15 -30,4 M-80,0 H-40" fill="none" stroke="#B9A2FF" stroke-width="2.200" stroke-linecap="round" opacity=".7"/><path d="M-62,0 H40" stroke="#6FB4FF" stroke-width="15" stroke-linecap="round" filter="url(#bbb)" opacity=".9"/><path d="M-62,0 H38" stroke="#1B2630" stroke-width="9" stroke-linecap="round"/><path d="M-62,0 H38" stroke="url(#bbs)" stroke-width="6" stroke-linecap="round"/><path d="M-58,0 H36" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M-64,-11 L-50,0 L-64,11 L-57,0Z" fill="#7FD6FF" stroke="#1B2630" stroke-width="2" stroke-linejoin="round"/><path d="M-52,-8 L-42,0 L-52,8 L-47,0Z" fill="#B9A2FF" stroke="#1B2630" stroke-width="1.600" stroke-linejoin="round"/><path d="M32,-15 L64,0 L32,15 L38,0Z" fill="#9FD8FF" filter="url(#bbb)" opacity=".95"/><path d="M32,-14 L62,0 L32,14 L38,0Z" fill="#F2F8FF" stroke="#1B2630" stroke-width="3" stroke-linejoin="round"/><path d="M40,0 H54" stroke="#7FB8FF" stroke-width="2.400" stroke-linecap="round"/><g fill="#fff"><path d="M-20,-14 l2,5 5,2 -5,2 -2,5 -2,-5 -5,-2 5,-2z"/><path d="M10,10 l1.600,4 4,1.600 -4,1.600 -1.600,4 -1.600,-4 -4,-1.600 4,-1.600z"/><path d="M-45,9 l1.300,3 3,1.300 -3,1.300 -1.300,3 -1.300,-3 -3,-1.300 3,-1.300z"/></g></svg>',
+    bigbolt: '<svg width="104" height="39" viewBox="-90 -32 170 64"><defs><radialGradient id="bbg"><stop offset="0" stop-color="#F4FEFF" stop-opacity=".95"/><stop offset=".4" stop-color="#8EE6FF" stop-opacity=".5"/><stop offset="1" stop-color="#5CD8FF" stop-opacity="0"/></radialGradient><linearGradient id="bbs" x1="0" x2="1"><stop offset="0" stop-color="#5CD8FF" stop-opacity="0"/><stop offset=".45" stop-color="#9FEAFF"/><stop offset="1" stop-color="#fff"/></linearGradient><linearGradient id="bbh" x1="0" x2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#8EE6FF"/></linearGradient></defs><ellipse cx="-6" cy="0" rx="86" ry="27" fill="url(#bbg)" opacity=".8"/><ellipse cx="-6" cy="0" rx="62" ry="12" fill="#7FE3FF" opacity=".3"/><path d="M-88,-3 Q-62,-17 -32,-6 M-88,4 Q-62,16 -32,5 M-82,0 H-42" fill="none" stroke="#BDF2FF" stroke-width="2.400" stroke-linecap="round" opacity=".8"/><path d="M-64,0 H40" stroke="#38B8F2" stroke-width="17" stroke-linecap="round" opacity=".5"/><path d="M-64,0 H38" stroke="#4FD0FF" stroke-width="10" stroke-linecap="round" opacity=".9"/><path d="M-64,0 H38" stroke="url(#bbs)" stroke-width="6.500" stroke-linecap="round"/><path d="M-58,0 H36" stroke="#fff" stroke-width="2.400" stroke-linecap="round"/><path d="M-66,-12 L-50,0 L-66,12 L-58,0Z" fill="#9FEAFF" stroke="#3AA9E6" stroke-width="2" stroke-linejoin="round"/><path d="M-53,-9 L-42,0 L-53,9 L-47,0Z" fill="#E3FAFF" stroke="#3AA9E6" stroke-width="1.600" stroke-linejoin="round"/><path d="M30,-17 L66,0 L30,17 L37,0Z" fill="url(#bbh)" stroke="#3AA9E6" stroke-width="2.400" stroke-linejoin="round"/><path d="M36,-5 L58,0 L36,5Z" fill="#fff" opacity=".85"/><path d="M-20,-22 l2,5 5,2 -5,2 -2,5 -2,-5 -5,-2 5,-2z M14,16 l1.600,4 4,1.600 -4,1.600 -1.600,4 -1.600,-4 -4,-1.600 4,-1.600z" fill="#fff"/></svg>',
     gas: function (sz, v) {
       var o = v ? [[-14, -10, 30], [16, 8, 26], [4, -22, 22]] : [[12, -8, 28], [-16, 10, 28], [0, 20, 20]];
       return '<svg width="' + sz + '" height="' + sz + '" viewBox="-50 -50 100 100"><circle r="40" fill="url(#gsm)"/>' + o.map(function (c) { return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '" fill="url(#gsm)"/>'; }).join('') + '</svg>';
@@ -3364,6 +3364,30 @@ CH.shield = critter({
       { transform: T(P.x, P.y, 0.3 * k, -12), opacity: 1 },
       { transform: T(P.x, P.y, 1.05 * k, 8), opacity: 1, offset: 0.4 },
       { transform: T(P.x, P.y, 1.3 * k, 18), opacity: 0 }], dur || 300);
+  }
+  /* Leuchtblitz ohne Cartoon-Stern (Mündungsfeuer) */
+  var GLOWSVG = '<svg width="70" height="70" viewBox="-35 -35 70 70"><defs><radialGradient id="pgl"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#9FEAFF" stop-opacity=".6"/><stop offset="1" stop-color="#4FD0FF" stop-opacity="0"/></radialGradient></defs><circle r="35" fill="url(#pgl)"/></svg>';
+  function fxGlow(P, k, dur) {
+    var d = mk(GLOWSVG, 0, 0), s = k || 1;
+    play(d, [{ transform: T(P.x, P.y, 0.3 * s, 0), opacity: 0.95 }, { transform: T(P.x, P.y, 1.2 * s, 0), opacity: 0 }], dur || 280);
+  }
+  /* Durchschlag: Pfeil trifft, leuchtet auf und fliegt durch; Energiefunken stieben in Schussrichtung weiter */
+  var STREAKSVG = '<svg width="100" height="12" viewBox="0 0 100 12"><defs><linearGradient id="pst"><stop offset="0" stop-color="#4FD0FF" stop-opacity="0"/><stop offset=".5" stop-color="#9FEAFF" stop-opacity=".9"/><stop offset=".78" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect y="2" width="100" height="8" rx="4" fill="url(#pst)"/><rect y="5" width="100" height="2" rx="1" fill="#fff" opacity=".9"/></svg>';
+  var SPARKSVG = '<svg width="18" height="6" viewBox="0 0 18 6"><defs><linearGradient id="psp"><stop offset="0" stop-color="#7FE3FF" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><rect y="1.500" width="18" height="3" rx="1.500" fill="url(#psp)"/></svg>';
+  function fxPierce(P, rot, k, tel) {
+    var s = k || 1, a = (rot || 0) / 57.2958, ux = Math.cos(a), uy = Math.sin(a), i;
+    fxGlow(P, 1.7 * s, 360);
+    if (tel && tel.animate) { try { tel.animate([{ filter: 'brightness(1)' }, { filter: 'brightness(2.1) saturate(0.7) drop-shadow(0 0 7px #8EE6FF)', offset: 0.25 }, { filter: 'brightness(1)' }], { duration: 300, easing: 'ease-out' }); } catch (e) {} }
+    var cx = P.x + ux * 14 * s, cy = P.y + uy * 14 * s, st = mk(STREAKSVG, 0, 0);
+    play(st, [{ transform: T(cx, cy, 0.25 * s, rot), opacity: 1 }, { transform: T(cx + ux * 22 * s, cy + uy * 22 * s, 1.05 * s, rot), opacity: 0.95, offset: 0.4 }, { transform: T(cx + ux * 46 * s, cy + uy * 46 * s, 1.3 * s, rot), opacity: 0 }], 340, { easing: 'ease-out' });
+    for (i = 0; i < 12; i++) {
+      var sp = (Math.random() - 0.5) * 1.0, aa = a + sp, dist = (44 + Math.random() * 56) * s, d = mk(SPARKSVG, 0, 0);
+      play(d, [{ transform: T(P.x + ux * 4, P.y + uy * 4, 0.9 * s, aa * 57.2958), opacity: 1 }, { transform: T(P.x + Math.cos(aa) * dist, P.y + Math.sin(aa) * dist, 0.5 * s, aa * 57.2958), opacity: 0 }], 300 + Math.random() * 180, { easing: 'ease-out' });
+    }
+    for (i = 0; i < 4; i++) {
+      var ba = a + Math.PI + (Math.random() - 0.5) * 1.5, bd = (12 + Math.random() * 14) * s, d2 = mk(SPARKSVG, 0, 0);
+      play(d2, [{ transform: T(P.x, P.y, 0.7 * s, ba * 57.2958), opacity: 0.9 }, { transform: T(P.x + Math.cos(ba) * bd, P.y + Math.sin(ba) * bd, 0.4 * s, ba * 57.2958), opacity: 0 }], 320 + Math.random() * 120, { easing: 'ease-out' });
+    }
   }
   function fxRing(P, col, to, dur) {
     var d = mk(SVG.ring(col), 0, 0);
@@ -3985,14 +4009,14 @@ CH.shield = critter({
       wpn(u, [{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(' + (-vx * 6) + 'px,' + (-vy * 6) + 'px) scale(1.2)', offset: 0.5 },
               { transform: 'translate(' + (vx * 4) + 'px,' + (vy * 4) + 'px) scale(0.95)', offset: 0.6 }, { transform: 'translate(0,0) scale(1)' }], 900);
       later(0, function () { floatText(u, 'Riesenpfeil!', 'reflect'); });
-      later(520, function () { fxStar(A, '#C9E4FF', 1.1, 340); fxRing(A, '#9FD0FF', 1.6, 420); fly(A, B0, fl, SVG.bigbolt, a * 57.2958, true); shake(4, 220); });
+      later(520, function () { fxGlow(A, 1.5, 380); fly(A, B0, fl, SVG.bigbolt, a * 57.2958, true); shake(4, 220); });
       for (var sp = 1; sp <= 9; sp++) (function (f) {
-        later(520 + fl * f, function () { fxStar({ x: A.x + (B0.x - A.x) * f + (Math.random() - 0.5) * 14, y: A.y + (B0.y - A.y) * f + (Math.random() - 0.5) * 14 }, f % 2 ? '#C9E4FF' : '#D8C2FF', 0.45 + Math.random() * 0.3, 420); });
+        later(520 + fl * f, function () { fxGlow({ x: A.x + (B0.x - A.x) * f + (Math.random() - 0.5) * 14, y: A.y + (B0.y - A.y) * f + (Math.random() - 0.5) * 14 }, 0.4 + Math.random() * 0.3, 400); });
       })(sp / 10);
       hits.forEach(function (H) {
         later(H.at, function () {
           var vv = vec(u, H.e);
-          fxStar(ctr(H.e), '#A8CEFF', 1.4, 340); fxRing(ctr(H.e), '#4D9BFF', 1.6, 400);
+          fxPierce(ctr(H.e), a * 57.2958, 1.5, H.e.el);
           showHit(H.e, vv, H.d, 2.2); shake(6, 260);
         });
       });
@@ -4126,18 +4150,18 @@ CH.shield = critter({
       });
       var mgx = u.x, mgy = u.y; while (mgx + ux * 0.5 >= -0.4 && mgx + ux * 0.5 <= COLS - 0.6 && mgy + uy * 0.5 >= -0.4 && mgy + uy * 0.5 <= ROWS - 0.6) { mgx += ux * 0.5; mgy += uy * 0.5; }
       var BF = ctr({ x: mgx, y: mgy, type: u.type }), bdx = BF.x - A.x, bdy = BF.y - A.y, btot = Math.hypot(bdx, bdy) || 1, brot = Math.atan2(bdy, bdx) * 57.2958;
-      var fx2 = 140 + btot * 0.7, sTot = Math.max(1, Math.hypot(mgx - u.x, mgy - u.y));
+      var XST = 260, fx2 = 140 + btot * 0.7, sTot = Math.max(1, Math.hypot(mgx - u.x, mgy - u.y));
       lean(u, v, 560, 4, 0.42);
       wpn(u, [{ transform: 'translate(0,0) scale(1)', filter: 'brightness(1)' }, { transform: 'translate(-4px,0) scale(1.14,1.06)', filter: 'brightness(1.7)', offset: 0.42 },
               { transform: 'translate(2px,0) scale(0.96)', filter: 'brightness(1.2)', offset: 0.52 }, { transform: 'translate(0,0) scale(1)', filter: 'brightness(1)' }], 560);
-      later(180, function () { fxStar(A, '#A8CEFF', 0.5, 220); });
-      later(260, function () { fly(A, BF, fx2, SVG.magic, brot, true); });
+      later(180, function () { fxGlow(A, 0.7, 240); });
+      later(XST, function () { fly(A, BF, fx2, SVG.magic, brot, true); });
       var tt = 1;
-      hitAt = 260 + fx2 * Math.min(1, gl / sTot);
-      later(hitAt, function () { fxStar(v.B, '#A8CEFF', 0.8, 260); fxRing(v.B, '#4D9BFF', 1.3, 320); showHit(t, v, dmg, 1); });
+      hitAt = XST + fx2 * Math.min(1, gl / sTot);
+      later(hitAt, function () { fxPierce(v.B, brot, 1, t.el); showHit(t, v, dmg, 1); });
       others.forEach(function (o) {
-        var at = 260 + fx2 * Math.min(1, o.s / sTot); if (at > hitAt) hitAt = at;
-        later(at, function () { var vv = vec(u, o.e); fxStar(ctr(o.e), '#A8CEFF', 0.8, 260); fxRing(ctr(o.e), '#4D9BFF', 1.3, 320); showHit(o.e, vv, o.d, 1); });
+        var at = XST + fx2 * Math.min(1, o.s / sTot); if (at > hitAt) hitAt = at;
+        later(at, function () { var vv = vec(u, o.e); fxPierce(ctr(o.e), brot, 1, o.e.el); showHit(o.e, vv, o.d, 1); });
       });
     } else if (kind === 'arrow') {
       // Bogen spannen, loslassen, Pfeil fliegt
