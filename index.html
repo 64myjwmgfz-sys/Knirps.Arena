@@ -1757,8 +1757,8 @@ html, body { overscroll-behavior-x: none; }
               blurb: 'Schnelle Pfeile im hohen Bogen aus bis zu 5 Feldern Entfernung.' },
     spark:  { name: 'Funke',       cost: 3, hp: 10, atk: 9, range: 2, ai: 10, mi: 6, color: '#8B5CD6', fx: 'bolt',
               blurb: 'Sehr langsam, aber jeder Zauber trifft hart.' },
-    healer: { name: 'Hexe',        cost: 3, hp: 22, atk: 3,  range: 3, ai: 6, mi: 5, color: '#4E9A22', fx: 'toss', potion: { every: 7, heal: 14, secs: 7, name: 'Heiltrank', desc: 'Wirft alle 7 Sekunden einen Heiltrank auf die nächste Figur oder den nächsten Helden in ihrem Team.' },
-              blurb: 'Wirft Gifttränke auf Gegner. Alle 7 Sekunden heilt ein Trank den nächsten Verbündeten.' },
+    healer: { name: 'Hexe',        cost: 3, hp: 22, atk: 3,  range: 3, ai: 6, mi: 5, color: '#4E9A22', fx: 'toss', potion: { every: 7, heal: 14, secs: 7, name: 'Heiltrank', desc: 'Wirft alle 7 Sekunden einen Heiltrank auf die nächste Figur oder den nächsten Helden in ihrem Team. Ab Stufe 3 werden alle Verbündeten im 3×3-Feld um das Ziel geheilt.' },
+              blurb: 'Wirft rote Schadenstränke auf Gegner. Alle 7 Sekunden heilt ein Trank den nächsten Verbündeten, ab Stufe 3 alle im 3×3-Feld.' },
     ram:    { name: 'Rammbock',    cost: 3, hp: 21, atk: 5, range: 1, ai: 6,  mi: 2, color: '#B4563C', front: true, fx: 'ram',
               blurb: 'Stürmt blitzschnell vor und rammt zu.' },
     sling:  { name: 'Schleuderer', cost: 2, hp: 12, atk: 2,  range: 3, ai: 3,  mi: 5, color: '#D9B13B', fx: 'sling',
@@ -3455,9 +3455,9 @@ CH.shield = critter({
         { transform: T(P.x + Math.cos(ang) * r, P.y + Math.sin(ang) * r, 0.2, 0), opacity: 0 }], 380 + Math.random() * 120);
     }
   }
-  function fxPlus(P) {
-    for (var i = 0; i < 3; i++) {
-      var dx = (i - 1) * 16, d = mk(SVG.plus, 0, 0);
+  function fxPlus(P, n) {
+    for (var i = 0; i < (n || 3); i++) {
+      var dx = n === 1 ? 0 : (i - 1) * 16, d = mk(SVG.plus, 0, 0);
       play(d, [
         { transform: T(P.x + dx, P.y + 6, 0.4, 0), opacity: 0 },
         { transform: T(P.x + dx, P.y - 8, 1, 0), opacity: 1, offset: 0.25 },
@@ -3724,19 +3724,27 @@ CH.shield = critter({
     try { var gw = partOf(t, '.wpn'); if (gw && gw.animate && !RM) { if (t.guardAnim) t.guardAnim.cancel(); t.guardAnim = gw.animate([{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(0,-10px) scale(1.7)' }], { duration: 260, fill: 'forwards', easing: 'ease-out' }); } } catch (e) {}
     floatText(t, 'Bollwerk!', 'reflect');
   }
-  function fxGrid(cx0, cy0, dur) {
+  function fxGrid(cx0, cy0, dur, fillc, strokec, soft) {
     var el = document.createElement('div'), polys = '';
     el.className = 'fxgrid';
     [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
       var x = cx0 + d[0], y = cy0 + d[1];
       if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return;
-      polys += '<polygon points="' + pts([proj(x, y), proj(x + 1, y), proj(x + 1, y + 1), proj(x, y + 1)]) + '" fill="#FFB84A" fill-opacity=".42" stroke="#FF8A3D" stroke-width="2.600" stroke-linejoin="round"/>';
+      polys += '<polygon points="' + pts([proj(x, y), proj(x + 1, y), proj(x + 1, y + 1), proj(x, y + 1)]) + '" fill="' + (fillc || '#FFB84A') + '" fill-opacity=".42" stroke="' + (strokec || '#FF8A3D') + '" stroke-width="2.600" stroke-linejoin="round"/>';
     });
     el.innerHTML = '<svg viewBox="0 0 360 780" preserveAspectRatio="none">' + polys + '</svg>';
-    fxEl.appendChild(el);
-    play(el, [{ opacity: 0 }, { opacity: 1, offset: 0.25 }, { opacity: 0.8, offset: 0.55 }, { opacity: 0 }], dur || 520);
+    (soft ? fxgEl : fxEl).appendChild(el);
+    play(el, [{ opacity: 0 }, { opacity: soft ? 0.55 : 1, offset: 0.25 }, { opacity: soft ? 0.4 : 0.8, offset: 0.55 }, { opacity: 0 }], dur || 520);
   }
 
+  /* einzelnes Eckfeld, damit der Heilbereich ein volles 3x3 wird */
+  function fxGridCell(cx0, cy0, dur) {
+    if (cx0 < 0 || cx0 >= COLS || cy0 < 0 || cy0 >= ROWS) return;
+    var el = document.createElement('div'); el.className = 'fxgrid';
+    el.innerHTML = '<svg viewBox="0 0 360 780" preserveAspectRatio="none"><polygon points="' + pts([proj(cx0, cy0), proj(cx0 + 1, cy0), proj(cx0 + 1, cy0 + 1), proj(cx0, cy0 + 1)]) + '" fill="#6DEB8E" fill-opacity=".42" stroke="#2FBF63" stroke-width="2.600" stroke-linejoin="round"/></svg>';
+    fxgEl.appendChild(el);
+    play(el, [{ opacity: 0 }, { opacity: 0.55, offset: 0.25 }, { opacity: 0.4, offset: 0.55 }, { opacity: 0 }], dur || 520);
+  }
   /* Echter Qualm: weiche, wachsende, verblassende Wolken */
   var gasMode = false;
   function puff(P, tx, ty, s0, s1, dur, delay, op, v) {
@@ -4348,14 +4356,22 @@ CH.shield = critter({
         } else showHit(t, v, dmg, 1.8 * k);
       });
     } else {
-      // Hexe: Gifttrank aus dem Gürtel ziehen, hoch ausholen, im Bogen werfen, Glas zerspringt, Giftwolke
-      var fh = 260 + v.d * 0.9;
-      lean(u, v, 560, 4, 0.42);
-      wpn(u, [{ transform: 'rotate(0deg) scale(1)' }, { transform: 'rotate(-40deg) translate(-2px,-8px) scale(1.12)', offset: 0.4 }, { transform: 'rotate(12deg) translate(' + (v.x * 4) + 'px,' + (v.y * 4) + 'px)', offset: 0.58 }, { transform: 'rotate(0deg)' }], 560);
-      later(180, function () { fxStar(A, '#C9F26B', 0.4, 200); });
-      later(308, function () { lob(A, v.B, fh, SVG.potion('#8FD83A', '#7BC043')); });
-      hitAt = 308 + fh;
-      later(hitAt, function () { potionSplash(v.B, '#8FD83A', '#B58CFF', k); showHit(t, v, dmg, 1.1 * k); });
+      // Hexe: roten Schadenstrank hochnehmen, weit ausholen, kräftig werfen; der Gegner zuckt zusammen
+      var fh = 240 + v.d * 0.8, HA = { x: A.x - v.x * 3, y: A.y - 26 };
+      var tk = tokOf(u);
+      if (tk && !RM) anim(tk, [{ transform: T(0, 0, 1, 0) },
+        { transform: T(-v.x * 6, -v.y * 6 + 1, 1, -5 * (v.x >= 0 ? 1 : -1)) + ' scale(0.95,1.07)', offset: 0.34 },
+        { transform: T(-v.x * 7, -v.y * 7 + 1, 1, -6 * (v.x >= 0 ? 1 : -1)) + ' scale(0.95,1.07)', offset: 0.44 },
+        { transform: T(v.x * 9, v.y * 9, 1, 5 * (v.x >= 0 ? 1 : -1)) + ' scale(1.06,0.94)', offset: 0.56 },
+        { transform: T(0, 0, 1, 0) }], 620, { easing: 'ease-in-out' });
+      wpn(u, [{ transform: 'rotate(0deg) scale(1)' }, { transform: 'rotate(-60deg) translate(-2px,-10px) scale(1.12)', offset: 0.4 }, { transform: 'rotate(20deg) translate(' + (v.x * 6) + 'px,' + (v.y * 6) + 'px)', offset: 0.56 }, { transform: 'rotate(0deg)' }], 620);
+      later(120, function () {
+        var ph = mk(SVG.potion('#E5393B', '#FF6B6B'), HA.x, HA.y);
+        play(ph, [{ transform: T(A.x, A.y, 0.7, 0), opacity: 0 }, { transform: T(HA.x, HA.y, 1, -8), opacity: 1, offset: 0.35 }, { transform: T(HA.x, HA.y - 2, 1.12, -14), opacity: 1, offset: 0.85 }, { transform: T(HA.x, HA.y - 2, 1.12, -14), opacity: 0 }], 250);
+      });
+      later(340, function () { lob(HA, v.B, fh, SVG.potion('#E5393B', '#FF6B6B')); });
+      hitAt = 340 + fh;
+      later(hitAt, function () { potionHit(v.B, t, v, k); showHit(t, v, dmg, 1.0 * k); flinch(t, v); });
     }
     if (def.ability && def.ability.heal) chargeHero(u, hitAt);
     if (def.aoe) {
@@ -4366,6 +4382,25 @@ CH.shield = critter({
     post.forEach(function (fn) { later(hitAt, fn); });
   }
 
+  /* Schadenstrank-Treffer: nur ein dünner roter Ring und ein paar rote Tropfen */
+  var REDRING = '<svg width="50" height="50" viewBox="-25 -25 50 50"><circle r="21" fill="none" stroke="#FF5A5A" stroke-width="2.4"/></svg>';
+  function potionHit(P, t, v, k) {
+    var r = mk(REDRING, 0, 0), kk = k || 1;
+    play(r, [{ transform: T(P.x, P.y, 0.3 * kk, 0), opacity: 0.95 }, { transform: T(P.x, P.y, 1.0 * kk, 0), opacity: 0 }], 300, { easing: 'ease-out' });
+    for (var i = 0; i < 7; i++) {
+      var ang = i / 7 * Math.PI * 2 + Math.random() * 0.5, rr = 14 + Math.random() * 12, d = mk(SVG.dot(i % 2 ? '#E5393B' : '#FF6B6B', 3 + Math.random() * 1.6), 0, 0);
+      play(d, [{ transform: T(P.x, P.y, 0.9, 0), opacity: 1 }, { transform: T(P.x + Math.cos(ang) * rr, P.y + Math.sin(ang) * rr * 0.7 + 4, 0.5, 0), opacity: 0 }], 380 + Math.random() * 120, { easing: 'ease-out' });
+    }
+  }
+  /* Der Getroffene zuckt kurz zusammen */
+  function flinch(t, v) {
+    var tk = tokOf(t); if (!tk || RM) return;
+    anim(tk, [{ transform: T(0, 0, 1, 0), filter: 'brightness(1)' },
+      { transform: T(-1.5, 1.5, 1, -2) + ' scale(0.93,0.9)', filter: 'brightness(1.5)', offset: 0.22 },
+      { transform: T(1.5, 0.5, 1, 2) + ' scale(1.03,0.97)', offset: 0.5 },
+      { transform: T(-0.5, 0, 1, -1), offset: 0.75 },
+      { transform: T(0, 0, 1, 0), filter: 'brightness(1)' }], 340, { easing: 'ease-out' });
+  }
   /* Zerspringende Flasche: Glassplitter, Spritzer, Blasen, Ring und eine kurze Giftwolke */
   function potionSplash(P, c1, c2, k) {
     var kk = k || 1;
@@ -4383,17 +4418,24 @@ CH.shield = critter({
     shake(2, 120);
   }
 
-  function healFx(u, a, amt) {
+  function healFx(u, a, amt, grp) {
     var v = vec(u, a), fl = 260 + v.d * 0.9, A = { x: v.A.x + v.x * 14, y: v.A.y - 6 };
     try { faceVec(u, v); } catch (e) {}
     try { limbsAttack(u, v, 'toss', 560, 0.55); } catch (e) {}
     lean(u, v, 560, 4, 0.42);
     wpn(u, [{ transform: 'rotate(0deg) scale(1)', filter: 'hue-rotate(0deg)' }, { transform: 'rotate(-40deg) translate(-2px,-8px) scale(1.12)', filter: 'hue-rotate(90deg) brightness(1.3)', offset: 0.4 }, { transform: 'rotate(12deg)', filter: 'hue-rotate(90deg)', offset: 0.6 }, { transform: 'rotate(0deg)', filter: 'hue-rotate(0deg)' }], 560);
-    later(180, function () { fxStar(A, '#FFB3D1', 0.4, 200); });
-    later(308, function () { lob(A, v.B, fl, SVG.potion('#FF8FB8', '#FFB3D1')); });
+    later(308, function () { lob(A, v.B, fl, SVG.potion('#4FCB5E', '#8CF5BE')); });
     later(308 + fl, function () {
       setHp(a); if (amt > 0) floatText(a, '+' + amt, 'heal');
-      potionSplash(v.B, '#FF9EC4', '#8CF5BE', 0.8); fxPlus(v.B); fxRing(v.B, '#7CFFB8', 1.6, 500);
+      fxPlus(v.B);
+      if (grp) {
+        fxGrid(a.x, a.y, 650, '#6DEB8E', '#2FBF63', true); /* 3x3 leuchtet leicht grün, hinter den Figuren */
+        [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (d) { fxGridCell(a.x + d[0], a.y + d[1], 700); });
+        grp.forEach(function (g) {
+          setHp(g.e); if (g.amt > 0) { floatText(g.e, '+' + g.amt, 'heal'); fxPlus(ctr(g.e), 1); }
+          if (!RM && g.e.el) anim(tokOf(g.e), [{ filter: 'brightness(1)' }, { filter: 'brightness(1.6) saturate(1.3)', offset: 0.3 }, { filter: 'brightness(1)' }], 520);
+        });
+      }
       if (!RM && a.el) anim(tokOf(a), [{ filter: 'brightness(1)' }, { filter: 'brightness(1.6) saturate(1.3)', offset: 0.3 }, { filter: 'brightness(1)' }], 520);
     });
   }
@@ -4624,7 +4666,11 @@ CH.shield = critter({
           u.potT = 0; u.potSeg = 0; setCharge(u, 0);
           var hl = Math.round(pot.heal * LV[u.level]);
           var hb0 = ally.hp; ally.hp = Math.min(ally.max, ally.hp + hl);
-          healFx(u, ally, ally.hp - hb0);
+          var grp = null;
+          if (u.level >= 3) {
+            grp = S.runtime.filter(function (a) { return a.hp > 0 && a.team === u.team && a !== ally && dist(ally, a) <= 1; }).map(function (a) { var b0 = a.hp; a.hp = Math.min(a.max, a.hp + hl); return { e: a, amt: a.hp - b0 }; });
+          }
+          healFx(u, ally, ally.hp - hb0, grp);
           u.cd = u.ai - 1;
           return;
         }
