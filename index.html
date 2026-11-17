@@ -1853,13 +1853,12 @@ html, body { overscroll-behavior-x: none; }
   var KEYS = Object.keys(TYPES);
   var POOL = KEYS.filter(function (k) { return !TYPES[k].hero && TYPES[k].summon !== true; });
   var HEROES = KEYS.filter(function (k) { return TYPES[k].hero; });
-  var SUMMON_EVERY = [7, 6, 5, 4], SUMMON_N = [1, 1, 2, 2];
+  var SUMMON_EVERY = [7, 7, 7, 7], SUMMON_N = [1, 1, 1, 1];
   var DECK_SIZE = 5, DECK_TOTAL = 6;
   var CROWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.5 5 8l4.5 4.5L12 6l2.5 6.5L19 8l1.5 10.5z" fill="#3A2500"/></svg>';
   var LV = [1, 1.35, 1.9, 2.7];
   /* 3 Fähigkeiten-Slots je Mini (für ★, ★★, ★★★); null = noch leer. Bisher nur bei Bogi belegt. */
   var PERKS = { archer: [null, { name: 'Doppelschuss', desc: 'Schießt 2 Pfeile gleichzeitig, wenn zwei Gegner in Reichweite sind. Sonst nur einen.' }, null],
-    coach: [{ name: 'Schnellerer Ruf', desc: 'Ruft alle 6 Sekunden ein Mädchen. Die Mädchen werden stärker.' }, { name: 'Doppelruf', desc: 'Ruft alle 5 Sekunden 2 Mädchen auf einmal.' }, { name: 'Große Truppe', desc: 'Ruft alle 4 Sekunden 2 Mädchen. Die Mädchen sind noch stärker.' }],
     spitter: [null, null, { name: 'Flammenmeer', desc: 'Jeder Feuerball macht Flächenschaden im Kreuz: das Ziel und die 4 Nachbarfelder werden getroffen.' }] };
   /* Helden-Level: aktuell bis Level 5 (später bis 15). Je Level mehr Leben und Angriff; auf Level 5 (später 10, 15) kommt eine Verstärkung der Fähigkeit. */
   var HERO_MAXLV = 5, HERO_UP_COSTS = [400, 1200, 3000, 7500], HERO_CARD_NEED = [10, 25, 50, 100], HERO_PERK_LVS = [5, 10, 15];
@@ -2618,13 +2617,8 @@ CH.shield = critter({
     return B;
   }
 
-  // Sternstufe neuer Bot-Figuren je nach Arena: Training 0, Arena 1 = 1 Stern, danach 2 (manche eine Stufe darunter)
-  function botLvl() {
-    var a = S.arenaIdx || 0, base = [0, 1, 2, 2][Math.min(a, 3)];
-    if (a === 2 && Math.random() < 0.3) base--;
-    if (a >= 3 && Math.random() < 0.4) base++;
-    return Math.max(0, base);
-  }
+  // Neue Bot-Figuren starten auf Stufe 0
+  function botLvl() { return 0; } /* neue Bot-Figuren starten immer auf Stufe 0 und werden bis zur Arena-Obergrenze (botCap) bezahlt verbessert */
 
   function botCap() { return [0, 1, 2, 3][Math.min(S.arenaIdx || 0, 3)]; } /* höchste Sternstufe der Bots je Arena */
 
@@ -3338,7 +3332,7 @@ CH.shield = critter({
   function ms(n) { return n / S.speed; }
   function later(n, fn) { setTimeout(fn, ms(n)); }
   function aliveUnits() { return S.runtime.filter(function (u) { return u.hp > 0; }); }
-  function dist(a, b) { return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)); } /* auch diagonal: ein Feld schräg zählt wie ein Feld geradeaus */
+  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y) - 0.42; } /* unsichtbarer Kreis: gleiche Reichweite in alle Richtungen; ein Nachbarfeld schräg (1,41) zählt noch als Nahkampf */
   function occupied(x, y) { return S.runtime.some(function (u) { return u.hp > 0 && u.x === x && u.y === y; }); }
   function cx(x) { return ((x + 0.5) * 100 / COLS) + '%'; }
 
@@ -3889,6 +3883,9 @@ CH.shield = critter({
     t.hp = Math.max(0, t.hp - out);
     return out;
   }
+  /* Schaden erst beim sichtbaren Treffer abziehen (Pfeil ist noch unterwegs): hurt() rechnet alles aus, die Lebenspunkte werden zurueckgesetzt und beim Aufprall abgezogen */
+  function hurtLate(src, t, dmg, post) { var h0 = t.hp, d = hurt(src, t, dmg, post); t.hp = h0; return d; }
+  function applyLate(t, d) { if (t.hp > 0) t.hp = Math.max(0, t.hp - (d || 0)); }
   function reflectFx(src, t, n) {
     if (!src.el) return;
     setHp(src);
@@ -4227,7 +4224,7 @@ CH.shield = critter({
       if (!best) return;
       var rows = Math.abs(best.y - sy) + Math.abs(best.x - sx) * 0.6, dur = 800 + rows * 230, steps = Math.max(6, Math.round(rows * 2.4));
       u.x = best.x; u.y = best.y; u.digT = Math.ceil(dur / TICK) + 1; u.cd = 1;
-      if (pushed) { pushed.dx = Math.sign(pushed.nx - pushed.e.x); pushed.e.x = pushed.nx; pushed.e.lastX = -1; }
+      if (pushed) { pushed.dx = Math.sign(pushed.nx - pushed.e.x); pushed.e.x = pushed.nx; pushed.e.lastX = -1; if (pushed.e.el) place(pushed.e); /* sofort sichtbar versetzen, damit Anzeige und Spalte (z.B. Bolzos Riesenpfeil) zusammenpassen */ }
       var el = u.el; if (!el) return;
       try { setFacing(u, u.team === 'p' ? 'B' : 'F', 1); } catch (e) {}
       el.style.visibility = 'hidden';
@@ -4283,7 +4280,7 @@ CH.shield = critter({
           .sort(function (a2, b2) { return Math.abs(a2.y - u.y) - Math.abs(b2.y - u.y); });
         foes.forEach(function (e) {
           var frac = Math.abs(e.y - u.y) / rows;
-          hits.push({ e: e, d: hurt(u, e, u.atk * def.opener.mult, post), at: fl * Math.min(1, frac) });
+          hits.push({ e: e, d: hurtLate(u, e, u.atk * def.opener.mult, post), at: fl * Math.min(1, frac) });
         });
         (function () { fxGlow(A, 1.5, 380); var gdx = B0.x - A.x, gdy = B0.y - A.y, gd = Math.hypot(gdx, gdy) || 1, gD = Math.max(gd + 30, exitDist(A, gdx / gd, gdy / gd) + 60), G2 = { x: A.x + (gdx / gd) * gD, y: A.y + (gdy / gd) * gD }, fl2 = fl * gD / gd; fly(A, G2, fl2, SVG.bigbolt, a * 57.2958, true, 1.1); fxStreak(A, G2, fl2, a * 57.2958, 1.3, (gD - 60 - 200) / gD); shake(4, 220); })();
             for (var sp = 1; sp <= 9; sp++) (function (f) {
@@ -4291,7 +4288,7 @@ CH.shield = critter({
             })(sp / 10);
             hits.forEach(function (H) {
               later(H.at, function () {
-                var vv = vec(u, H.e);
+                var vv = vec(u, H.e); applyLate(H.e, H.d);
                 fxPierce(ctr(H.e), a * 57.2958, 1.5, H.e.el);
                 showHit(H.e, vv, H.d, 2.2); shake(6, 260);
               });
@@ -4437,7 +4434,7 @@ CH.shield = critter({
       S.runtime.forEach(function (e) {
         if (e === t || e.hp <= 0 || e.team === u.team || e.digT > 0) return;
         var rx = e.x - u.x, ry = e.y - u.y, sd = rx * ux + ry * uy, pd = Math.abs(rx * uy - ry * ux);
-        if (sd > 0 && pd <= 0.55) others.push({ e: e, s: sd, d: hurt(u, e, u.atk, post) });
+        if (sd > 0 && pd <= 0.55) others.push({ e: e, s: sd, d: hurtLate(u, e, u.atk, post) });
       });
       var mgx = u.x, mgy = u.y; while (mgx + ux * 0.5 >= -0.4 && mgx + ux * 0.5 <= COLS - 0.6 && mgy + uy * 0.5 >= -0.4 && mgy + uy * 0.5 <= ROWS - 0.6) { mgx += ux * 0.5; mgy += uy * 0.5; }
       var BF = ctr({ x: mgx, y: mgy, type: u.type }), bdx = BF.x - A.x, bdy = BF.y - A.y, btot = Math.hypot(bdx, bdy) || 1, brot = Math.atan2(bdy, bdx) * 57.2958;
@@ -4450,11 +4447,12 @@ CH.shield = critter({
       later(XST - 20, function () { fxGlow(tipOf(u, v, A), 0.8, 240); });
       later(XST, function () { var bD = Math.max(btot + 30, exitDist(A, bdx / btot, bdy / btot) + 50), BF2 = { x: A.x + (bdx / btot) * bD, y: A.y + (bdy / btot) * bD }, fx2b = fx2 * bD / btot; fly(A, BF2, fx2b, SVG.magic, brot, true, 0.82); fxStreak(A, BF2, fx2b, brot, 1, (bD - 50 - 170) / bD); });
       var tt = 1;
+      t.hp = Math.min(t.max, t.hp + dmg); /* Hauptziel: Abzug erst beim Aufprall */
       hitAt = XST + fx2 * Math.min(1, gl / sTot);
-      later(hitAt, function () { fxPierce(v.B, brot, 1, t.el, true); showHit(t, v, dmg, 1); });
+      later(hitAt, function () { applyLate(t, dmg); fxPierce(v.B, brot, 1, t.el, true); showHit(t, v, dmg, 1); });
       others.forEach(function (o) {
         var at = XST + fx2 * Math.min(1, o.s / sTot); if (at > hitAt) hitAt = at;
-        later(at, function () { var vv = vec(u, o.e); fxPierce(ctr(o.e), brot, 1, o.e.el, true); showHit(o.e, vv, o.d, 1); });
+        later(at, function () { applyLate(o.e, o.d); var vv = vec(u, o.e); fxPierce(ctr(o.e), brot, 1, o.e.el, true); showHit(o.e, vv, o.d, 1); });
       });
     } else if (kind === 'arrow') {
       // Bogen spannen, loslassen, Pfeil fliegt
@@ -4524,10 +4522,11 @@ CH.shield = critter({
           { transform: T(X, Yc + H * 0.12, 0.5, 0), opacity: 0, offset: 1 }], dur, { easing: 'ease-in-out', delay: dl });
       };
       /* Feuerstoss im Kreuz: leuchtende gelb-weisse Glutkugeln poppen von der Mitte nach aussen auf die 5 Felder, ganz kurz */
-      var crossFire = function (cx0, cy0, dur) {
+      var crossFire = function (cx0, cy0, dur, only) {
         var k0 = board.clientWidth / VW, wv = Math.abs(proj(cx0 + 1, cy0).x - proj(cx0, cy0).x) * k0, uid = 'gl' + Math.floor(Math.random() * 1e6);
         var orb = '<svg width="100" height="100" viewBox="-50 -50 100 100"><defs><radialGradient id="' + uid + '"><stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/><stop offset=".28" stop-color="#FFF3A0" stop-opacity=".98"/><stop offset=".55" stop-color="#FFC531" stop-opacity=".75"/><stop offset=".8" stop-color="#FF8A1F" stop-opacity=".3"/><stop offset="1" stop-color="#FF7A1F" stop-opacity="0"/></radialGradient></defs><circle r="50" fill="url(#' + uid + ')"/></svg>';
         var spots = [[0, 0, 2.2], [1, 0, 1.6], [-1, 0, 1.6], [0, 1, 1.6], [0, -1, 1.6], [0.5, 0, 1.3], [-0.5, 0, 1.3], [0, 0.5, 1.3], [0, -0.5, 1.3]];
+        if (only) spots = [[0, 0, 1.25], [0, 0, 0.8]];
         spots.forEach(function (sp) {
           var q = proj(cx0 + 0.5 + sp[0], cy0 + 0.5 + sp[1]), X = q.x * k0, Y = q.y * k0 - wv * 0.18, sz = wv * sp[2], d = Math.hypot(sp[0], sp[1]) * 70;
           var o = mk(orb, X, Y);
@@ -4549,7 +4548,8 @@ CH.shield = critter({
           shake(4, 220);
           aoeHit.forEach(function (e) { showHit(e, vec(u, e), e.dmgOut, 1.1 * k); });
         } else {
-          burn(B, 1, 0);
+          /* Einzelziel: gleicher Glut-Blitz wie Stufe 3, nur auf dem Ziel, keine stehende Flamme */
+          crossFire(tx0, ty0, 480, true);
           shake(k > 1 ? 3 : 1.8, 140); showHit(t, v, dmg, 1.1 * k);
         }
       });
@@ -4868,7 +4868,7 @@ CH.shield = critter({
     u.sumT = (u.sumT || 0) + 1;
     if (u.sumT < need) return;
     u.sumT = 0;
-    var n = SUMMON_N[lv], gt = TYPES.girl, m = LV[lv];
+    var n = SUMMON_N[lv], gt = TYPES.girl, m = 1;
     var fwd = u.team === 'p' ? -1 : 1, cells = [];
     for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) {
       var x = u.x + dx, y = u.y + dy;
@@ -5338,7 +5338,8 @@ CH.shield = critter({
   function inChests(k) { var g = arenaOf(k); return g > 0 && k !== 'hero' && S.maxT >= ARENAS[g].ranks[0][0]; }
   var MAXT_KEY = 'knirps-arena-maxt';
   var DOLCHA_PRICE = 80000;
-  var DEV_ALL = false; /* Testmodus: auf false setzen, dann gelten die normalen Freischaltungen wieder */
+  /* Entwickler-Modus: gilt nur in der Testversion (Artefakt/lokal), niemals auf der echten GitHub-Seite */
+  var DEV_ALL = !/github\.io$/i.test(location.hostname);
   function unlocked(k) { return DEV_ALL || arenaOf(k) === 0 || !!(S.own && S.own[k]) || (k === 'hero' && S.ownD) || !!(S.cards && S.cards[k] > 0) || !!(S.up && S.up[k] > 0) || !!(S.hlv && S.hlv[k] > 1); }
   var NODES = [];
   ARENAS.forEach(function (a, ai) { a.ranks.forEach(function (r, ri) { NODES.push({ t: r[0], name: r[1], ai: ai, first: ri === 0 }); }); });
@@ -5395,6 +5396,8 @@ CH.shield = critter({
   var WALLET_KEY = 'knirps-arena-wallet';
   S.gems = 0; S.coins = 0; S.runCoins = 0; S.ownD = false;
   try { var wo = JSON.parse(localStorage.getItem(WALLET_KEY) || '{}'); S.gems = Math.max(0, +wo.g || 0); S.coins = Math.max(0, +wo.c || 0); S.ownD = !!wo.d; } catch (e) {}
+  if (DEV_ALL) { S.gems = Math.max(S.gems, 99999); S.coins = Math.max(S.coins, 99999); S.ownD = true; Object.keys(TYPES).forEach(function (k) { if (TYPES[k].hero) S.hlv[k] = HERO_MAXLV; else S.up[k] = 3; }); S.trophies = Math.max(S.trophies, 9999); S.maxT = Math.max(S.maxT, 9999);
+    try { var db = document.createElement('div'); db.textContent = 'DEV'; db.style.cssText = 'position:fixed;left:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px));z-index:99999;font:700 10px system-ui;letter-spacing:1px;color:#fff;background:rgba(214,60,60,.85);padding:2px 6px;border-radius:6px;pointer-events:none'; document.body.appendChild(db); } catch (e) {} }
   function saveWallet() { try { localStorage.setItem(WALLET_KEY, JSON.stringify({ g: S.gems, c: S.coins, d: S.ownD ? 1 : 0 })); } catch (e) {} }
   function saveTrophies() { S.maxT = Math.max(S.maxT, S.trophies); try { localStorage.setItem(TROPHY_KEY, String(S.trophies)); localStorage.setItem(MAXT_KEY, String(S.maxT)); } catch (e) {} }
   function rankOf(t) { var r = NODES[0].name; NODES.forEach(function (n) { if (t >= n.t && n.ai < PLAYABLE) r = n.name; }); return r; }
