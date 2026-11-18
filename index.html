@@ -5708,9 +5708,13 @@ CH.shield = critter({
   function drawChest(n, bonus, force) {
     /* Aus einer Kiste kommt genau eine Karte: meistens eine Truppe (Holzkiste 2-3, Goldkiste 5-7), seltener ein Held (Holzkiste 8-20, Goldkiste 20-50).
        Neue Figuren (Arena erreicht, noch nicht im Besitz) kommen beim ersten Ziehen immer nur mit 1 Karte. */
-    var heroes = HEROES.filter(function (k) { return unlocked(k) || inChests(k); });
+    /* Bereits gemaxte Karten (Truppen Stern 3, Helden Höchstlevel) kommen nicht mehr aus Kisten */
+    var heroes = HEROES.filter(function (k) { return (unlocked(k) || inChests(k)) && heroLv(k) < HERO_MAXLV; });
+    var troops = POOL.filter(function (k) { return !TYPES[k].hero && (unlocked(k) || inChests(k)) && upLevel(k) < 3; });
+    if (!heroes.length && !troops.length) { var cc = Math.round((bonus ? 500 + rnd(1001) : 100 + rnd(201))); S.coins += cc; saveWallet(); return [{ cur: 'coin', n: cc }]; }
     var asHero = heroes.length && (force === 'hero' || (force !== 'troop' && Math.random() < (bonus ? 0.22 : 0.08)));
-    var pool = asHero ? heroes : POOL.filter(function (k) { return !TYPES[k].hero && (unlocked(k) || inChests(k)); });
+    if (!heroes.length) asHero = false; else if (!troops.length) asHero = true;
+    var pool = asHero ? heroes : troops;
     var k = pool[rnd(pool.length)], isNew = !unlocked(k), b = S.cards[k] || 0;
     var c = 1; /* immer genau eine Karte mit Menge 1 */
     var lv0 = asHero ? null : upLevel(k);
