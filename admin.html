@@ -1,0 +1,20 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Knirps-Arena Admin</title>
+<style>body{font:15px system-ui;margin:0;padding:16px;background:#1b2233;color:#eef}h1{font-size:20px}input,button{font:inherit;padding:9px;border-radius:8px;border:0;margin:3px 0}button{background:#f4b400;font-weight:700}table{width:100%;border-collapse:collapse;margin-top:10px}td,th{padding:8px 6px;border-bottom:1px solid #345;text-align:left}.on{color:#3ddc84}.off{color:#789}small{color:#9ab}#err{color:#ff8a80}</style></head><body>
+<h1>Knirps-Arena Admin</h1>
+<div id="login"><input id="m" type="email" placeholder="E-Mail"><br><input id="p" type="password" placeholder="Passwort"><br><button id="go">Anmelden</button></div>
+<div id="err"></div><div id="main" hidden><b id="sum"></b> <button id="out">Abmelden</button><table><thead><tr><th>Name</th><th>Status</th><th>Trophäen</th><th>Zuletzt aktiv</th></tr></thead><tbody id="rows"></tbody></table><small>Online = in den letzten 2 Minuten aktiv. Live aktualisiert.</small></div>
+<script src="cloud-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp(window.KNIRPS_CLOUD);var A=firebase.auth(),D=firebase.firestore(),$=function(i){return document.getElementById(i)},docs=[];
+$('go').onclick=function(){$('err').textContent='';A.signInWithEmailAndPassword($('m').value,$('p').value).catch(function(e){$('err').textContent=e.code})};
+$('out').onclick=function(){A.signOut()};
+function ago(t){var s=(Date.now()-t)/1000;return s<60?'gerade eben':s<3600?Math.floor(s/60)+' Min.':s<86400?Math.floor(s/3600)+' Std.':Math.floor(s/86400)+' Tage'}
+function draw(){var n=0,h='';docs.sort(function(a,b){return b.t-a.t}).forEach(function(d){var on=Date.now()-d.t<120000;if(on)n++;h+='<tr><td>'+esc(d.name||'(ohne Name)')+'</td><td class="'+(on?'on':'off')+'">'+(on?'● online'+(d.screen?' ('+esc(d.screen)+')':''):'○ offline')+'</td><td>'+d.tr+'</td><td>'+(d.t?ago(d.t):'–')+'</td></tr>'});$('rows').innerHTML=h;$('sum').textContent=n+' online · '+docs.length+' Konten'}
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+setInterval(draw,20000);
+A.onAuthStateChanged(function(u){$('login').hidden=!!u;$('main').hidden=!u;if(!u)return;
+D.collection('users').onSnapshot(function(q){docs=q.docs.map(function(x){var d=x.data(),t=d.seen||d.updated;return{name:d.name,screen:d.screen,tr:d.trophies||0,t:t?t.toMillis():0}});draw()},function(e){$('err').textContent='Kein Zugriff ('+e.code+'). Regeln in Firestore anpassen.'})});
+</script></body></html>
