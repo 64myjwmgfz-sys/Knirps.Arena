@@ -2021,11 +2021,17 @@ html, body { overscroll-behavior-x: none; }
 .qbtn .qrw { color: #0B3A1A; font-family: inherit; font-size: 12px; }
 .qdone { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: #2FBF5B; color: #fff; font-weight: 900; font-size: 20px; }
 
-html:has(body.in-menu.in-home), body.in-menu.in-home { overflow: hidden; overscroll-behavior: none; height: 100dvh; }
-body.in-menu.in-home .menu, body.in-menu.in-home .menu * { touch-action: pan-x; }
 
 
-body.in-home .mbody { padding-top: 22px; }
+.mbody:has(> .stage) { padding-top: 22px; }
+
+.ccost:not(.hlv), .ccost.hlv { background: none !important; }
+.ccost .ccbg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: -1; overflow: visible; pointer-events: none; }
+.ccost .ccn { position: relative; font-style: normal; }
+.cmart .ccost { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; padding: 3px 0 0; font-size: 16px; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.45); }
+/* Tableiste immer am unteren Bildschirmrand */
+.menu .tabs { position: fixed; bottom: 0; left: 50%; right: auto; margin: 0; transform: translateX(-50%); width: min(452px, calc(100vw - 16px)); box-sizing: border-box; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); }
+.menu .mwrap { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 </style>
 
 <div class="menu" id="menu"></div>
@@ -5695,6 +5701,10 @@ CH.shield = critter({
   }
 
   /* ---------- Kisten ---------- */
+  /* Kosten-Tropfen und Level-Krone als Inline-SVG (statt CSS-Hintergrundbild, damit sie überall sichtbar sind) */
+  var CC_DROP = '<svg class="ccbg" viewBox="0 0 34 40" aria-hidden="true"><defs><radialGradient id="ccg" cx=".35" cy=".5" r=".75"><stop offset="0" stop-color="#E6FFF8"/><stop offset=".5" stop-color="#5FE8CF"/><stop offset="1" stop-color="#14A89A"/></radialGradient></defs><path d="M18.5 2.5C21 3 21 6.5 23 8C28 9.5 31.5 15 31.5 23a13.5 13.5 0 0 1-27 0C4.5 12 11 4.5 18.5 2.5Z" fill="url(#ccg)" stroke="#0E3A3A" stroke-width="2.6" stroke-linejoin="round"/><path d="M9 22c0-5 3-9 7-11" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2.6" stroke-linecap="round"/><circle cx="9.2" cy="27" r="1.3" fill="#fff" fill-opacity=".7"/></svg>';
+  var CC_CROWN = '<svg class="ccbg" viewBox="0 0 44 38" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="ccc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF0A0"/><stop offset=".55" stop-color="#FFC93A"/><stop offset="1" stop-color="#E39A12"/></linearGradient></defs><path d="M5 33L3 11L13 20L22 5L31 20L41 11L39 33Z" fill="url(#ccc)" stroke="#5A3606" stroke-width="2.6" stroke-linejoin="round"/><path d="M7 29.5H37" stroke="#8A5A0A" stroke-width="1.6" stroke-opacity=".55" stroke-linecap="round"/><circle cx="3" cy="10" r="3" fill="#FFF3B0" stroke="#5A3606" stroke-width="1.8"/><circle cx="22" cy="4.5" r="3.2" fill="#FFF3B0" stroke="#5A3606" stroke-width="1.8"/><circle cx="41" cy="10" r="3" fill="#FFF3B0" stroke="#5A3606" stroke-width="1.8"/><path d="M8 25L6.5 15" stroke="#fff" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  function CCI(hero, n) { return (hero ? CC_CROWN : CC_DROP) + '<i class="ccn">' + n + '</i>'; }
   var CUM = [4, 7, 9];
   function cumOf(lv, have) { var t = 0, i; for (i = 0; i < lv; i++) t += CARD_NEED[i]; return Math.min(9, t + (lv >= 3 ? 0 : have)); }
   var MSTAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.800l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.600 6.100 20.800l1.200-6.500L2.500 9.700l6.600-.9z"/></svg>';
@@ -6750,10 +6760,10 @@ CH.shield = critter({
     var deckTiles = '', sf = S.swapFor && S.deck.indexOf(S.swapFor) < 0 ? S.swapFor : null;
     for (i = 0; i < DECK_SIZE; i++) {
       var dk = S.deck[i];
-      deckTiles += dk ? '<button class="cdt' + (sf ? ' swap' : '') + '" ' + (sf ? 'data-swaptile="' + dk + '"' : 'data-open="' + dk + '"') + ' aria-label="' + TYPES[dk].name + '"><span class="ccost" aria-label="Kosten ' + TYPES[dk].cost + '">' + TYPES[dk].cost + '</span>' + upArrow(dk) + '<span class="cplat"></span>' + CH[dk] + starRow(upLevel(dk)) + '<span class="rglass"></span></button>' : '<div class="cdt empty" aria-label="Frei"></div>';
+      deckTiles += dk ? '<button class="cdt' + (sf ? ' swap' : '') + '" ' + (sf ? 'data-swaptile="' + dk + '"' : 'data-open="' + dk + '"') + ' aria-label="' + TYPES[dk].name + '"><span class="ccost" aria-label="Kosten ' + TYPES[dk].cost + '">' + CCI(0, TYPES[dk].cost) + '</span>' + upArrow(dk) + '<span class="cplat"></span>' + CH[dk] + starRow(upLevel(dk)) + '<span class="rglass"></span></button>' : '<div class="cdt empty" aria-label="Frei"></div>';
       if (i === 2) { /* Zeilenumbruch durch Grid */ }
     }
-    deckTiles += !S.heroKey ? '<div class="cdt cdh empty" aria-label="Held frei"></div>' : '<button class="cdt cdh" data-open="' + S.heroKey + '" aria-label="Held ' + TYPES[S.heroKey].name + ' ansehen"><span class="ccost hlv" aria-label="Level ' + heroLv(S.heroKey) + '">' + heroLv(S.heroKey) + '</span>' + upArrow(S.heroKey) + '<span class="cplat"></span>' + CH[S.heroKey] + '</button>';
+    deckTiles += !S.heroKey ? '<div class="cdt cdh empty" aria-label="Held frei"></div>' : '<button class="cdt cdh" data-open="' + S.heroKey + '" aria-label="Held ' + TYPES[S.heroKey].name + ' ansehen"><span class="ccost hlv" aria-label="Level ' + heroLv(S.heroKey) + '">' + CCI(1, heroLv(S.heroKey)) + '</span>' + upArrow(S.heroKey) + '<span class="cplat"></span>' + CH[S.heroKey] + '</button>';
     var rest = list.filter(function (key) { return TYPES[key].hero ? S.heroKey !== key : S.deck.indexOf(key) < 0; });
     var so = S.collSort || 'cosa', sk = so.slice(0, 3), sd = so.slice(3) === 'a' ? 1 : -1;
     if (tab !== 'hero' && sk) {
@@ -6766,7 +6776,7 @@ CH.shield = critter({
     var cards = rest.map(function (key) {
       var t = TYPES[key], lk = !unlocked(key), inD = false;
       return '<button class="cc' + (inD ? ' in' : '') + (lk ? ' lk' : '') + '" data-open="' + key + '">' +
-        (lk ? '<span class="clock">' + mi('lock') + '</span>' : '<span class="ccost' + (t.hero ? ' hlv' : '') + '" aria-label="' + (t.hero ? 'Level ' + heroLv(key) : 'Kosten ' + t.cost) + '">' + (t.hero ? heroLv(key) : t.cost) + '</span>') +
+        (lk ? '<span class="clock">' + mi('lock') + '</span>' : '<span class="ccost' + (t.hero ? ' hlv' : '') + '" aria-label="' + (t.hero ? 'Level ' + heroLv(key) : 'Kosten ' + t.cost) + '">' + CCI(t.hero, t.hero ? heroLv(key) : t.cost) + '</span>') +
         upArrow(key) + '<span class="cart"><span class="cplat"></span>' + CH[key] + (t.hero ? '' : starRow(upLevel(key))) + '<span class="rglass"></span></span>' +
         (lk ? '' : cardBar(key)) +
         (lk ? '<span class="clbl">' + (inChests(key) ? 'In Boxen' : arenaOf(key) < 0 ? 'Kaufbar' : 'Ab ' + ARENAS[arenaOf(key)].n) + '</span>' : t.hero ? '<span class="clbl hh">' + t.name + '</span>' : '') + '</button>';
@@ -6849,7 +6859,7 @@ CH.shield = critter({
       act = '<button class="cmbtn" data-add="' + k + '">' + (full ? 'Ins Deck · tauschen' : 'Ins Deck') + '</button>';
     }
     return '<div class="cmodal" data-close="1"><div class="cm' + (t.hero ? '' : ' glass') + '" role="dialog" aria-label="' + t.name + '"><button class="cx" data-close="1" aria-label="Schließen">' + mi('x') + '</button>' +
-      '<div class="cmart' + (lk ? ' lk' : '') + (t.hero ? '' : ' big') + '"><span class="cplat"></span>' + CH[k] + (t.hero ? '' : '<span class="ccost">' + t.cost + '</span>') + '<button class="cnav l" data-cnav="-1" aria-label="Vorheriger"></button><button class="cnav r" data-cnav="1" aria-label="Nächster"></button></div>' +
+      '<div class="cmart' + (lk ? ' lk' : '') + (t.hero ? '' : ' big') + '"><span class="cplat"></span>' + CH[k] + (t.hero ? '' : '<span class="ccost">' + CCI(0, t.cost) + '</span>') + '<button class="cnav l" data-cnav="-1" aria-label="Vorheriger"></button><button class="cnav r" data-cnav="1" aria-label="Nächster"></button></div>' +
       '<h3>' + t.name + '</h3><span class="cmrole">' + (t.hero ? t.role : 'Mini · ' + (t.front || t.range <= 1 ? 'Nahkampf' : 'Fernkampf')) + '</span><p>' + t.blurb + '</p>' +
       '<div class="cmst">' + tiles + '</div>' + extra + '<div class="cmact">' + act + '</div></div></div>';
   }
@@ -7191,6 +7201,12 @@ CH.shield = critter({
     document.body.classList.toggle('modal-open', !!S.cmodal && S.tab === 'coll');
     document.body.classList.toggle('in-pass', S.tab === 'pass');
     document.body.classList.toggle('in-home', S.tab === 'home');
+    if (!window.__homeLock) { window.__homeLock = 1; var hx0 = 0, hy0 = 0;
+      document.addEventListener('touchstart', function (e) { if (e.touches[0]) { hx0 = e.touches[0].clientX; hy0 = e.touches[0].clientY; } }, { passive: true });
+      document.addEventListener('touchmove', function (e) { /* Kampfmenü: kein senkrechtes Scrollen */
+        if (S.screen !== 'menu' || S.tab !== 'home' || S.cmodal || S.ppick || S.mpop) return;
+        var t = e.touches[0]; if (t && Math.abs(t.clientY - hy0) > Math.abs(t.clientX - hx0) && e.cancelable) e.preventDefault();
+      }, { passive: false }); }
     if (S.tab === 'rec') setTimeout(function () { pathLayout(true); }, 0);
   }
 
