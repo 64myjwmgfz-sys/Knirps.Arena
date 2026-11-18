@@ -1911,6 +1911,9 @@ html, body { overscroll-behavior-x: none; }
 .lv.champ b { font-weight: 400; font-size: 13px; line-height: 1; color: #4A2A00; }
 
 .unit .lv.champ { left: auto; right: 88%; bottom: auto; top: calc(6% + 3.5px - 9px); z-index: 4; margin-right: -4px; }
+/* Sterne der Knirpse sitzen wie das Heldenlevel links am Lebensbalken; Lebensbalken schon in der Vorbereitung sichtbar */
+.unit .lv:not(.champ), .unit .lv.l2:not(.champ), .unit .lv.l3:not(.champ) { left: auto; right: 88%; bottom: auto; top: calc(6% + 3.5px - 8px); z-index: 4; margin-right: -2px; height: 18px; padding: 0; font-size: 16px; letter-spacing: -2px; border-radius: 0; background: none; box-shadow: none; color: #FFC933; -webkit-text-stroke: 2.5px #4A2A00; paint-order: stroke fill; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35); }
+.hpbar { opacity: 1; }
 @keyframes gin { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes gwp { from { transform: scale(0.96); } to { transform: scale(1.04); } }
 .unit.guarding::after { animation: gin 0.3s ease-out, gwp 0.9s ease-in-out 0.3s infinite alternate; }
