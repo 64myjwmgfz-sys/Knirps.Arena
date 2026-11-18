@@ -6251,7 +6251,7 @@ CH.shield = critter({
     S.coins += cg; S.runCoins += cg; saveWallet();
     addXp((res === 'win' ? 10 : 0) + (kind === 'victory' ? 40 : kind === 'over' ? 15 : 0));
     var gain = 0;
-    if (kind === 'victory') gain = 15;
+    if (kind === 'victory') gain = 30;
     if (kind === 'over') gain = -Math.min(5, S.trophies);
     S.gain = gain; S.trophies = Math.max(0, S.trophies + gain); saveTrophies();
     S.best = Math.max(S.best, S.round);
