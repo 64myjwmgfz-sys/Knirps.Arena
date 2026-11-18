@@ -5705,7 +5705,7 @@ CH.shield = critter({
     return '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="cmgold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4A0"/><stop offset=".5" stop-color="#FFC933"/><stop offset="1" stop-color="#F29A10"/></linearGradient></defs></svg><div class="cmtrack" style="--f:' + (tot / 9 * 100) + '%"><i style="width:' + (tot / 9 * 100) + '%"></i>' + cells + '</div>';
   }
   function cmTxt(tot, lv) { return '<b>' + tot + '/9</b> Karten · ' + (lv >= 3 ? 'Maximal' : 'nächster Stern bei ' + CUM[lv]); }
-  function drawChest(n, bonus, force) {
+  function drawChest(n, bonus, force, rar) {
     /* Aus einer Kiste kommt genau eine Karte: meistens eine Truppe (Holzkiste 2-3, Goldkiste 5-7), seltener ein Held (Holzkiste 8-20, Goldkiste 20-50).
        Neue Figuren (Arena erreicht, noch nicht im Besitz) kommen beim ersten Ziehen immer nur mit 1 Karte. */
     /* Bereits gemaxte Karten (Truppen Stern 3, Helden Höchstlevel) kommen nicht mehr aus Kisten */
@@ -5716,7 +5716,8 @@ CH.shield = critter({
     if (!heroes.length) asHero = false; else if (!troops.length) asHero = true;
     var pool = asHero ? heroes : troops;
     var k = pool[rnd(pool.length)], isNew = !unlocked(k), b = S.cards[k] || 0;
-    var c = 1; /* immer genau eine Karte mit Menge 1 */
+    var c = 1; /* Truppen: genau eine Karte; Helden: mehrere (Lucky Drop mehr als Box, höhere Seltenheit mehr) */
+    if (asHero && !isNew) c = rar != null ? [8 + rnd(8), 15 + rnd(16), 30 + rnd(31)][Math.min(2, rar)] : 3 + rnd(4);
     var lv0 = asHero ? null : upLevel(k);
     if (isNew) { S.own[k] = 1; saveOwn(); }
     S.cards[k] = isNew ? 0 : b + c; saveCards(); /* die erste Karte schaltet nur frei, der Balken startet bei 0 */
@@ -5730,7 +5731,7 @@ CH.shield = critter({
       if (Math.random() < 0.5) { m = Math.round((Math.random() < 0.1 ? 8 : 1 + rnd(4)) * 100 * mul); S.coins += m; saveWallet(); return [{ cur: 'coin', n: m }]; }
       m = Math.round((Math.random() < 0.08 ? 15 : 1 + rnd(4)) * 10 * mul); S.gems += m; saveWallet(); return [{ cur: 'gem', n: m }];
     }
-    return drawChest(1, rar > 0 ? 1 : 0, Math.random() < hero / (1 - cur) ? 'hero' : 'troop');
+    return drawChest(1, rar > 0 ? 1 : 0, Math.random() < hero / (1 - cur) ? 'hero' : 'troop', rar);
   }
   function chestPal(gold) {
     return gold ? { in1: '#D4FFE6', in2: '#38C486', f1: '#B8F5CF', f2: '#2FD08A', s1: '#27BF7C', s2: '#13875A', l1: '#D9FFE9', l2: '#7CE8AE', t1: '#F0FFF6', t2: '#BDF7D6', c1: '#2DBE80', c2: '#14895C', b1: '#FFF6BE', b2: '#FFC93A', bs1: '#FFB92E', bs2: '#E08A10', ol: '#127A52', ob: '#D9871A', lk1: '#FFFFFF', lk2: '#FFD84A', st: '#1FA866' }
@@ -6155,6 +6156,7 @@ CH.shield = critter({
     }
     function reveal() {
       var i = shown.length, o = loot[i], el = document.createElement('div');
+      if (!o) return;
       if (o.cur) {
         el.innerHTML = curCard(o); el = el.firstChild; cards.appendChild(el); shown.push(el); emerge(el); sparks();
         var dn = el.querySelector('.dn'), t0 = Date.now();
@@ -6169,8 +6171,10 @@ CH.shield = critter({
       setHint(i < n - 1 ? 'Tippe für die nächste Truppe (' + (i + 1) + '/' + n + ')' : 'Tippen zum Weiter');
     }
     var t00 = Date.now(), lastTapT = 0;
+    var ready = false;
     fx.onclick = function () {
       if (busy) return;
+      if (st === 2 && !ready) return; /* Kiste öffnet sich noch: Tippen ignorieren */
       busy = true; setTimeout(function () { busy = false; }, gold ? (st === 0 ? 60 : 220) : 520);
       if (gold && st === 0) {
         if (Date.now() - t00 < 250) { busy = false; return; }
@@ -6214,10 +6218,10 @@ CH.shield = critter({
         var sd = fx.querySelector('.dstars');
         if (!gold) setTimeout(function () { fx.classList.add('flash'); }, 1750);
         setTimeout(function () { fx.classList.remove('flash'); fx.classList.add('open'); if (sd) sd.classList.add('gone'); lidOpen(); if (gold) setTimeout(burst, 440); else { burst(); setTimeout(burst, 260); } }, 1500);
-        setTimeout(function () { busy = false; if (lootFn) { loot = lootFn(rar); n = loot.length; } reveal(); }, 2450);
+        setTimeout(function () { busy = false; ready = true; if (lootFn) { loot = lootFn(rar); n = loot.length; } reveal(); }, 2450);
         return;
       }
-      if (st === 0) { st = 2; fx.classList.add('flash'); setTimeout(function () { fx.classList.remove('flash'); fx.classList.add('open'); lidOpen(); burst(); }, 380); setTimeout(reveal, 900); }
+      if (st === 0) { st = 2; fx.classList.add('flash'); setTimeout(function () { fx.classList.remove('flash'); fx.classList.add('open'); lidOpen(); burst(); }, 380); setTimeout(function () { ready = true; reveal(); }, 900); }
       else if (shown.length < n) reveal();
       else end();
     };
