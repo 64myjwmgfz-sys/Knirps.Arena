@@ -2032,6 +2032,7 @@ html, body { overscroll-behavior-x: none; }
 /* Tableiste immer am unteren Bildschirmrand */
 .menu .tabs { position: fixed; bottom: 0; left: 50%; right: auto; margin: 0; transform: translateX(-50%); width: min(452px, calc(100vw - 16px)); box-sizing: border-box; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); }
 .menu .mwrap { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+.clforgot { display: block; margin: -4px auto 2px; background: none; border: none; color: var(--m-text); opacity: .75; font-size: 13px; font-weight: 700; text-decoration: underline; padding: 4px; }
 </style>
 
 <div class="menu" id="menu"></div>
@@ -7034,6 +7035,14 @@ CH.shield = critter({
     if (!CL.ready) return;
     if (a === 'logout') { CL.auth.signOut().then(function () { CL.msg = 'Abgemeldet.'; CL.ok = true; clRender(); }); return; }
     if (a === 'sync') { clPush(true); return; }
+    if (a === 'reset') {
+      var rmail = (($('clmail') || {}).value || '').trim(); CL.mail = rmail;
+      if (!rmail) { CL.msg = 'Bitte zuerst deine E-Mail-Adresse eingeben.'; CL.ok = false; renderMenu(); return; }
+      CL.msg = 'Sende E-Mail …'; CL.ok = true; renderMenu();
+      CL.auth.sendPasswordResetEmail(rmail).then(function () { CL.msg = 'E-Mail zum Zurücksetzen wurde an ' + rmail + ' gesendet.'; CL.ok = true; renderMenu(); })
+        .catch(function (e) { CL.msg = clErr(e); CL.ok = false; renderMenu(); });
+      return;
+    }
     if (a === 'apple') {
       var pr = new CL.fb.auth.OAuthProvider('apple.com'); pr.addScope('email'); pr.addScope('name');
       var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
@@ -7063,6 +7072,7 @@ CH.shield = critter({
       '<input id="clpw" class="accinp clinp" type="password" autocomplete="' + (reg ? 'new-password' : 'current-password') + '" placeholder="Passwort (mind. 6 Zeichen)">' +
       (CL.msg ? '<p class="clmsg' + (CL.ok ? ' ok' : '') + '">' + CL.msg + '</p>' : '') +
       '<button class="clbtn big" data-cl="' + (reg ? 'register' : 'login') + '">' + (reg ? 'Konto erstellen' : 'Anmelden') + '</button>' +
+      (reg ? '' : '<button class="clforgot" data-cl="reset">Passwort vergessen?</button>') +
       '<button class="clapple" data-cl="apple"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.100-1.600-2.800-1.800-3.400-1.800-1.400-.1-2.800.9-3.500.9s-1.900-.8-3.100-.8c-1.600 0-3.100.9-3.900 2.400-1.700 2.900-.4 7.200 1.200 9.600.8 1.200 1.700 2.500 3 2.400 1.200 0 1.700-.8 3.100-.8s1.900.8 3.100.8c1.300 0 2.100-1.200 2.900-2.300.9-1.300 1.300-2.600 1.300-2.700 0 0-2.500-1-2.700-3.800zM14.100 5.600c.6-.8 1.100-1.900.9-3-.9 0-2.100.6-2.700 1.400-.6.700-1.100 1.800-1 2.900 1.100.1 2.200-.5 2.800-1.300z"/></svg>Mit Apple anmelden</button></div>';
   }
   clInit();
