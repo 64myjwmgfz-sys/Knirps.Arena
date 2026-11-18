@@ -6087,18 +6087,20 @@ CH.shield = critter({
       sparks();
       setHint(i < n - 1 ? 'Tippe für die nächste Truppe (' + (i + 1) + '/' + n + ')' : 'Tippen zum Weiter');
     }
-    var t00 = Date.now();
+    var t00 = Date.now(), lastTapT = 0;
     fx.onclick = function () {
       if (busy) return;
-      busy = true; setTimeout(function () { busy = false; }, gold ? 220 : 520);
+      busy = true; setTimeout(function () { busy = false; }, gold ? (st === 0 ? 60 : 220) : 520);
       if (gold && st === 0) {
-        if (Date.now() - t00 < 350) { busy = false; return; }
+        if (Date.now() - t00 < 250) { busy = false; return; }
+        var nowT = Date.now(), dtT = nowT - (lastTapT || nowT - 600); lastTapT = nowT; var spd = Math.max(0.35, Math.min(1, dtT / 520)); /* schnelles Tippen: kuerzere Animationen, weniger Partikel */
         var ds = fx.querySelectorAll('.dstars .ds'), c2 = fx.querySelector('.c2');
         if (taps < 3) {
           ds[taps].classList.add('on');
           var sr = ds[taps].getBoundingClientRect(), fr2 = fx.getBoundingClientRect(), z;
-          for (z = 0; z < 10; z++) {
-            var ee = document.createElement('i'), aa = z / 10 * Math.PI * 2, dd = 40 + Math.random() * 30;
+          var nsp = Math.round(4 + 6 * spd);
+          for (z = 0; z < nsp; z++) {
+            var ee = document.createElement('i'), aa = z / nsp * Math.PI * 2, dd = 40 + Math.random() * 30;
             ee.className = 'sp'; ee.style.left = (sr.left + sr.width / 2 - fr2.left) + 'px'; ee.style.top = (sr.top + sr.height / 2 - fr2.top) + 'px';
             ee.style.setProperty('--dx', Math.cos(aa) * dd + 'px'); ee.style.setProperty('--dy', Math.sin(aa) * dd + 'px');
             fx.appendChild(ee); setTimeout((function (el) { return function () { el.remove(); }; })(ee), 1200);
@@ -6118,12 +6120,12 @@ CH.shield = critter({
           burst();
         }
         if (c2) { c2.classList.remove('lev1', 'lev2', 'lev3'); if (taps < 4) c2.classList.add('lev' + taps); }
-        mring(3 + taps * 1.5, 900, 0); mring(2 + taps, 700, 90); motes(12 + taps * 5, 170);
+        mring(3 + taps * 1.5, Math.round(900 * Math.max(0.5, spd)), 0); if (spd > 0.6) mring(2 + taps, 700, 90); motes(Math.max(4, Math.round((12 + taps * 5) * spd)), 170);
         var sv = c2 && (c2.querySelector('.cb3w') || c2.querySelector('.chsvg'));
         if (sv && sv.animate && !RM) {
           if (up) spin3d(c2);
           else if (taps >= 4) { finalSpin(c2); sv.animate([{ filter: 'brightness(1)' }, { filter: 'brightness(1.5)', offset: .6 }, { filter: 'brightness(2.6)' }], { duration: 1500, fill: 'forwards', easing: 'ease-in' }); }
-          else sv.animate([{ transform: 'scale(1) rotate(0)', filter: 'brightness(1)' }, { transform: 'scale(.78,.8) rotate(-3deg)', filter: 'brightness(2.6) drop-shadow(0 0 30px var(--hc))', offset: .18 }, { transform: 'scale(1.16,1.12) rotate(2deg)', filter: 'brightness(1.7)', offset: .5 }, { transform: 'scale(.96) rotate(-1deg)', offset: .72 }, { transform: 'scale(1.03)', offset: .87 }, { transform: 'scale(1) rotate(0)', filter: 'brightness(1)' }], { duration: 560, easing: 'ease-out' });
+          else { if (c2._sq) { try { c2._sq.cancel(); } catch (e) {} } c2._sq = sv.animate([{ transform: 'scale(1) rotate(0)', filter: 'brightness(1)' }, { transform: 'scale(.78,.8) rotate(-3deg)', filter: 'brightness(2.6) drop-shadow(0 0 30px var(--hc))', offset: .18 }, { transform: 'scale(1.16,1.12) rotate(2deg)', filter: 'brightness(1.7)', offset: .5 }, { transform: 'scale(.96) rotate(-1deg)', offset: .72 }, { transform: 'scale(1.03)', offset: .87 }, { transform: 'scale(1) rotate(0)', filter: 'brightness(1)' }], { duration: Math.round(560 * Math.max(0.45, spd)), easing: 'ease-out' }); }
         }
         if (taps < need3) { setHint(taps < 3 ? 'Noch ' + (3 - taps) + 'x tippen: ' + taps + '/3' : 'Noch einmal tippen zum Öffnen!'); return; }
         st = 2; setHint(''); busy = true;
