@@ -449,7 +449,7 @@ body.in-menu.in-pass { background:
 
 /* ---------- Deck und Heldin ---------- */
 .cta:disabled { filter: grayscale(0.85); opacity: 0.6; cursor: default; transform: none; box-shadow: 0 6px 0 var(--m-gold-d), 0 6px 0 3px var(--m-ol); }
-.dhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.dhead { display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-bottom: 12px; }
 .dhead b, .gtitle { font-family: var(--font-display); font-weight: 400; font-size: 20px; }
 .dcount { padding: 2px 11px; border-radius: 999px; background: var(--m-panel-d); font-family: var(--font-display); font-size: 15px; font-variant-numeric: tabular-nums; box-shadow: 0 0 0 2.5px var(--m-ol); }
 .dcount.ok { background: var(--m-gold); color: #3A2500; }
@@ -1412,6 +1412,9 @@ html, body { overscroll-behavior-x: none; }
 .pbuy.cant { opacity: .6; }
 .pall { width: 100%; margin-top: 8px; padding: 9px; border: 0; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 900; font-size: 15px; color: #fff; background: linear-gradient(#35B56A, #1E8248); box-shadow: 0 0 0 3px var(--m-ol); }
 .pall:disabled { opacity: .45; cursor: default; }
+.mtop { z-index: 60; }
+.mpop { z-index: 70; }
+.mlvl .lname { display: block; max-width: 104px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mlvl .lbar small { font-size: 9.5px; font-weight: 800; opacity: .8; letter-spacing: .04em; }
 .mlvl .lring { width: 38px; height: 38px; flex: none; position: relative; z-index: 2; filter: drop-shadow(0 2px 0 rgba(0,0,0,.28)); }
 .mlvl .lring text { font-weight: 900; font-size: 21px; fill: #fff; paint-order: stroke; stroke: #0A2F44; stroke-width: 3px; stroke-linejoin: round; font-family: inherit; }
@@ -1597,7 +1600,7 @@ html, body { overscroll-behavior-x: none; }
 .cdp .dhead { margin-bottom: 12px; }
 .cdp .dhead b.cbub { font-size: 15px; }
 .cdp .dcount { padding: 6px 14px; font-size: 14px; color: #1F4256; background: linear-gradient(#FFFFFF, #E4F3F7); box-shadow: 0 0 0 2.5px #3C7F91, 0 3px 0 2.5px #3C7F91, inset 0 2px 0 #fff; }
-.cdp .dhead { justify-content: space-between; gap: 8px; }
+.cdp .dhead { justify-content: flex-start; gap: 10px; }
 .dmb { width: 42px; height: 38px; border: 0; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; background: linear-gradient(#3C6C86, #24465C); box-shadow: 0 0 0 2.5px #12222E, 0 3px 0 2.5px #12222E, inset 0 2px 0 rgba(255,255,255,.3); }
 .dmb i { display: block; width: 20px; height: 3.5px; border-radius: 2px; background: #fff; }
 .davg { display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin: 10px 4px -4px 0; font-family: var(--font-display); font-size: 16px; color: #1F4256; }
@@ -2045,6 +2048,51 @@ html, body { overscroll-behavior-x: none; }
 .menu .tabs { position: fixed; bottom: 0; left: 50%; right: auto; margin: 0; transform: translateX(-50%); width: min(452px, calc(100vw - 16px)); box-sizing: border-box; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); }
 .menu .mwrap { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .clforgot { display: block; margin: -4px auto 2px; background: none; border: none; color: var(--m-text); opacity: .75; font-size: 13px; font-weight: 700; text-decoration: underline; padding: 4px; }
+/* ===== Glas-Design: Kopfleiste, untere Leiste, Fenster ===== */
+.mtop { background: none; box-shadow: none; border-radius: 0; padding: 6px 6px 8px; gap: 8px; align-items: center; }
+.mtop .pill, .mlvl .lbar {
+  background: linear-gradient(180deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,.10) 46%, rgba(6,38,66,.55) 54%, rgba(6,38,66,.70) 100%);
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,.75), inset 0 -2px 0 rgba(0,0,0,.18), 0 0 0 2px rgba(255,255,255,.32), 0 0 0 4px rgba(8,34,58,.55), 0 6px 12px rgba(0,0,0,.28);
+  -webkit-backdrop-filter: blur(8px) saturate(1.3); backdrop-filter: blur(8px) saturate(1.3);
+}
+.mtop .pill { position: relative; flex: 1 1 0; min-width: 0; padding: 4px 6px 4px 24px; gap: 0; border-radius: 999px; justify-content: center; height: 30px; box-sizing: border-box; }
+.mtop .pill .pi, .mtop .pill.gemp .pi, .mtop .pill.coinp .pi { position: absolute; left: -7px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; background: none; box-shadow: none; border-radius: 0; filter: drop-shadow(0 2px 0 rgba(0,0,0,.35)); }
+.mtop .pill .pi svg { width: 34px; height: 34px; }
+.mtop .pill small { display: none; }
+.mtop .pill b { font-size: 14px; letter-spacing: -0.02em; line-height: 1; color: #fff; text-shadow: 0 2px 0 rgba(0,40,70,.65); }
+.mlvl .lbar { height: 28px; margin-left: -14px; padding: 0 12px 0 20px; align-items: center; border-radius: 0 999px 999px 0; box-sizing: border-box; }
+.mlvl .lname { max-width: 90px; font-weight: 900; font-size: 14px; color: #fff; text-shadow: 0 2px 0 rgba(0,40,70,.65); }
+.mtop .mlvl { flex: 0 0 114px; min-width: 0; }
+.mlvl .lbar { min-width: 0; flex: 1; }
+/* untere Leiste */
+.tabs { background: linear-gradient(180deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.08) 22%, rgba(8,40,70,.72) 30%, rgba(6,32,58,.88) 100%); -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.7), 0 0 0 2px rgba(255,255,255,.28), 0 0 0 4px rgba(8,34,58,.5), 0 -6px 16px rgba(0,0,0,.25); border-radius: 18px 18px 0 0; }
+.tab { color: #CFE8F6; }
+.tab svg { filter: drop-shadow(0 2px 0 rgba(0,0,0,.3)); }
+.tab.on { color: #fff; background: linear-gradient(180deg, rgba(255,255,255,.62) 0%, rgba(160,222,255,.34) 50%, rgba(80,170,230,.30) 100%); box-shadow: inset 0 2px 0 rgba(255,255,255,.9), 0 0 0 2px rgba(255,255,255,.85), 0 0 16px rgba(130,215,255,.75), 0 4px 10px rgba(0,0,0,.25); transform: translateY(-6px); border-radius: 14px; text-shadow: 0 1px 0 rgba(0,50,90,.6); }
+/* Fenster: weisses Glas */
+.mpop { background: linear-gradient(160deg, rgba(255,255,255,.97), rgba(226,236,246,.94) 55%, rgba(240,246,252,.97)); box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(120,150,190,.55), 0 14px 28px rgba(0,0,0,.4), inset 0 2px 0 #fff; border-radius: 18px; color: #24344A; }
+.mpop button { color: #1E2D44; background: linear-gradient(#fff, #E6EEF7); box-shadow: 0 0 0 2px #C9D8E8, inset 0 2px 0 #fff; }
+.mpop button:active { background: linear-gradient(#E6EEF7, #D3E0EE); }
+.mpop button svg { stroke: #2F6E94; }
+
+.tabs { padding: 8px 8px 6px; gap: 4px; }
+.tab { position: relative; z-index: 1; }
+.tabhl { position: absolute; left: 8px; top: 8px; bottom: 6px; width: calc((100% - 16px - 12px) / 4); border-radius: 14px; z-index: 0; pointer-events: none; transform: translateX(calc(var(--hp, 1) * (100% + 4px)));
+  background: linear-gradient(180deg, rgba(255,255,255,.62) 0%, rgba(160,222,255,.34) 50%, rgba(80,170,230,.30) 100%); box-shadow: inset 0 2px 0 rgba(255,255,255,.9), 0 0 0 2px rgba(255,255,255,.85), 0 0 16px rgba(130,215,255,.75), 0 4px 10px rgba(0,0,0,.25); }
+.tabhl.anim { transition: transform .26s cubic-bezier(.22,.8,.3,1), opacity .2s; }
+.tab.on { background: none; box-shadow: none; transform: none; }
+
+.mbody { position: relative; }
+.mbody .passchip { top: 8px; right: 0; }
+.mbody .questchip { top: 8px; left: 0; right: auto; }
+
+/* Haptik: Knoepfe in der Sammlung federn beim Druecken */
+.ctab, .dsl, .dmb, .cdt:not(.empty), .cc, .cbub.csb, .dmenu button, .cmodal button, .cmbtn, .cx, .cbanner button, .pall, .pbuy {
+  transition: transform .16s cubic-bezier(.3,1.7,.5,1), filter .12s; -webkit-tap-highlight-color: transparent; will-change: transform; }
+.ctab:active, .dsl:active, .dmb:active, .cdt:not(.empty):active, .cbub.csb:active, .dmenu button:active, .cmodal button:active, .cmbtn:active, .cx:active, .cbanner button:active, .pall:active, .pbuy:active {
+  transform: translateY(3px) scale(.95); filter: brightness(.93); transition-duration: .05s; }
+.cc:active { transform: translateY(4px) scale(.965); filter: brightness(.95); transition-duration: .05s; }
 </style>
 
 <div class="menu" id="menu"></div>
@@ -6579,7 +6627,12 @@ CH.shield = critter({
     coin: '<circle cx="12" cy="12" r="8.500"/><circle cx="12" cy="12" r="4.800"/>',
     shop: '<path d="M5 8.500h14l-1 11.500H6z"/><path d="M9 8.500V7a3 3 0 0 1 6 0v1.500"/>'
   };
-  function mi(k) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + MI[k] + '</svg>'; }
+  var ART = {
+    coin: '<circle cx="16" cy="16" r="14.500" fill="#E89B12" stroke="#7A4300" stroke-width="2"/><circle cx="16" cy="16" r="11.200" fill="#FFD23F" stroke="#F2A81C" stroke-width="1.600"/><path d="M16 9.500l1.900 4 4.400.5-3.200 3 .9 4.400-4-2.200-4 2.200.9-4.400-3.200-3 4.400-.5z" fill="#E89B12"/><path d="M8.200 12.200A9 9 0 0 1 15 6.800" fill="none" stroke="#FFF6C8" stroke-width="2" stroke-linecap="round"/>',
+    gem: '<path d="M9 5h14l6 7-13 15L3 12z" fill="#35C4F2" stroke="#0B5A86" stroke-width="2" stroke-linejoin="round"/><path d="M9.500 5.500h13L19 12h-6z" fill="#A8F0FF"/><path d="M3.500 12H13l3 14.500z" fill="#1E9FD6"/><path d="M28.500 12H19l-3 14.500z" fill="#1788BF"/><path d="M3 12h26M9 5l4 7 3 15 3-15 4-7" fill="none" stroke="#0B5A86" stroke-width="1.200" stroke-linejoin="round"/>',
+    trophy: '<path d="M9 5h14v8a7 7 0 0 1-14 0z" fill="#FFD23F" stroke="#7A4300" stroke-width="2" stroke-linejoin="round"/><path d="M9 7.500H5.500v2a4 4 0 0 0 4 4M23 7.500h3.500v2a4 4 0 0 1-4 4" fill="none" stroke="#C47A00" stroke-width="2" stroke-linecap="round"/><path d="M14 19.500h4v4.500h-4z" fill="#E89B12" stroke="#7A4300" stroke-width="1.600"/><rect x="9.500" y="24" width="13" height="4" rx="1.500" fill="#FFB81F" stroke="#7A4300" stroke-width="2"/><path d="M12.500 8v5" fill="none" stroke="#FFF6C8" stroke-width="2" stroke-linecap="round"/>'
+  };
+  function mi(k) { if (ART[k]) return '<svg viewBox="0 0 32 32" class="ico" aria-hidden="true">' + ART[k] + '</svg>'; return '<svg viewBox="0 0 24 24" aria-hidden="true">' + MI[k] + '</svg>'; }
 
   function pill(icon, label, value) {
     return '<div class="pill"><span class="pi">' + mi(icon) + '</span><span><small>' + label + '</small><b>' + value + '</b></span></div>';
@@ -6626,7 +6679,7 @@ CH.shield = critter({
 
   function homeHtml() {
     var ready = S.deck.length >= DECK_SIZE && !!S.heroKey;
-    var h = '' +
+    var h = '' + passChip() + questChip() +
       deckStage() +
       '<div class="ctarow">' + isleBtn() +
       '<button class="cta" data-act="play"' + (!S.inGame && !ready ? ' disabled' : '') + '>' + (S.inGame ? 'Weiter' : 'Kampf') + '</button></div>' +
@@ -6644,7 +6697,7 @@ CH.shield = critter({
   S.heroKey = 'shield';
 
   var DECK_SLOTS = 5, SLOTS_KEY = 'knirps-arena-decks';
-  S.dslot = 0; S.dmenu = 0; S.decks = [];
+  S.dslot = 0; S.dcount = 1; S.dmenu = 0; S.decks = [];
   function cleanDeck(o) {
     var got = {}, list = [];
     ((o && Array.isArray(o.cards)) ? o.cards : []).forEach(function (k) {
@@ -6664,12 +6717,15 @@ CH.shield = critter({
     try { old = JSON.parse(localStorage.getItem(DECK_KEY) || 'null'); } catch (e) {}
     S.decks = [];
     for (i = 0; i < DECK_SLOTS; i++) S.decks.push(cleanDeck(o && Array.isArray(o.decks) ? o.decks[i] : (i === 0 ? old : null)));
-    applySlot(o && o.slot >= 0 && o.slot < DECK_SLOTS ? o.slot : 0);
+    var dc = o && +o.dcount >= 1 ? Math.min(DECK_SLOTS, +o.dcount) : 1;
+    if (o && !(+o.dcount >= 1)) { var defJ = JSON.stringify(cleanDeck(null)); for (i = 1; i < DECK_SLOTS; i++) if (JSON.stringify(S.decks[i]) !== defJ) dc = i + 1; }
+    S.dcount = dc;
+    applySlot(o && o.slot >= 0 && o.slot < dc ? o.slot : 0);
     if (S.heroKey && !unlocked(S.heroKey)) S.heroKey = 'shield';
   }
   function saveDeck() {
     if (S.decks[S.dslot]) S.decks[S.dslot] = { cards: S.deck.slice(), heroKey: S.heroKey };
-    try { localStorage.setItem(SLOTS_KEY, JSON.stringify({ slot: S.dslot, decks: S.decks })); } catch (e) {}
+    try { localStorage.setItem(SLOTS_KEY, JSON.stringify({ slot: S.dslot, dcount: S.dcount, decks: S.decks })); } catch (e) {}
   }
   function toggleCard(k) {
     if (TYPES[k].hero) {
@@ -6796,12 +6852,13 @@ CH.shield = critter({
         (lk ? '<span class="clbl">' + (inChests(key) ? 'In Boxen' : arenaOf(key) < 0 ? 'Kaufbar' : 'Ab ' + ARENAS[arenaOf(key)].n) + '</span>' : t.hero ? '<span class="clbl hh">' + t.name + '</span>' : '') + '</button>';
     }).join('');
     var got = list.filter(function (k) { return unlocked(k); }).length, dslots = '', dmenu = '';
-    for (i = 0; i < DECK_SLOTS; i++) dslots += '<button class="dsl' + (i === S.dslot ? ' on' : '') + '" data-dslot="' + i + '" aria-label="Deck ' + (i + 1) + '">' + (i + 1) + '</button>';
+    for (i = 0; i < S.dcount; i++) dslots += '<button class="dsl' + (i === S.dslot ? ' on' : '') + '" data-dslot="' + i + '" aria-label="Deck ' + (i + 1) + '">' + (i + 1) + '</button>';
     var avgCost = S.deck.length ? (S.deck.reduce(function (n, k) { return n + TYPES[k].cost; }, 0) / S.deck.length).toFixed(1).replace('.', ',') : '0';
-    if (S.dmenu === 1) dmenu = '<div class="dmenu"><button data-dcopy="1">Deck kopieren</button><button data-drand="1">Zufälliges Deck</button><button data-ddel="1">Deck löschen</button></div>';
+    if (S.dmenu === 1) dmenu = '<div class="dmenu">' + (S.dcount < DECK_SLOTS ? '<button data-dadd="1">Deck hinzufügen</button>' : '') + (S.dcount > 1 ? '<button data-dcopy="1">Deck kopieren</button>' : '') + '<button data-drand="1">Zufälliges Deck</button>' + '<button data-ddel="1">Deck löschen</button></div>';
+    else if (0) dmenu = '<div class="dmenu"><button data-dcopy="1">Deck kopieren</button><button data-drand="1">Zufälliges Deck</button><button data-ddel="1">Deck löschen</button></div>';
     else if (S.dmenu === 2) {
       dmenu = '<div class="dmenu"><span>Deck ' + (S.dslot + 1) + ' kopieren nach:</span><div class="dpick">';
-      for (i = 0; i < DECK_SLOTS; i++) if (i !== S.dslot) dmenu += '<button data-dpick="' + i + '">' + (i + 1) + '</button>';
+      for (i = 0; i < S.dcount; i++) if (i !== S.dslot) dmenu += '<button data-dpick="' + i + '">' + (i + 1) + '</button>';
       dmenu += '</div></div>';
     }
     return       '<div class="ctabs"><button class="ctab' + (tab === 'hero' ? ' on' : '') + '" data-ctab="hero">' + mi('crown') + 'Helden</button><button class="ctab' + (tab === 'mini' ? ' on' : '') + '" data-ctab="mini">' + mi('swords') + 'Minis</button></div>' +
@@ -6872,7 +6929,7 @@ CH.shield = critter({
     } else {
       act = '<button class="cmbtn" data-add="' + k + '">' + (full ? 'Ins Deck · tauschen' : 'Ins Deck') + '</button>';
     }
-    return '<div class="cmodal" data-close="1"><div class="cm' + (t.hero ? '' : ' glass') + '" role="dialog" aria-label="' + t.name + '"><button class="cx" data-close="1" aria-label="Schließen">' + mi('x') + '</button>' +
+    return '<div class="cmodal" data-close="1"><div class="cm glass" role="dialog" aria-label="' + t.name + '"><button class="cx" data-close="1" aria-label="Schließen">' + mi('x') + '</button>' +
       '<div class="cmart' + (lk ? ' lk' : '') + (t.hero ? '' : ' big') + '"><span class="cplat"></span>' + CH[k] + (t.hero ? '' : '<span class="ccost">' + CCI(0, t.cost) + '</span>') + '<button class="cnav l" data-cnav="-1" aria-label="Vorheriger"></button><button class="cnav r" data-cnav="1" aria-label="Nächster"></button></div>' +
       '<h3>' + t.name + '</h3><span class="cmrole">' + (t.hero ? t.role : 'Mini · ' + (t.front || t.range <= 1 ? 'Nahkampf' : 'Fernkampf')) + '</span><p>' + t.blurb + '</p>' +
       '<div class="cmst">' + tiles + '</div>' + extra + '<div class="cmact">' + act + '</div></div></div>';
@@ -7121,7 +7178,7 @@ CH.shield = critter({
 
   function tabsHtml() {
     var list = [['shop', 'Shop', 'shop'], ['home', 'Kampf', 'swords'], ['coll', 'Sammlung', 'cards'], ['events', 'Events', 'star']];
-    return '<nav class="tabs" aria-label="Menü">' + list.map(function (t) {
+    return '<nav class="tabs" aria-label="Menü"><span class="tabhl" aria-hidden="true"></span>' + list.map(function (t) {
       if (t[0] === 'events') return '<button class="tab soon" data-soon="1" aria-label="Events, bald verfügbar">' + mi(t[2]) + '<span>' + t[1] + '</span></button>';
       return '<button class="tab' + (S.tab === t[0] ? ' on' : '') + '" data-tab="' + t[0] + '"' + (S.tab === t[0] ? ' aria-current="page"' : '') + '>' + mi(t[2]) + '<span>' + t[1] + '</span></button>';
     }).join('') + '</nav>';
@@ -7177,10 +7234,11 @@ CH.shield = critter({
         resetNb();
         var nb = document.createElement('div');
         nb.className = 'mbody dragnb'; nb.innerHTML = bodyFor(TAB_ORDER[ni]);
-        nb.style.cssText = 'position:absolute;top:0;left:14px;right:14px;pointer-events:none;will-change:transform';
+        nb.style.cssText = 'position:absolute;top:' + (window.pageYOffset || 0) + 'px;left:14px;right:14px;pointer-events:none;will-change:transform';
         $('menu').querySelector('.mwrap').appendChild(nb); st.nb = nb; st.nbIdx = ni;
       }
       st.cur.style.transform = 'translateX(' + dx + 'px)';
+      var hl = $('menu').querySelector('.tabhl'); if (hl) { hl.classList.remove('anim'); hl.style.setProperty('--hp', (st.ti + (ni - st.ti) * Math.min(1, Math.abs(dx) / st.W)).toFixed(3)); }
       st.nb.style.transform = 'translateX(' + (dx + (dx < 0 ? st.W : -st.W)) + 'px)';
     }, { passive: false });
     function finish(e) {
@@ -7192,6 +7250,7 @@ CH.shield = critter({
       var ease = 'transform .26s cubic-bezier(.22,.8,.3,1)', sign = dx < 0 ? -1 : 1;
       s.cur.style.transition = ease;
       if (s.nb) s.nb.style.transition = ease;
+      var hl2 = $('menu').querySelector('.tabhl'); if (hl2) { hl2.classList.add('anim'); var tgt = go ? s.nbIdx : s.ti; hl2.style.setProperty('--hp', tgt); window.__hp = tgt; }
       requestAnimationFrame(function () {
         if (go) { s.cur.style.transform = 'translateX(' + (sign * s.W) + 'px)'; s.nb.style.transform = 'translateX(0)'; }
         else { s.cur.style.transform = 'translateX(0)'; if (s.nb) s.nb.style.transform = 'translateX(' + (sign * s.W) + 'px)'; }
@@ -7208,12 +7267,13 @@ CH.shield = critter({
     document.addEventListener('touchcancel', finish, { passive: true });
     window.__swipe = goTab;
   })();
+  document.addEventListener('pointerdown', function (e) { if (S.screen === 'menu' && e.target.closest && e.target.closest('button') && navigator.vibrate) { try { navigator.vibrate(8); } catch (x) {} } }, { passive: true });
   function renderMenu() {
     var body = bodyFor(S.tab), LI = lvlInfo();
     var oldBody = $('menu').querySelector('.mbody'), sc = slideCls();
     $('menu').innerHTML =
-      '<div class="mtop">' + '<button class="mlvl" data-mmenu="1" aria-label="Menü, Level ' + LI.l + ', noch ' + (LI.need - LI.cur) + ' XP bis zum nächsten Level" aria-expanded="' + !!S.mpop + '">' + lvlRing(LI) + '<span class="lbar">' + (LI.need - LI.cur) + '<small>XP</small></span></button>' + pill('trophy', 'Trophäen', S.trophies) + pill('coin', 'Münzen', S.coins).replace('class="pill"', 'class="pill coinp"') + pill('gem', 'Juwelen', S.gems).replace('class="pill"', 'class="pill gemp"') +
-      (S.tab === 'home' ? passChip() + questChip() : '') + (S.mpop ? '<div class="mpop" role="menu"><button data-tab="acct" role="menuitem">' + mi('user') + 'Konto</button><button data-tab="rules" role="menuitem">' + mi('book') + 'Spielregeln</button><button data-tab="ach" role="menuitem">' + mi('crown') + 'Erfolge</button><button data-tab="pass" role="menuitem">' + mi('star') + 'Knirpspass</button></div>' : '') + '</div>' +
+      '<div class="mtop">' + '<button class="mlvl" data-mmenu="1" aria-label="Menü, ' + S.name.replace(/[<>&"]/g, '') + ', Level ' + LI.l + '" aria-expanded="' + !!S.mpop + '">' + lvlRing(LI) + '<span class="lbar"><span class="lname">' + S.name.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</span></span></button>' + pill('trophy', 'Trophäen', S.trophies) + pill('coin', 'Münzen', S.coins).replace('class="pill"', 'class="pill coinp"') + pill('gem', 'Juwelen', S.gems).replace('class="pill"', 'class="pill gemp"') +
+      (S.mpop ? '<div class="mpop" role="menu"><button data-tab="acct" role="menuitem">' + mi('user') + 'Konto</button><button data-tab="rules" role="menuitem">' + mi('book') + 'Spielregeln</button><button data-tab="ach" role="menuitem">' + mi('crown') + 'Erfolge</button><button data-tab="pass" role="menuitem">' + mi('star') + 'Knirpspass</button></div>' : '') + '</div>' +
       '<div class="mwrap"><div class="mbody' + sc + '">' + body + '</div></div>' + tabsHtml() + (S.ppick ? pickHtml() : '');
     if (sc && oldBody) {
       var wrap = $('menu').querySelector('.mwrap');
@@ -7221,6 +7281,14 @@ CH.shield = critter({
       wrap.appendChild(oldBody);
       setTimeout(function () { if (oldBody.parentNode) oldBody.remove(); }, 420);
     }
+    (function () { /* markierter Tab unten gleitet mit; Pass/Quests bleiben still und blenden nur aus/ein */
+      var hl = $('menu').querySelector('.tabhl'), ni = TAB_ORDER.indexOf(S.tab), mt = $('menu').querySelector('.mtop');
+      if (hl) {
+        if (ni < 0) hl.style.opacity = '0';
+        else { var from = window.__hp == null ? ni : window.__hp; hl.style.setProperty('--hp', from); void hl.offsetWidth; hl.classList.add('anim'); hl.style.setProperty('--hp', ni); window.__hp = ni; }
+      }
+      window.__rt = S.tab;
+    })();
     document.body.classList.toggle('modal-open', !!S.cmodal && S.tab === 'coll');
     document.body.classList.toggle('in-pass', S.tab === 'pass');
     document.body.classList.toggle('in-home', S.tab === 'home');
@@ -7270,7 +7338,8 @@ CH.shield = critter({
     board.style.scale = String(zoom);
     board.style.transform = 'perspective(1100px) rotateX(' + (inPrep ? 22 : 7) + 'deg)';
     ensureZones();
-    board.style.translate = tx.toFixed(1) + 'px ' + ty.toFixed(1) + 'px';
+    var newT = tx.toFixed(1) + 'px ' + ty.toFixed(1) + 'px';
+    board.style.translate = newT;
     if (first) { void board.offsetWidth; board.style.transition = ''; board.setAttribute('data-cam', '1'); }
   }
   /* Magische Zonen-Rahmen: blau = eigene Haelfte, rot = Gegner (nur in der Vorbereitung sichtbar) */
@@ -7318,8 +7387,10 @@ CH.shield = critter({
   });
   document.addEventListener('click', function (e) {
     if (S.screen === 'menu') {
+      if (S.dmenu && !e.target.closest('.dmenu') && !e.target.closest('[data-dmenu]')) { S.dmenu = 0; renderMenu(); return; } /* Tipp daneben schliesst das Deck-Menue */
       var op = e.target.closest('[data-open]');
       if (op) { S.swapFor = null; S.cmodal = op.getAttribute('data-open'); S.swap = false; renderMenu(); return; }
+      if (e.target.closest('[data-dadd]')) { if (S.dcount < DECK_SLOTS) { saveDeck(); S.decks[S.dcount] = { cards: [], heroKey: null }; S.dcount++; applySlot(S.dcount - 1); S.heroOn = true; saveDeck(); } S.dmenu = 0; S.swapFor = null; renderMenu(); return; }
       var dm = e.target.closest('[data-dmenu]');
       if (dm) { S.dmenu = S.dmenu ? 0 : 1; renderMenu(); return; }
       if (e.target.closest('[data-ddel]')) { S.deck = []; S.heroKey = null; S.dmenu = 0; S.swapFor = null; saveDeck(); renderMenu(); return; }
