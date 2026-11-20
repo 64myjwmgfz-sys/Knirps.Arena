@@ -2126,9 +2126,78 @@ html, body { overscroll-behavior-x: none; }
 .arank { padding: 5px 16px; border-radius: 999px; font-weight: 800; font-size: 14px; color: #fff; background: rgba(8,34,70,.55); box-shadow: 0 0 0 2px rgba(255,255,255,.35); animation: arbanner .5s 1s both; }
 .atap { position: absolute; bottom: calc(40px + env(safe-area-inset-bottom, 0px)); font-weight: 800; font-size: 17px; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.35); animation: arfade .5s 1.6s both, arblink 1.6s 1.6s ease-in-out infinite; }
 @keyframes arblink { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+
+/* bunte Tab-Symbole */
+.tab svg.ico { width: 36px; height: 36px; overflow: visible; filter: drop-shadow(0 2px 0 rgba(0,0,0,.3)); transition: transform .22s cubic-bezier(.3,1.6,.5,1); }
+.tab.on svg.ico { transform: translateY(-3px) scale(1.14); }
+.tab.soon svg.ico { filter: grayscale(.2) drop-shadow(0 2px 0 rgba(0,0,0,.3)); }
+.tab { gap: 1px; }
+
+.legal { text-align: center; margin: 14px 0 4px; font-weight: 700; font-size: 13px; }
+.legal a { color: #CFE8F6; text-decoration: underline; }
+
+/* Querformat (iPad/Handy): Insel passt sich der Hoehe an, damit Kampf-Knopf nicht unter der Leiste liegt */
+@media (orientation: landscape) and (max-height: 1100px) {
+  .menu .stage { width: min(100%, calc((100vh - 530px) * 1.1796)); min-width: 230px; margin-left: auto; margin-right: auto; margin-top: 8px; }
+  .menu { padding-bottom: 120px; }
+}
+
+/* Handy im Querformat: nur Hochformat erlaubt (iPad bleibt frei drehbar) */
+#rotate { display: none; position: fixed; inset: 0; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 20px; background: radial-gradient(ellipse at 50% 40%, #3AA0E8, #17407F); color: #fff; font-family: var(--font-display); }
+#rotate svg { width: 84px; height: 84px; animation: rotwob 1.8s ease-in-out infinite; }
+#rotate b { font-weight: 400; font-size: 28px; -webkit-text-stroke: 6px var(--m-ol); paint-order: stroke fill; text-shadow: 0 3px 0 rgba(0,0,0,.3); }
+#rotate span { font-family: 'Nunito', system-ui, sans-serif; font-weight: 800; font-size: 15px; opacity: .9; }
+@keyframes rotwob { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
+@media (orientation: landscape) and (max-height: 520px) { #rotate { display: flex; } }
+
+/* ===== Shop im weissen Glas-Design der Sammlung ===== */
+.gemgrid { padding: 12px 10px 14px; gap: 12px 10px; border-radius: 18px; background: linear-gradient(#7FD0DC, #5DB7C9); box-shadow: 0 0 0 3px var(--m-ol), inset 0 3px 0 rgba(255,255,255,.35); }
+.gempack { position: relative; overflow: hidden; color: #1E3A4A; padding: 14px 8px 12px; border-radius: 16px;
+  background: linear-gradient(160deg, rgba(255,255,255,.98) 0%, #E4F3F8 52%, #F3FAFD 100%);
+  box-shadow: 0 0 0 2.5px #fff, 0 0 0 4.5px rgba(76,157,176,.75), 0 5px 0 4.5px #3C7F91, inset 0 2px 0 #fff, inset 0 -10px 18px rgba(120,190,225,.22);
+  transition: transform .16s cubic-bezier(.3,1.7,.5,1), filter .12s; -webkit-tap-highlight-color: transparent; }
+.gempack::before { content: ""; position: absolute; left: -10%; right: -10%; top: -30%; height: 55%; background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,0)); border-radius: 0 0 50% 50%; pointer-events: none; }
+.gempack > * { position: relative; }
+.gempack:active { transform: translateY(4px) scale(.96); filter: brightness(.95); transition-duration: .05s; }
+.gempack b { color: #1E3A4A; text-shadow: 0 1px 0 #fff; }
+.gempack small { color: #5B7F8F; }
+.gempack .gpi svg { filter: drop-shadow(0 2px 0 rgba(30,60,80,.25)); }
+.gempack .gprice { box-shadow: 0 0 0 2.5px #7A4A08, 0 3px 0 2.5px #7A4A08, inset 0 2px 0 rgba(255,255,255,.6); margin-bottom: 3px; }
+.gempack.cant { filter: saturate(.6) brightness(.97); }
+.gempack.cant .gprice { opacity: .75; }
+.chestpack.goldc { background: linear-gradient(160deg, #FFFDF0 0%, #FFF0B8 55%, #FFF8DA 100%); box-shadow: 0 0 0 2.5px #fff, 0 0 0 4.5px #E7A81C, 0 5px 0 4.5px #B97800, inset 0 2px 0 #fff, inset 0 -10px 18px rgba(255,200,60,.3); }
+.shh { align-self: flex-start; padding: 6px 16px 6px 10px; border-radius: 999px; font-size: 17px; color: #1F4256; -webkit-text-stroke: 0; text-shadow: none; background: linear-gradient(#FFFFFF, #E4F3F7); box-shadow: 0 0 0 2.5px #3C7F91, 0 3px 0 2.5px #3C7F91, inset 0 2px 0 #fff; }
+.shh svg { width: 22px; height: 22px; }
+.shopnote, .menu .panel:not(.herocard):not(.cdp) { }
+.shopnote, .herocard, .mbody .panel.shopnote + * { }
+.herocard, .shopnote { background: linear-gradient(160deg, rgba(255,255,255,.98), rgba(226,236,246,.94) 55%, rgba(240,246,252,.97)); color: #24344A; box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(120,150,190,.55), 0 8px 18px rgba(0,0,0,.25), inset 0 2px 0 #fff; }
+.herocard { padding: 14px 16px; }
+.soonoffer { justify-content: center; text-align: center; padding: 22px 16px; } .soonoffer .hcinfo { align-items: center; }
+.hcinfo b { color: #1E2D44; } .hcinfo small { color: #6B7F98; }
+.hcown { color: #fff; box-shadow: 0 0 0 2.5px #1F6B3C, 0 3px 0 2.5px #1F6B3C, inset 0 2px 0 rgba(255,255,255,.4); background: linear-gradient(#4CC878, #2F9E55); }
+.shopmsg { color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.3); }
+
+.shrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dtimer { padding: 5px 12px; border-radius: 999px; font-weight: 800; font-size: 12.5px; color: #fff; background: rgba(8,34,70,.45); box-shadow: 0 0 0 2px rgba(255,255,255,.35); white-space: nowrap; }
+
+.dailygrid { grid-template-columns: repeat(3, 1fr); gap: 10px 8px; padding: 12px 8px 14px; }
+.cc.dly { padding-bottom: 8px; gap: 6px; transition: transform .16s cubic-bezier(.3,1.7,.5,1), filter .2s; }
+.cc.dly:active:not(:disabled) { transform: translateY(3px) scale(.95); }
+.cc.dly .dprice { display: inline-flex; align-items: center; justify-content: center; gap: 4px; align-self: center; padding: 4px 12px; border-radius: 10px; font-weight: 800; font-size: 15px; color: var(--m-ol); background: linear-gradient(#FFE27A, #FFB81F); box-shadow: 0 0 0 2.5px #7A4A08, inset 0 2px 0 rgba(255,255,255,.6); }
+.cc.dly .dprice svg { width: 17px; height: 17px; }
+.cc.dly.cant { filter: saturate(.7); }
+.cc.dly.sold { cursor: default; }
+.cc.dly.sold .cart { filter: grayscale(.85) brightness(.93); }
+.cc.dly.sold { background: linear-gradient(#E3E8EC, #C9D2DA); box-shadow: 0 0 0 2.5px #8B96A3, 0 4px 0 2.5px #6B7683, inset 0 2px 0 rgba(255,255,255,.6); }
+.cc.dly.sold .dprice { background: linear-gradient(#5FD88A, #2F9E55); box-shadow: 0 0 0 2.5px #1F6B3C, inset 0 2px 0 rgba(255,255,255,.5); }
+.cc.dly .dok svg { width: 22px; height: 22px; fill: none; stroke: #fff; filter: drop-shadow(0 1px 0 rgba(0,60,20,.5)); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.cfx.direct .cstage, .cfx.direct .rar { display: none; }
+.cc.dly .dname { position: absolute; left: 6px; right: 6px; top: 6px; z-index: 4; text-align: center; font-family: var(--font-display); font-size: 13px; line-height: 1; color: #1E3A4A; text-shadow: 0 1px 0 #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.cc.dly .dqty { position: absolute; left: 7px; bottom: 7px; z-index: 5; padding: 1px 8px; border-radius: 999px; font-family: var(--font-display); font-size: 15px; line-height: 1.25; color: #3A2500; background: linear-gradient(#FFE27A, #FFB81F); box-shadow: 0 0 0 2px #7A4A08, inset 0 1.5px 0 rgba(255,255,255,.6); pointer-events: none; }
 </style>
 
 <div class="menu" id="menu"></div>
+<div id="rotate" aria-live="polite"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="20" y="6" width="24" height="42" rx="5" fill="#fff" stroke="#1B2630" stroke-width="3"/><rect x="24" y="12" width="16" height="26" rx="2" fill="#5FC3FF"/><circle cx="32" cy="43" r="2" fill="#1B2630"/><path d="M12 54a22 22 0 0 0 40 0" fill="none" stroke="#FFD23F" stroke-width="4" stroke-linecap="round"/><path d="M52 54l4-8-9 2z" fill="#FFD23F" stroke="#FFD23F" stroke-width="2" stroke-linejoin="round"/></svg><b>Bitte Handy drehen</b><span>Knirps-Arena wird im Hochformat gespielt.</span></div>
 
 <main class="app" id="app" hidden>
   <section class="boardwrap">
@@ -6051,13 +6120,13 @@ CH.shield = critter({
     } catch (e) {}
   }
   function showChest(loot, done, kind) {
-    questAdd('chest');
+    if (kind !== 'direct') questAdd('chest');
     var gold = kind === 'gold', rar = 0, lootFn = typeof loot === 'function' ? loot : null, n = lootFn ? 1 : loot.length, need3 = gold ? 4 : 1, taps = 0, fx = document.getElementById('cfx');
     if (!fx) { fx = document.createElement('div'); fx.id = 'cfx'; document.body.appendChild(fx); }
     var pts = '';
     for (var q = 0; q < 18; q++) pts += '<span style="left:' + (Math.random() * 100).toFixed(1) + '%;animation-delay:-' + (Math.random() * 9).toFixed(1) + 's;animation-duration:' + (6 + Math.random() * 6).toFixed(1) + 's;--s:' + (0.5 + Math.random()).toFixed(2) + '"></span>';
     fx.className = 'cfx ' + (gold ? 'gold r0' : 'wood'); fx.hidden = false;
-    fx.innerHTML = (gold ? '<div class="rbg b1"></div><div class="rbg b2"></div>' : '') + '<div class="rays"></div><div class="pts">' + pts + '</div><div class="ctitle">' + (gold ? 'Lucky Drop' : 'Box') + '</div>' + (gold ? '<div class="dstars">' + [0, 1, 2].map(function (k) { return '<svg viewBox="-12 -12 84 84" class="ds"><defs><radialGradient id="dsgl" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".45" stop-color="#FFF08A"/><stop offset="1" stop-color="#FFB800"/></radialGradient><radialGradient id="dhg' + k + '" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="currentColor" stop-opacity=".9"/><stop offset=".6" stop-color="currentColor" stop-opacity=".25"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs><circle class="dh" cx="30" cy="31" r="40" fill="url(#dhg' + k + ')"/><path class="sh" d="M30 5l7.200 15.600 17 2-12.600 11.600 3.400 16.800L30 42.400 15 51l3.400-16.800L5.800 22.600l17-2z"/><path class="dsp" d="M52 6l1.800 4.200 4.200 1.800-4.200 1.800L52 18l-1.800-4.200L46 12l4.200-1.800z" fill="#fff"/><path class="dsp" style="animation-delay:-.35s" d="M6 44l1.400 3.200 3.200 1.400-3.200 1.400L6 53.200l-1.400-3.200L1.400 48.600l3.200-1.400z" fill="#fff"/></svg>'; }).join('') + '</div>' : '') +
+    fx.innerHTML = (gold ? '<div class="rbg b1"></div><div class="rbg b2"></div>' : '') + '<div class="rays"></div><div class="pts">' + pts + '</div><div class="ctitle">' + (gold ? 'Lucky Drop' : kind === 'direct' ? 'Gekauft!' : 'Box') + '</div>' + (gold ? '<div class="dstars">' + [0, 1, 2].map(function (k) { return '<svg viewBox="-12 -12 84 84" class="ds"><defs><radialGradient id="dsgl" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".45" stop-color="#FFF08A"/><stop offset="1" stop-color="#FFB800"/></radialGradient><radialGradient id="dhg' + k + '" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="currentColor" stop-opacity=".9"/><stop offset=".6" stop-color="currentColor" stop-opacity=".25"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs><circle class="dh" cx="30" cy="31" r="40" fill="url(#dhg' + k + ')"/><path class="sh" d="M30 5l7.200 15.600 17 2-12.600 11.600 3.400 16.800L30 42.400 15 51l3.400-16.800L5.800 22.600l17-2z"/><path class="dsp" d="M52 6l1.800 4.200 4.200 1.800-4.200 1.800L52 18l-1.800-4.200L46 12l4.200-1.800z" fill="#fff"/><path class="dsp" style="animation-delay:-.35s" d="M6 44l1.400 3.200 3.200 1.400-3.200 1.400L6 53.200l-1.400-3.200L1.400 48.600l3.200-1.400z" fill="#fff"/></svg>'; }).join('') + '</div>' : '') +
       (gold ? '<div class="rar">SELTEN</div>' : '') + '<div class="cstage"><div class="cglow"></div><div class="beam"></div><div class="floor"></div><div class="cs flat">' + chest3d(gold) + '</div></div>' +
       '<div class="twk">' + [[14, 24], [80, 12], [8, 62], [88, 58], [28, 4], [66, 76], [50, 0]].map(function (t, i) { return '<i style="left:' + t[0] + '%;top:' + t[1] + '%;animation-delay:-' + (i * 0.27).toFixed(2) + 's;width:' + (12 + i % 3 * 5) + 'px;height:' + (12 + i % 3 * 5) + 'px"></i>'; }).join('') + '</div><div class="flashw"></div><div class="cards"></div><div class="chint">' + (gold ? 'Tippe die Box an: 0/3' : 'Tippe die Box an') + '</div>';
     var lidEl = fx.querySelector('.lidjs'), lidRaf = 0;
@@ -6330,6 +6399,7 @@ CH.shield = critter({
       else if (shown.length < n) reveal();
       else end();
     };
+    if (kind === 'direct') { st = 2; ready = true; fx.classList.add('direct'); setTimeout(reveal, 80); }
   }
 
   function finish(res) {
@@ -6682,6 +6752,10 @@ CH.shield = critter({
     shop: '<path d="M5 8.500h14l-1 11.500H6z"/><path d="M9 8.500V7a3 3 0 0 1 6 0v1.500"/>'
   };
   var ART = {
+    tshop: '<rect x="3.5" y="14" width="25" height="14" rx="3" fill="#C9772A" stroke="#2A1A12" stroke-width="2"/><path d="M3.5 14V12.5A8.5 8.5 0 0 1 12 4h8a8.5 8.5 0 0 1 8.5 8.5V14Z" fill="#EE9A40" stroke="#2A1A12" stroke-width="2" stroke-linejoin="round"/><rect x="13.5" y="4" width="5" height="24" fill="#FFC93A" stroke="#2A1A12" stroke-width="1.8"/><rect x="12" y="14.5" width="8" height="7" rx="2" fill="#FFE27A" stroke="#2A1A12" stroke-width="1.8"/><circle cx="16" cy="17.6" r="1.2" fill="#2A1A12"/>',
+    tswords: '<g transform="rotate(-45 16 16)"><path d="M16 1.8 19.4 5.6V20.5H12.6V5.6Z" fill="#E6EEF6" stroke="#2A1A12" stroke-width="1.8" stroke-linejoin="round"/><path d="M16 5V19" stroke="#9FB3C8" stroke-width="1.6" stroke-linecap="round"/><rect x="8.6" y="20" width="14.8" height="3.6" rx="1.8" fill="#FFC93A" stroke="#2A1A12" stroke-width="1.8"/><rect x="14.4" y="23.4" width="3.2" height="5" rx="1" fill="#B8601F" stroke="#2A1A12" stroke-width="1.6"/><circle cx="16" cy="29.6" r="2" fill="#FFC93A" stroke="#2A1A12" stroke-width="1.5"/></g><g transform="rotate(45 16 16)"><path d="M16 1.8 19.4 5.6V20.5H12.6V5.6Z" fill="#E6EEF6" stroke="#2A1A12" stroke-width="1.8" stroke-linejoin="round"/><path d="M16 5V19" stroke="#9FB3C8" stroke-width="1.6" stroke-linecap="round"/><rect x="8.6" y="20" width="14.8" height="3.6" rx="1.8" fill="#FFC93A" stroke="#2A1A12" stroke-width="1.8"/><rect x="14.4" y="23.4" width="3.2" height="5" rx="1" fill="#B8601F" stroke="#2A1A12" stroke-width="1.6"/><circle cx="16" cy="29.6" r="2" fill="#FFC93A" stroke="#2A1A12" stroke-width="1.5"/></g>',
+    tcards: '<g transform="rotate(-14 16 28)"><rect x="7" y="4" width="15" height="21" rx="3" fill="#4C8BF5" stroke="#2A1A12" stroke-width="2"/><rect x="10" y="7.5" width="9" height="14" rx="1.8" fill="#7FB0FF"/></g><g transform="rotate(10 16 28)"><rect x="11" y="5" width="15" height="21" rx="3" fill="#FFF6E6" stroke="#2A1A12" stroke-width="2"/><rect x="13.8" y="8" width="9.4" height="15" rx="1.8" fill="#FF9A3C"/><path d="M18.5 10.8l1.2 2.5 2.7.4-2 1.9.5 2.7-2.4-1.3-2.4 1.3.5-2.7-2-1.9 2.7-.4z" fill="#FFF6D0" stroke="#2A1A12" stroke-width="1.1" stroke-linejoin="round"/></g>',
+    tstar: '<path d="M16 3.2l3.9 8 8.8 1.3-6.4 6.2 1.5 8.8L16 23.3l-7.8 4.2 1.5-8.8-6.4-6.2 8.8-1.3z" fill="#FFD23F" stroke="#2A1A12" stroke-width="2" stroke-linejoin="round"/><path d="M16 8.2l1.8 3.9" stroke="#FFF3B0" stroke-width="2" stroke-linecap="round"/>',
     coin: '<circle cx="16" cy="16" r="14.500" fill="#E89B12" stroke="#7A4300" stroke-width="2"/><circle cx="16" cy="16" r="11.200" fill="#FFD23F" stroke="#F2A81C" stroke-width="1.600"/><path d="M16 9.500l1.900 4 4.400.5-3.200 3 .9 4.400-4-2.200-4 2.200.9-4.400-3.200-3 4.400-.5z" fill="#E89B12"/><path d="M8.200 12.200A9 9 0 0 1 15 6.800" fill="none" stroke="#FFF6C8" stroke-width="2" stroke-linecap="round"/>',
     gem: '<path d="M9 5h14l6 7-13 15L3 12z" fill="#35C4F2" stroke="#0B5A86" stroke-width="2" stroke-linejoin="round"/><path d="M9.500 5.500h13L19 12h-6z" fill="#A8F0FF"/><path d="M3.500 12H13l3 14.500z" fill="#1E9FD6"/><path d="M28.500 12H19l-3 14.500z" fill="#1788BF"/><path d="M3 12h26M9 5l4 7 3 15 3-15 4-7" fill="none" stroke="#0B5A86" stroke-width="1.200" stroke-linejoin="round"/>',
     trophy: '<path d="M9 5h14v8a7 7 0 0 1-14 0z" fill="#FFD23F" stroke="#7A4300" stroke-width="2" stroke-linejoin="round"/><path d="M9 7.500H5.500v2a4 4 0 0 0 4 4M23 7.500h3.500v2a4 4 0 0 1-4 4" fill="none" stroke="#C47A00" stroke-width="2" stroke-linecap="round"/><path d="M14 19.500h4v4.500h-4z" fill="#E89B12" stroke="#7A4300" stroke-width="1.600"/><rect x="9.500" y="24" width="13" height="4" rx="1.500" fill="#FFB81F" stroke="#7A4300" stroke-width="2"/><path d="M12.500 8v5" fill="none" stroke="#FFF6C8" stroke-width="2" stroke-linecap="round"/>'
@@ -7054,11 +7128,37 @@ CH.shield = critter({
       '<li>Nicht ausgegebener Knirpsaft bleibt dir für die nächste Runde.</li>' +
       '<li>Mit Verkaufen bekommst du den vollen Preis zurück.</li>' +
       '<li>Jede Figur schlägt in ihrem eigenen Tempo zu. In der Sammlung siehst du, wer schnell und wer langsam ist.</li></ul></div>' +
+      '<div class="panel"><b style="font-family:var(--font-display);font-weight:400;font-size:18px">Münzen &amp; Boxen</b><ul class="tips" style="margin-top:8px"><li>Gewonnene Runde: +10 Münzen.</li><li>Match gewonnen: +30 Münzen Bonus und eine Box.</li><li>Karten aus Boxen verbessern deine Truppen in der Sammlung.</li></ul></div>' +
       '<div class="panel"><b style="font-family:var(--font-display);font-weight:400;font-size:18px">So gibt es Trophäen</b>' +
       '<ul class="tips" style="margin-top:8px"><li>Spiel gewonnen (Bot besiegt): +15 Trophäen.</li><li>Alle Herzen verloren: −5 Trophäen.</li><li>Spiel mittendrin verlassen: −5 Trophäen.</li><li>Die Belohnungen (?) an den Stufen kommen später.</li></ul></div>';
   }
 
   var GEMPACKS = [[80, '0,99 €', 'Handvoll'], [500, '4,99 €', 'Beutel'], [1200, '9,99 €', 'Sack'], [2500, '19,99 €', 'Fass'], [6500, '49,99 €', 'Schatzkammer'], [14000, '99,99 €', 'Drachenhort']];
+  /* ---------- Tagesangebot: jeden Tag 3 verschiedene Knirpse, je 1 Karte ---------- */
+  var DAILY_KEY = 'knirps-arena-daily', DAILY_PRICE = 150, DAILY_SLOTS = 3;
+  function dayKey() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function dailyPicks() {
+    var key = dayKey(), h = 7, i;
+    for (i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) % 1000003;
+    var el = POOL.filter(function (k) { return !TYPES[k].hero && unlocked(k) && upLevel(k) < 3; });
+    if (el.length < DAILY_SLOTS) el = POOL.filter(function (k) { return !TYPES[k].hero && unlocked(k); });
+    var out = [];
+    while (out.length < DAILY_SLOTS && el.length) { h = (h * 1103515245 + 12345) % 2147483647; out.push(el.splice(h % el.length, 1)[0]); }
+    return out;
+  }
+  function dailyState() { try { var o = JSON.parse(localStorage.getItem(DAILY_KEY) || 'null'); if (o && o.d === dayKey() && Array.isArray(o.b)) return o.b; } catch (e) {} return []; }
+  function dailyLeft() { var n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1), mins = Math.max(1, Math.round((m - n) / 60000)); return mins >= 60 ? Math.floor(mins / 60) + ' Std. ' + (mins % 60) + ' Min.' : mins + ' Min.'; }
+  function dailyHtml() {
+    var picks = dailyPicks(); if (!picks.length) return '';
+    var bought = dailyState();
+    return '<div class="shrow"><h3 class="shh">' + mi('star') + 'Tagesangebote</h3><span class="dtimer">Neu in ' + dailyLeft() + '</span></div><div class="gemgrid dailygrid">' +
+      picks.map(function (k, i) {
+        var sold = bought.indexOf(i) >= 0;
+        return '<button class="cc dly' + (sold ? ' sold' : S.coins < DAILY_PRICE ? ' cant' : '') + '" data-buydaily="' + i + '"' + (sold ? ' disabled' : '') + ' aria-label="' + TYPES[k].name + (sold ? ', gekauft' : ', ' + DAILY_PRICE + ' Münzen') + '">' +
+          '<span class="cart"><span class="cplat"></span>' + CH[k] + '<span class="dname">' + TYPES[k].name + '</span><span class="dqty">×1</span><span class="rglass"></span></span>' +
+          (sold ? '<span class="dprice dok">' + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.500"/></svg></span>' : '<span class="dprice">' + mi('coin') + DAILY_PRICE + '</span>') + '</button>';
+      }).join('') + '</div>' + (S.dailyMsg ? '<p class="shopmsg">' + S.dailyMsg + '</p>' : '');
+  }
   var CHESTS = [{ name: 'Box', n: 3, bonus: 0, price: 300, gem: false }, { name: 'Lucky Drop', n: 1, bonus: 1, price: 40, gem: true, gold: true }];
   var CHEST_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true" style="fill:#62D4F6;stroke:#1A78A8;stroke-width:1.8;stroke-linejoin:round"><path d="M3 11V9a5 5 0 015-5h8a5 5 0 015 5v2z"/><rect x="3" y="11" width="18" height="9" rx="2"/><rect x="10.500" y="10" width="3" height="4" fill="#FFC933"/></svg>';
   var COINPACKS = [[100, 10], [550, 50], [1200, 100], [3200, 250]];
@@ -7066,6 +7166,7 @@ CH.shield = critter({
   function shopHtml() {
     var h = '<div><h2 class="mtitle">Shop</h2><p class="msub">Juwelen und Münzen</p></div>' +
       '<div class="panel shopnote"><b>Testphase:</b> Juwelen kosten noch nichts, es wird kein Geld abgebucht. Verwenden kannst du sie später.</div>' +
+      dailyHtml() +
       '<h3 class="shh">' + CHEST_ICO + 'Boxen</h3><div class="gemgrid chestgrid">' +
       CHESTS.map(function (c, i) {
         var can = c.gem ? S.gems >= c.price : S.coins >= c.price;
@@ -7081,12 +7182,11 @@ CH.shield = critter({
         var can = S.gems >= c[1];
         return '<button class="gempack coinpack' + (can ? '' : ' cant') + '" data-buycoin="' + i + '"><span class="gpi">' + mi('coin') + '</span><b>' + c[0].toLocaleString('de-DE') + '</b><small>Münzen</small><span class="gprice gp2">' + mi('gem') + c[1] + '</span></button>';
       }).join('') + '</div>' + (S.coinMsg ? '<p class="shopmsg">' + S.coinMsg + '</p>' : '') +
+      (unlocked('hero') ? '<h3 class="shh heroh">' + mi('star') + 'Neue Angebote</h3><div class="panel herocard soonoffer"><div class="hcinfo"><b>Bald mehr!</b><small>Neue Angebote kommen bald.</small></div></div>' :
       '<h3 class="shh heroh">' + mi('crown') + 'Helden</h3>' +
       '<div class="panel herocard"><div class="hcfig">' + CH.hero + '</div><div class="hcinfo"><b>' + TYPES.hero.name + '</b><small>' + TYPES.hero.role + '</small>' +
-      (unlocked('hero') ? '<span class="hcown">Freigeschaltet</span>' : '<button class="gempack hcbuy' + (S.coins >= DOLCHA_PRICE ? '' : ' cant') + '" data-buyhero="1"><span class="gprice gp2">' + mi('coin') + DOLCHA_PRICE.toLocaleString('de-DE') + '</span></button>') +
-      '</div></div>' + (S.heroMsg ? '<p class="shopmsg">' + S.heroMsg + '</p>' : '') +
-      '<div class="panel"><p style="margin:0 0 8px;font-weight:700">Du hast <b>' + S.coins + '</b> Münzen.</p>' +
-      '<ul class="tips"><li>Gewonnene Runde: +10 Münzen.</li><li>Match gewonnen: +30 Münzen Bonus und eine Box.</li><li>Karten aus Boxen verbessern deine Truppen in der Sammlung.</li></ul></div>';
+      '<button class="gempack hcbuy' + (S.coins >= DOLCHA_PRICE ? '' : ' cant') + '" data-buyhero="1"><span class="gprice gp2">' + mi('coin') + DOLCHA_PRICE.toLocaleString('de-DE') + '</span></button>' +
+      '</div></div>') + (S.heroMsg ? '<p class="shopmsg">' + S.heroMsg + '</p>' : '');
     return h;
   }
 
@@ -7231,7 +7331,7 @@ CH.shield = critter({
   }
 
   function tabsHtml() {
-    var list = [['shop', 'Shop', 'shop'], ['home', 'Kampf', 'swords'], ['coll', 'Sammlung', 'cards'], ['events', 'Events', 'star']];
+    var list = [['shop', 'Shop', 'tshop'], ['home', 'Kampf', 'tswords'], ['coll', 'Sammlung', 'tcards'], ['events', 'Events', 'tstar']];
     return '<nav class="tabs" aria-label="Menü"><span class="tabhl" aria-hidden="true"></span>' + list.map(function (t) {
       if (t[0] === 'events') return '<button class="tab soon" data-soon="1" aria-label="Events, bald verfügbar">' + mi(t[2]) + '<span>' + t[1] + '</span></button>';
       return '<button class="tab' + (S.tab === t[0] ? ' on' : '') + '" data-tab="' + t[0] + '"' + (S.tab === t[0] ? ' aria-current="page"' : '') + '>' + mi(t[2]) + '<span>' + t[1] + '</span></button>';
@@ -7569,6 +7669,19 @@ CH.shield = critter({
       if (S.coins >= DOLCHA_PRICE) { S.coins -= DOLCHA_PRICE; S.ownD = true; saveWallet(); S.heroMsg = ''; S.cmodal = null; }
       else S.heroMsg = 'Dafür fehlen dir ' + (DOLCHA_PRICE - S.coins).toLocaleString('de-DE') + ' Münzen.';
       renderMenu(); return;
+    }
+    var bd = e.target.closest('[data-buydaily]');
+    if (bd && S.screen === 'menu') {
+      var di = +bd.getAttribute('data-buydaily'), dks = dailyPicks(), dk = dks[di], dbo = dailyState();
+      if (dk && dbo.indexOf(di) < 0) {
+        if (S.coins >= DAILY_PRICE) {
+          S.coins -= DAILY_PRICE; saveWallet(); S.dailyMsg = ''; dbo.push(di);
+          try { localStorage.setItem(DAILY_KEY, JSON.stringify({ d: dayKey(), b: dbo })); } catch (e) {}
+          var db0 = S.cards[dk] || 0, dlv = upLevel(dk); S.cards[dk] = db0 + 1; saveCards(); autoUp(dk);
+          renderMenu(); showChest([{ k: dk, n: 1, before: db0, lv0: dlv, isNew: false }], function () { if (S.screen === 'menu') renderMenu(); }, 'direct');
+        } else { S.dailyMsg = 'Dafür fehlen dir ' + (DAILY_PRICE - S.coins).toLocaleString('de-DE') + ' Münzen.'; renderMenu(); }
+      }
+      return;
     }
     var bk = e.target.closest('[data-buychest]');
     if (bk && S.screen === 'menu') {
