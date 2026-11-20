@@ -758,6 +758,18 @@ body.in-game { overflow: hidden; padding: 0; }
 /* Leisten über dem Kopf */
 .hpbar, .unit.champ .hpbar { left: 10%; right: 10%; top: 6%; bottom: auto; height: 7px; }
 .chbar { left: 10%; right: 10%; top: calc(6% - 9px); bottom: auto; height: 7px; }
+.shbar { position: absolute; left: 10%; right: 10%; top: calc(6% - 9px); height: 7px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: rgba(0, 0, 0, 0.55); box-shadow: 0 0 0 1px #1B2630; border-radius: 3px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.shbar.on { opacity: 1; }
+.shbar i { display: block; background: transparent; transition: background 0.2s; }
+.shbar i + i { box-shadow: -1px 0 0 #1B2630; }
+.shbar i.on { background: linear-gradient(#BDEBFF, #3FA0E8); }
+.unit.dying .shbar { opacity: 0 !important; }
+.shbar i.on { background: linear-gradient(#FFFFFF, #AFC0D0); }
+/* Silber leuchtendes Schild des Waechters: Schildwall (3 Schlaege) und Eiserne Haut (3 Sekunden) */
+.unit.shielded .tok, .unit[data-type="guard"].invul .tok { filter: drop-shadow(0 0 7px #E4EDF6) drop-shadow(0 0 2px #fff); }
+.unit.shielded::after, .unit[data-type="guard"].invul::after { content: ""; position: absolute; left: 8%; right: 8%; top: 4%; bottom: 10%; border-radius: 50%; border: 3px solid rgba(225, 235, 246, 0.95); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.45), rgba(190, 208, 226, 0.22)); box-shadow: 0 0 12px rgba(225, 235, 246, 0.9), inset 0 0 10px rgba(255, 255, 255, 0.6); pointer-events: none; animation: gpulse 0.8s ease-in-out infinite alternate; }
+.unit[data-type="guard"].invul::after { background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.6), rgba(190, 208, 226, 0.34)); }
+.unit.shielded .wpn, .unit[data-type="guard"].invul .wpn { transform: translate(0, -10px) scale(1.7); transition: transform 0.26s ease-out; }
 .unit { overflow: visible; }
 /* ---------- iPad / Tablet ---------- */
 .app { max-width: none; margin: 0; --ui: 1; --cw: 0px; }
@@ -2272,7 +2284,8 @@ button.pslot b { font-size: 12.5px; }
 
   var TYPES = {
     guard:  { name: 'Wächter',     cost: 2, hp: 36, atk: 3,  range: 1, ai: 7,  mi: 6, color: '#4F7CAC', front: true, fx: 'bash',
-              blurb: 'Hält die Front. Viel Leben, aber langsame Schläge.' },
+              shield: { hits: 3, name: 'Schildwall', desc: 'Steht er zu Rundenbeginn vorn (kein Verbündeter vor ihm in seiner Spalte) und hat Gegner vor sich, bekommt er ein Schild: Es hält die nächsten 3 Schläge komplett ab, egal wie viel Schaden sie machen. Der Balken über seinem Kopf zeigt, wie viele Schläge noch übrig sind.' },
+              blurb: 'Hält die Front. Viel Leben, aber langsame Schläge. Mit Sternen wird er zum Fels: erst ein Schild, dann weniger Schaden, dann kurz unverwundbar.' },
     blade:  { name: 'Klingler',    cost: 2, hp: 16, atk: 3,  range: 1, ai: 3,  mi: 4, color: '#D2691E', front: true, fx: 'slash',
               blurb: 'Sehr schnelle Hiebe, aber wenig Leben.' },
     archer: { name: 'Bogi',        cost: 2, hp: 12, atk: 3,  range: 5, ai: 5,  mi: 5, color: '#4E9A57', fx: 'arrow',
@@ -2324,12 +2337,12 @@ button.pslot b { font-size: 12.5px; }
                          desc: 'Sein normaler Angriff ist ein Peitschenhieb mit 2 Feldern Reichweite. Jeder Hieb füllt den Ulti-Balken unter seinem Lebensbalken. Nach 8 Hieben holt er zum großen Knall aus: Mit 3 Feldern Reichweite trifft er einen Gegner mit 1,5-fachem Schaden und betäubt ihn 4 Sekunden lang. Der Betäubte kann sich in dieser Zeit weder bewegen noch angreifen.' },
               blurb: 'Dompteur mit langer Peitsche. Schlägt auf 2 Felder zu, nach 8 Hieben betäubt er einen Gegner auf 3 Felder für 4 Sekunden.' },
     coach:  { name: 'Coach Nabil', cost: 3, hp: 30, atk: 3, range: 1, ai: 6, mi: 5, color: '#1F8A8A', front: true, fx: 'box',
-              summon: { every: 7, name: 'Ruf der Mädchen' },
-              blurb: 'Boxtrainer mit Fade-Frisur. Schlägt mit Handschuhen abwechselnd links und rechts zu und ruft alle 7 Sekunden ein kleines Dolch-Mädchen aufs Feld. Mit Sternen ruft er schneller und mehr.' },
+              summon: { every: 7, name: 'Ruf der Mamacitas' },
+              blurb: 'Boxtrainer mit Fade-Frisur. Schlägt mit Handschuhen abwechselnd links und rechts zu und ruft alle 7 Sekunden eine kleine Mamacita aufs Feld. Mit Sternen ruft er schneller und mehr.' },
     rost:   { name: 'Rost', cost: 3, hp: 30, atk: 10, range: 1, ai: 12, mi: 5, color: '#8A5A3A', front: true, fx: 'greatsword',
               crit: { chance: [0.10, 0.25, 0.25, 0.25], mult: 2, name: 'Kritischer Treffer' },
               blurb: 'Kleiner Ritter mit umgedrehtem Eimer als Helm und einem kräftigen Breitschwert. Holt mit dem Schwert von hinten aus, schlägt langsam, aber sehr hart und landet mit etwas Glück einen kritischen Treffer mit doppeltem Schaden.' },
-    girl:   { name: 'Dolch-Mädchen', cost: 0, hp: 14, atk: 2, range: 1, ai: 4, mi: 4, color: '#D9779F', front: true, fx: 'dagger', summon: true,
+    girl:   { name: 'Mamacita', cost: 0, hp: 14, atk: 2, range: 1, ai: 4, mi: 4, color: '#D9779F', front: true, fx: 'dagger', summon: true,
               blurb: 'Klein, flink und schwach. Wird von Coach Nabil gerufen.' },
     slappy: { name: 'Slappy', cost: 3, hp: 26, atk: 1.4, range: 1, ai: 3, mi: 4, color: '#E8584C', front: true, fx: 'fish',
               ability: { kind: 'combo', every: 5, hits: 8, mult: 1.5, name: 'Fisch-Combo', tag: 'Combo nach 5 Schlägen',
@@ -2349,7 +2362,8 @@ button.pslot b { font-size: 12.5px; }
   var CROWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.5 5 8l4.5 4.5L12 6l2.5 6.5L19 8l1.5 10.5z" fill="#3A2500"/></svg>';
   var LV = [1, 1.35, 1.9, 2.7];
   /* 3 Fähigkeiten-Slots je Mini (für ★, ★★, ★★★); null = noch leer. Bisher nur bei Bogi belegt. */
-  var PERKS = { archer: [null, { name: 'Doppelschuss', desc: 'Schießt 2 Pfeile gleichzeitig, wenn zwei Gegner in Reichweite sind. Sonst nur einen.' }, null],
+  var PERKS = { guard: [{ name: 'Schildwall', desc: 'Steht er zu Rundenbeginn vorn (kein Verbündeter vor ihm in seiner Spalte) und hat Gegner vor sich, bekommt er ein Schild, das die nächsten 3 Schläge komplett abfängt, egal wie viel Schaden sie machen.' }, { name: 'Rückendeckung', desc: 'Steht ein Verbündeter auf einem angrenzenden Feld, erleidet er 10 % weniger Schaden.' }, { name: 'Eiserne Haut', desc: 'Fällt sein Leben zum ersten Mal unter 40 %, ist er 3 Sekunden lang unverwundbar.' }],
+    archer: [null, { name: 'Doppelschuss', desc: 'Schießt 2 Pfeile gleichzeitig, wenn zwei Gegner in Reichweite sind. Sonst nur einen.' }, null],
     rost: [{ name: 'Mehr Glück', desc: 'Kritische Treffer: 25 % Chance (statt 10 %) auf doppelten Schaden.' }, null, null],
     spitter: [null, null, { name: 'Flammenmeer', desc: 'Jeder Feuerball macht Flächenschaden im Kreuz: das Ziel und die 4 Nachbarfelder werden getroffen.' }] };
   /* Helden-Level: aktuell bis Level 5 (später bis 15). Je Level mehr Leben und Angriff; auf Level 5 (später 10, 15) kommt eine Verstärkung der Fähigkeit. */
@@ -3458,7 +3472,7 @@ CH.shield = critter({
         (S.sel && S.sel.kind === 'unit' && S.sel.id === u.id ? ' picked' : '') + (S.pop === u.id ? ' pop' : '');
       el.innerHTML = '<div class="base"></div><div class="shd">' + icon(skey(u)) + '</div><div class="tok" style="--c:' + t.color + '">' + icon(skey(u)) + '</div>' +
         (t.hero ? '<span class="lv champ" aria-label="Level ' + (u.hl || 1) + '">' + CROWN + '<b>' + (u.hl || 1) + '</b></span>' : u.level ? '<span class="lv l' + u.level + '" aria-label="' + u.level + ' von 3 Sternen">' + stars(u.level) + '</span>' : '') +
-        '<span class="hpbar"><i></i></span>' + chbarHtml(t, u) + '<span class="hit"></span>';
+        '<span class="hpbar"><i></i></span>' + chbarHtml(t, u) + (t.shield ? '<span class="shbar" aria-hidden="true"><i></i><i></i><i></i></span>' : '') + '<span class="hit"></span>';
       unitsEl.appendChild(el);
       u.el = el; faceVars(u);
       place(u);
@@ -4438,7 +4452,14 @@ CH.shield = critter({
   /* Schaden verteilen. Goldo lädt bei Treffern auf und schützt sich danach. */
   function hurt(src, t, dmg, post) {
     if (t.invul || t.away) return 0;
+    if (t.shield > 0) {
+      t.shield--;
+      var sfn = function () { t.shieldShown = Math.max(0, (t.shieldShown || 0) - 1); shieldBar(t); floatText(t, 'Schild!', 'reflect'); if (t.el) fxRing(ctr(t), '#6FC8FF', 1.3, 260); };
+      if (post) post.push(sfn); else sfn();
+      return 0;
+    }
     var ab = abOf(t), out = dmg;
+    if (TYPES[t.type].shield && t.level >= 2 && S.runtime.some(function (a) { return a !== t && a.hp > 0 && a.team === t.team && !a.away && dist(t, a) <= 1; })) out = out * 0.9;
     if (ab && ab.kind === 'guard') {
       if (t.guardT > 0) {
         out = Math.max(1, Math.round(dmg * (1 - ab.reduce)));
@@ -4453,7 +4474,31 @@ CH.shield = critter({
       }
     }
     t.hp = Math.max(0, t.hp - out);
+    if (TYPES[t.type].shield && t.level >= 3 && !t.ironUsed && t.hp > 0 && t.hp / t.max < 0.4) {
+      t.ironUsed = true; t.invul = true; t.ironT = Math.ceil(3000 / TICK);
+      var ifn = function () { if (t.el && t.hp > 0) t.el.classList.add('invul'); floatText(t, 'Eiserne Haut!', 'reflect'); };
+      if (post) post.push(ifn); else ifn();
+    }
     return out;
+  }
+  function shieldBar(u) {
+    var bar = partOf(u, '.shbar'); if (!bar) return;
+    var n = u.shieldShown || 0;
+    for (var i = 0; i < bar.children.length; i++) bar.children[i].className = i < n ? 'on' : '';
+    bar.classList.toggle('on', n > 0);
+    if (u.el) u.el.classList.toggle('shielded', n > 0 && u.hp > 0);
+  }
+  /* Rundenbeginn: der Waechter bekommt sein Schild, wenn er vorn steht und Gegner vor sich hat */
+  function shieldStart() {
+    S.runtime.forEach(function (u) {
+      var sh = TYPES[u.type].shield; if (!sh || u.hp <= 0 || (u.level || 0) < 1) return;
+      var dir = u.team === 'p' ? -1 : 1;
+      var allyAhead = S.runtime.some(function (a) { return a !== u && a.hp > 0 && a.team === u.team && a.x === u.x && (a.y - u.y) * dir > 0; });
+      var foeAhead = S.runtime.some(function (e) { return e.hp > 0 && e.team !== u.team && Math.abs(e.x - u.x) <= 1 && (e.y - u.y) * dir > 0; });
+      if (allyAhead || !foeAhead) return;
+      u.shield = sh.hits; u.shieldShown = sh.hits; shieldBar(u); floatText(u, 'Schild!', 'reflect');
+      if (u.el) fxRing(ctr(u), '#6FC8FF', 1.5, 420);
+    });
   }
   /* Schaden erst beim sichtbaren Treffer abziehen (Pfeil ist noch unterwegs): hurt() rechnet alles aus, die Lebenspunkte werden zurueckgesetzt und beim Aufprall abgezogen */
   function hurtLate(src, t, dmg, post) { var h0 = t.hp, d = hurt(src, t, dmg, post); t.hp = h0; return d; }
@@ -4982,7 +5027,7 @@ CH.shield = critter({
       if (!best) return;
       var rows = Math.abs(best.y - sy) + Math.abs(best.x - sx) * 0.6, dur = 800 + rows * 230, steps = Math.max(6, Math.round(rows * 2.4));
       u.x = best.x; u.y = best.y; u.digT = Math.ceil(dur / TICK) + 1; u.cd = 1;
-      if (pushed) { pushed.dx = Math.sign(pushed.nx - pushed.e.x); pushed.e.x = pushed.nx; pushed.e.lastX = -1; if (pushed.e.el) place(pushed.e); /* sofort sichtbar versetzen, damit Anzeige und Spalte (z.B. Bolzos Riesenpfeil) zusammenpassen */ }
+      /* Der Gegner/Mitspieler auf dem Zielfeld wird erst beim Auftauchen weggeschleudert, nicht schon waehrend der Tunnel gegraben wird */
       var el = u.el; if (!el) return;
       try { setFacing(u, u.team === 'p' ? 'B' : 'F', 1); } catch (e) {}
       el.style.visibility = 'hidden';
@@ -5002,7 +5047,18 @@ CH.shield = critter({
       later(dur, function () {
         el.style.transition = 'none'; place(u); void el.offsetWidth; el.style.transition = ''; el.style.visibility = '';
         var P = ctr(u);
-        if (pushed && pushed.e.el) { place(pushed.e); if (!RM) anim(tokOf(pushed.e), [{ transform: T(0, 0, 1, 0) }, { transform: T(-pushed.dx * 4, -8, 1, pushed.dx * 16) + ' scale(0.95,1.08)', offset: 0.4 }, { transform: T(0, 0, 1, 0) }], 420, { easing: 'ease-out' }); }
+        S.runtime.filter(function (e) { return e !== u && e.hp > 0 && !e.away && e.x === u.x && e.y === u.y; }).forEach(function (e) {
+          var spots = [], r, ddx, cx2, cy2;
+          for (r = 0; r < ROWS && !spots.length; r++) {
+            [u.y + r * -dir, u.y - r * -dir].forEach(function (yy) { if (yy < 0 || yy >= ROWS) return;
+              for (ddx = 1; ddx < COLS; ddx++) [u.x - ddx, u.x + ddx].forEach(function (nx) { if (nx >= 0 && nx < COLS && !occupied(nx, yy)) spots.push({ x: nx, y: yy, d: ddx + r * 2 }); }); });
+            if (spots.length) { var md = Math.min.apply(null, spots.map(function (q) { return q.d; })); spots = spots.filter(function (q) { return q.d === md; }); }
+          }
+          if (!spots.length) return;
+          var sp = spots[rnd(spots.length)], pdx = Math.sign(sp.x - e.x) || 1;
+          e.x = sp.x; e.y = sp.y; e.lastX = -1; e.cd = Math.max(e.cd || 0, 2);
+          if (e.el) { place(e); if (!RM) anim(tokOf(e), [{ transform: T(0, 0, 1, 0) }, { transform: T(-pdx * 8, -30, 1, pdx * 28) + ' scale(0.95,1.1)', offset: 0.45 }, { transform: T(0, 0, 1, 0) }], 520, { easing: 'ease-out' }); }
+        });
         fxPuff(P, '#8A5A32', 12, 34); fxPuff(P, '#B07C4A', 8, 22); fxRing(P, '#D9B07A', 1.4, 340); shake(5, 260);
         floatText(u, 'Tunnler!', 'reflect');
         if (!RM) anim(tokOf(u), [{ transform: T(0, 26, 0.4, 0), opacity: 0 }, { transform: T(0, -10, 1.1, 0) + ' scale(0.9,1.2)', opacity: 1, offset: 0.55 }, { transform: T(0, 0, 1, 0) }], 520, { easing: 'ease-out' });
@@ -5746,6 +5802,7 @@ CH.shield = critter({
     S.gas = (S.gas || []).filter(function (z) { return z.t > 0; });
     shuffle(aliveUnits()).forEach(function (u) {
       if (u.hp <= 0) return;
+      if (u.ironT > 0) { u.ironT--; if (u.ironT <= 0) { u.invul = false; if (u.el) u.el.classList.remove('invul'); } else return; /* in Schildhaltung: kein Laufen, kein Angriff */ }
       if (u.guardT > 0) {
         u.guardT--;
         var ab = abOf(u);
@@ -5811,8 +5868,13 @@ CH.shield = critter({
       foes.some(function (e) { var ea = e.guardT > 0 ? abOf(e) : null; if (ea && ea.taunt && dist(u, e) <= 1) { u.lockId = e.id; return true; } });
       var hunt = !!TYPES[u.type].dig;
       var t = foes.filter(function (e) { return e.id === u.lockId; })[0] || foes.sort(function (a, b) { if (hunt) { var pd = (a.range >= 2 ? 0 : 1) - (b.range >= 2 ? 0 : 1); if (pd) return pd; } return dist(u, a) - dist(u, b) || a.hp - b.hp; })[0];
-      u.lockId = t.id;
       var rng = (gab && gab.kind === 'whipstun' && u.stunReady) ? gab.ultRange : u.range;
+      /* Ist das bisherige Ziel aus der Reichweite gegangen, sucht die Figur erst ein neues Ziel in Reichweite, bevor sie dem alten hinterherlaeuft */
+      if (dist(u, t) > rng) {
+        var near = foes.filter(function (e) { return dist(u, e) <= rng; }).sort(function (a, b) { return dist(u, a) - dist(u, b) || a.hp - b.hp; })[0];
+        if (near) t = near;
+      }
+      u.lockId = t.id;
       if (dist(u, t) <= rng) {
         if (gab && gab.kind === 'gas' && u.gasT >= Math.round(gab.secs * 1000 / TICK)) { u.gasT = 0; u.gasSeg = 0; gasAttack(u, t); u.cd = u.ai + 1; u.cdTot = 0; return; }
         attack(u, t); u.cd = u.ai - 1 + (u.extraCd || 0); u.cdTot = u.cd; u.extraCd = 0; return;
@@ -5886,7 +5948,7 @@ CH.shield = critter({
   async function runBattle() {
     var my = ++token, ticks = 0;
     await sleep(500);
-    if (S.phase === 'battle' && my === token) { greet(); digStarts(); openers(); ballOpener(); }
+    if (S.phase === 'battle' && my === token) { greet(); digStarts(); openers(); ballOpener(); shieldStart(); }
     while (S.phase === 'battle' && my === token) {
       while (S.paused && my === token) await sleep(100);
       if (my !== token) return;
