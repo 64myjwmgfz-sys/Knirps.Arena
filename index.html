@@ -373,6 +373,9 @@ body.in-menu.in-pass { background:
   color: var(--m-text);
 }
 .mtop { display: flex; justify-content: space-between; gap: 10px; }
+.tfly { position: fixed; left: 0; top: 0; width: 30px; height: 30px; z-index: 10002; pointer-events: none; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4)); }
+.tfly svg { width: 100%; height: 100%; }
+.tgain { position: fixed; z-index: 10002; transform: translateX(-50%); padding: 2px 10px; border-radius: 999px; background: rgba(10, 37, 54, 0.85); color: #FFD84A; font-family: var(--font-display); font-size: 13px; pointer-events: none; white-space: nowrap; box-shadow: 0 0 0 2px #1B2630; }
 .pill { display: flex; align-items: center; gap: 8px; padding: 5px 14px 5px 6px; border-radius: 999px; background: var(--m-panel-d); box-shadow: 0 0 0 3px var(--m-ol); min-width: 0; }
 .pill .pi { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--m-gold); box-shadow: 0 0 0 2.5px var(--m-ol); display: grid; place-items: center; }
 .pill .pi svg { width: 18px; height: 18px; fill: none; stroke: var(--m-ol); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -2211,6 +2214,12 @@ html, body { overscroll-behavior-x: none; }
 .cc.dly .dprice { display: inline-flex; align-items: center; justify-content: center; gap: 4px; align-self: center; padding: 4px 12px; border-radius: 10px; font-weight: 800; font-size: 15px; color: var(--m-ol); background: linear-gradient(#FFE27A, #FFB81F); box-shadow: 0 0 0 2.5px #7A4A08, inset 0 2px 0 rgba(255,255,255,.6); }
 .cc.dly .dprice svg { width: 17px; height: 17px; }
 .cc.dly.cant { filter: saturate(.7); }
+.cc.dly .dcrown { position: absolute; top: 26px; right: 10px; width: 28px; height: 24px; z-index: 6; transform: rotate(12deg); filter: drop-shadow(0 2px 0 rgba(90, 54, 0, .45)); pointer-events: none; }
+.cc.dly .dcrown svg { width: 100%; height: 100%; display: block; }
+.cc.dly.sold .dcrown { filter: grayscale(1) brightness(.9); }
+.cc.dly.dhero:not(.sold) { background: linear-gradient(#FFF1B0, #FFD04A 55%, #F2A81C); box-shadow: 0 0 0 2.5px #8A5A0A, 0 4px 0 2.5px #5E3A05, 0 0 14px rgba(255, 200, 60, .75), inset 0 2px 0 rgba(255,255,255,.75); }
+.cc.dly.dhero:not(.sold) .cart { background: radial-gradient(ellipse at 50% 30%, #FFFBE0, #FFE08A 60%, #F7C443) !important; box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px rgba(190, 130, 20, .6), inset 0 -10px 18px rgba(255, 255, 255, .35) !important; }
+.cc.dly.dhero:not(.sold) .dname { color: #5A3600; text-shadow: 0 1px 0 rgba(255,255,255,.8); }
 .cc.dly.sold { cursor: default; }
 .cc.dly.sold .cart { filter: grayscale(.85) brightness(.93); }
 .cc.dly.sold { background: linear-gradient(#E3E8EC, #C9D2DA); box-shadow: 0 0 0 2.5px #8B96A3, 0 4px 0 2.5px #6B7683, inset 0 2px 0 rgba(255,255,255,.6); }
@@ -3812,7 +3821,7 @@ CH.shield = critter({
   function act(a) {
     if (a === 'next') return nextRound();
     if (a === 'restart' || a === 'newrun') return startRun(false);
-    if (a === 'menu') { if (S.screen === 'game' && S.inGame) return openPause(); return showScreen('menu'); }
+    if (a === 'menu') { if (S.screen === 'game' && S.inGame) return openPause(); if (S.screen === 'game' && S.gain > 0 && document.querySelector('.endtro .ti')) return trophyFly(); return showScreen('menu'); }
     if (a === 'resume') return closePause();
     if (a === 'leave') return leaveGame();
     if (a === 'play') return S.inGame ? showScreen('game') : startRun(false);
@@ -6576,7 +6585,7 @@ CH.shield = critter({
   var SEENA_KEY = 'knirps-arena-seena';
   function arenaPending() { return arenaIdxOf(S.trophies) > (S.seenArena || 0); }
   function showArenaReveal() {
-    if (document.getElementById('arenaRev') || !arenaPending()) return;
+    if (document.getElementById('arenaRev') || !arenaPending() || S.tflying) return;
     var ni = arenaIdxOf(S.trophies), A = ARENAS[ni], d = document.createElement('div');
     d.id = 'arenaRev'; d.className = 'arev';
     var st = ''; for (var i = 0; i < 14; i++) st += '<i style="left:' + (Math.random() * 100).toFixed(1) + '%;animation-delay:' + (Math.random() * 2.4).toFixed(2) + 's;animation-duration:' + (2.6 + Math.random() * 2).toFixed(2) + 's"></i>';
@@ -6899,7 +6908,7 @@ CH.shield = critter({
       '<span class="isle ' + (A.soon ? 'soon' : A.cls) + '" style="--rock:' + ROCKS[ai] + '"><span class="isfloat">' +
       '<svg class="isrock" viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true"><path d="M3 3H97Q93 25 75 35Q63 47 50 47Q37 47 25 35Q7 25 3 3Z" fill="var(--rock)" stroke="#1B2630" stroke-width="4" stroke-linejoin="round"/><path d="M22 14Q30 28 40 33M62 16Q70 26 78 24" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="3" stroke-linecap="round"/></svg>' +
       '<span class="istop">' + (A.soon ? '<b>?</b>' : '') + '</span></span><span class="isshadow"></span></span>' +
-      '<span class="ptxt"><small>' + A.n + '</small><strong>' + A.name + '</strong><span class="pnum">(' + A.n + ')</span><span class="ptro">' + mi('trophy') + '<b>' + S.trophies + '</b><em>Trophäenpfad</em></span></span>' +
+      '<span class="ptxt"><small>' + A.n + '</small><strong>' + A.name + '</strong><span class="pnum">(' + A.n + ')</span><span class="ptro">' + mi('trophy') + '<b>' + (S.tshow != null ? S.tshow : S.trophies) + '</b><em>Trophäenpfad</em></span></span>' +
       '<svg class="pchev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>';
   }
 
@@ -7109,7 +7118,7 @@ function cmodalHtml(k) {
       for (i = 1; i <= HERO_MAXLV; i++) hpips += '<i' + (i <= hl ? ' class="on"' : '') + '></i>';
       hpips += '</span>';
       var hbar = hMax ? '' : '<div class="hbar"><span class="rbar" style="--seg:' + segN(hNeed) + '"><i style="width:' + Math.min(100, Math.round(hHave / hNeed * 100)) + '%"></i>' + goalEnd(true, hHave >= hNeed) + '</span><small>Heldenkarten <em>' + Math.min(hHave, hNeed) + '/' + hNeed + '</em></small></div>';
-      extra = hbar + '<div class="upgrow"><div><small>Heldenlevel</small><b class="hlvbig">Level ' + hl + ' <em>/ ' + HERO_MAXLV + '</em></b>' + hpips + '</div>' +
+      var hmain = hbar + '<div class="upgrow"><div><small>Heldenlevel</small><b class="hlvbig">Level ' + hl + ' <em>/ ' + HERO_MAXLV + '</em></b>' + hpips + '</div>' +
         (lk ? '' : hMax ? '<span class="upgmax">Maximal</span>' : '<button class="upgbtn' + (hCan ? '' : ' cant') + '" data-hup="' + k + '">Verbessern<br><small>' + mi('coin') + HERO_UP_COSTS[hl - 1] + '</small></button>') + '</div>' +
         (S.upMsg ? '<p class="upgmsg">' + S.upMsg + '</p>' : '') +
         '<div class="pslots" role="list" aria-label="Fähigkeiten-Verstärkungen">' + HERO_PERK_LVS.map(function (pl, n) {
@@ -7117,9 +7126,10 @@ function cmodalHtml(k) {
           return '<div class="' + cls + '" role="listitem"><span class="pstr">Level ' + pl + '</span>' +
             (has ? '<b>' + hp_.name + '</b><small>' + hp_.desc + '</small>' : '<b>Bald</b><small>Neue Fähigkeit folgt.</small>') +
             (locked ? '<span class="plk">' + mi('lock') + '</span>' : '') + '</div>';
-        }).join('') + '</div>' +
-        '<div class="lvl">' + hrows + '</div>' +
+        }).join('') + '</div>';
+      var hstat = '<div class="lvl">' + hrows + '</div>' +
         '<div class="abil"><b>' + t.ability.name + '</b><p>' + t.ability.desc + '</p><div class="chdemo" style="--n:' + t.ability.every + '" aria-hidden="true">' + segs(Math.ceil(t.ability.every * 2 / 3), t.ability.every) + '</div></div>';
+      if (S.cpage === 'stats') { pageStats = true; extra = hstat; } else extra = hmain;
     } else {
       var rows = '<span></span><span class="th">Leben</span><span class="th">' + (t.heal ? 'Heilung' : 'Angriff') + '</span>';
       for (i = 0; i <= 3; i++) {
@@ -7165,9 +7175,9 @@ function cmodalHtml(k) {
       act = '<button class="cmbtn" data-add="' + k + '">' + (full ? 'Ins Deck · tauschen' : 'Ins Deck') + '</button>';
     }
     return '<div class="cmodal" data-close="1"><div class="cm glass" role="dialog" aria-label="' + t.name + '"><button class="cx" data-close="1" aria-label="Schließen">' + mi('x') + '</button>' +
-      '<div class="cmart' + (lk ? ' lk' : '') + (t.hero ? '' : ' big') + '"><span class="cplat"></span>' + (pageStats && !lk && !t.hero && CLIPS[k] ? '<video class="cclip" src="' + CLIPS[k] + '" autoplay loop muted playsinline webkit-playsinline disablepictureinpicture></video>' : CH[k]) + (t.hero || pageStats ? '' : '<span class="ccost">' + CCI(0, t.cost) + '</span>') + '</div>' +
+      '<div class="cmart' + (lk ? ' lk' : '') + (t.hero && pageStats ? '' : ' big') + '"><span class="cplat"></span>' + (pageStats && !lk && !t.hero && CLIPS[k] ? '<video class="cclip" src="' + CLIPS[k] + '" autoplay loop muted playsinline webkit-playsinline disablepictureinpicture></video>' : CH[k]) + (t.hero || pageStats ? '' : '<span class="ccost">' + CCI(0, t.cost) + '</span>') + '</div>' +
       '<h3>' + t.name + '</h3><span class="cmrole">' + (t.hero ? t.role : 'Mini · ' + (t.front || t.range <= 1 ? 'Nahkampf' : 'Fernkampf')) + '</span>' +
-      (!t.hero && !pageStats ? '' : '<p>' + t.blurb + '</p><div class="cmst">' + tiles + '</div>') + extra + '<div class="cmact' + (t.hero ? '' : ' two') + '">' + (t.hero ? '' : '<button class="cmbtn alt" data-cpage="' + (pageStats ? 'main' : 'stats') + '">' + (pageStats ? 'Zurück' : 'Stats') + '</button>') + act + '</div></div></div>';
+      (!pageStats ? '' : '<p>' + t.blurb + '</p><div class="cmst">' + tiles + '</div>') + extra + '<div class="cmact two">' + ('<button class="cmbtn alt" data-cpage="' + (pageStats ? 'main' : 'stats') + '">' + (pageStats ? 'Zurück' : 'Stats') + '</button>') + act + '</div></div></div>';
   }
 
   function islandSvg(x, y, w, kind) {
@@ -7242,15 +7252,21 @@ function cmodalHtml(k) {
 
   var GEMPACKS = [[80, '0,99 €', 'Handvoll'], [500, '4,99 €', 'Beutel'], [1200, '9,99 €', 'Sack'], [2500, '19,99 €', 'Fass'], [6500, '49,99 €', 'Schatzkammer'], [14000, '99,99 €', 'Drachenhort']];
   /* ---------- Tagesangebot: jeden Tag 3 verschiedene Knirpse, je 1 Karte ---------- */
-  var DAILY_KEY = 'knirps-arena-daily', DAILY_PRICE = 150, DAILY_SLOTS = 3;
+  var DAILY_KEY = 'knirps-arena-daily', DAILY_PRICE = 150, DAILY_HERO_PRICE = 1200, DAILY_HERO_QTY = 8, DAILY_SLOTS = 3;
+  function dPrice(k) { return TYPES[k].hero ? DAILY_HERO_PRICE : DAILY_PRICE; }
+  function dQty(k) { return TYPES[k].hero ? DAILY_HERO_QTY : 1; }
   function dayKey() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
   function dailyPicks() {
     var key = dayKey(), h = 7, i;
     for (i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) % 1000003;
+    var hs = HEROES.filter(function (k) { return unlocked(k) && heroLv(k) < HERO_MAXLV; }), hero = null, slots = DAILY_SLOTS;
+    if (!hs.length) hs = HEROES.filter(function (k) { return unlocked(k); });
+    if (hs.length) { h = (h * 1103515245 + 12345) % 2147483647; hero = hs[h % hs.length]; slots--; }
     var el = POOL.filter(function (k) { return !TYPES[k].hero && unlocked(k) && upLevel(k) < 3; });
-    if (el.length < DAILY_SLOTS) el = POOL.filter(function (k) { return !TYPES[k].hero && unlocked(k); });
+    if (el.length < slots) el = POOL.filter(function (k) { return !TYPES[k].hero && unlocked(k); });
     var out = [];
-    while (out.length < DAILY_SLOTS && el.length) { h = (h * 1103515245 + 12345) % 2147483647; out.push(el.splice(h % el.length, 1)[0]); }
+    while (out.length < slots && el.length) { h = (h * 1103515245 + 12345) % 2147483647; out.push(el.splice(h % el.length, 1)[0]); }
+    if (hero) out.push(hero); /* der Held steht immer im dritten Platz */
     return out;
   }
   function dailyState() { try { var o = JSON.parse(localStorage.getItem(DAILY_KEY) || 'null'); if (o && o.d === dayKey() && Array.isArray(o.b)) return o.b; } catch (e) {} return []; }
@@ -7261,9 +7277,9 @@ function cmodalHtml(k) {
     return '<div class="shrow"><h3 class="shh">' + mi('star') + 'Tagesangebote</h3><span class="dtimer">Neu in ' + dailyLeft() + '</span></div><div class="gemgrid dailygrid">' +
       picks.map(function (k, i) {
         var sold = bought.indexOf(i) >= 0;
-        return '<button class="cc dly' + (sold ? ' sold' : S.coins < DAILY_PRICE ? ' cant' : '') + '" data-buydaily="' + i + '"' + (sold ? ' disabled' : '') + ' aria-label="' + TYPES[k].name + (sold ? ', gekauft' : ', ' + DAILY_PRICE + ' Münzen') + '">' +
-          '<span class="cart"><span class="cplat"></span>' + CH[k] + '<span class="dname">' + TYPES[k].name + '</span><span class="dqty">×1</span><span class="rglass"></span></span>' +
-          (sold ? '<span class="dprice dok">' + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.500"/></svg></span>' : '<span class="dprice">' + mi('coin') + DAILY_PRICE + '</span>') + '</button>';
+        return '<button class="cc dly' + (TYPES[k].hero ? ' dhero' : '') + (sold ? ' sold' : S.coins < dPrice(k) ? ' cant' : '') + '" data-buydaily="' + i + '"' + (sold ? ' disabled' : '') + ' aria-label="' + TYPES[k].name + (sold ? ', gekauft' : ', ' + dQty(k) + ' Karte' + (dQty(k) > 1 ? 'n' : '') + ', ' + dPrice(k) + ' Münzen') + '">' +
+          '<span class="cart"><span class="cplat"></span>' + CH[k] + '<span class="dname">' + TYPES[k].name + '</span><span class="dqty">×' + dQty(k) + '</span>' + (TYPES[k].hero ? '<span class="dcrown" aria-hidden="true"><svg viewBox="0 0 40 34"><path d="M5 27 L3 9 L13 17 L20 4 L27 17 L37 9 L35 27 Z" fill="#FFD23F" stroke="#7A4A08" stroke-width="3" stroke-linejoin="round"/><rect x="5" y="26" width="30" height="6" rx="2" fill="#F2A81C" stroke="#7A4A08" stroke-width="3" stroke-linejoin="round"/><circle cx="20" cy="4" r="2.6" fill="#FF6B6B" stroke="#7A4A08" stroke-width="2"/><circle cx="3" cy="9" r="2.2" fill="#6BD0FF" stroke="#7A4A08" stroke-width="1.8"/><circle cx="37" cy="9" r="2.2" fill="#6BD0FF" stroke="#7A4A08" stroke-width="1.8"/></svg></span>' : '') + '<span class="rglass"></span></span>' +
+          (sold ? '<span class="dprice dok">' + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.500"/></svg></span>' : '<span class="dprice">' + mi('coin') + dPrice(k).toLocaleString('de-DE') + '</span>') + '</button>';
       }).join('') + '</div>' + (S.dailyMsg ? '<p class="shopmsg">' + S.dailyMsg + '</p>' : '');
   }
   var CHESTS = [{ name: 'Box', n: 3, bonus: 0, price: 300, gem: false }, { name: 'Lucky Drop', n: 1, bonus: 1, price: 40, gem: true, gold: true }];
@@ -7545,7 +7561,7 @@ function cmodalHtml(k) {
     var body = bodyFor(S.tab), LI = lvlInfo();
     var oldBody = $('menu').querySelector('.mbody'), sc = slideCls();
     $('menu').innerHTML =
-      '<div class="mtop">' + '<button class="mlvl" data-mmenu="1" aria-label="Menü, ' + S.name.replace(/[<>&"]/g, '') + ', Level ' + LI.l + '" aria-expanded="' + !!S.mpop + '">' + lvlRing(LI) + '<span class="lbar"><span class="lname">' + S.name.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</span></span></button>' + pill('trophy', 'Trophäen', S.trophies) + pill('coin', 'Münzen', S.coins).replace('class="pill"', 'class="pill coinp"') + pill('gem', 'Juwelen', S.gems).replace('class="pill"', 'class="pill gemp"') +
+      '<div class="mtop">' + '<button class="mlvl" data-mmenu="1" aria-label="Menü, ' + S.name.replace(/[<>&"]/g, '') + ', Level ' + LI.l + '" aria-expanded="' + !!S.mpop + '">' + lvlRing(LI) + '<span class="lbar"><span class="lname">' + S.name.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</span></span></button>' + pill('trophy', 'Trophäen', S.tshow != null ? S.tshow : S.trophies) + pill('coin', 'Münzen', S.coins).replace('class="pill"', 'class="pill coinp"') + pill('gem', 'Juwelen', S.gems).replace('class="pill"', 'class="pill gemp"') +
       (S.mpop ? '<div class="mpop" role="menu"><button data-tab="acct" role="menuitem">' + mi('user') + 'Konto</button><button data-tab="rules" role="menuitem">' + mi('book') + 'Spielregeln</button><button data-tab="ach" role="menuitem">' + mi('crown') + 'Erfolge</button><button data-tab="pass" role="menuitem">' + mi('star') + 'Knirpspass</button></div>' : '') + '</div>' +
       '<div class="mwrap"><div class="mbody' + sc + '">' + body + '</div></div>' + tabsHtml() + (S.ppick ? pickHtml() : '');
     if (sc && oldBody) {
@@ -7631,6 +7647,47 @@ function cmodalHtml(k) {
   }
   window.addEventListener('resize', layoutStage);
   window.addEventListener('orientationchange', layoutStage);
+
+
+  /* Nach dem Spiel: die gewonnenen Trophaeen fliegen in die Trophaeenleiste der Lobby, danach erscheint kurz klein die Gesamtmenge */
+  function trophyFly() {
+    var gain = S.gain, src = document.querySelector('.endtro .ti'), sr = src ? src.getBoundingClientRect() : null;
+    S.gain = 0; S.tshow = Math.max(0, S.trophies - gain); S.tflying = true;
+    showScreen('menu');
+    function setShown(v) {
+      S.tshow = v;
+      var b = document.querySelector('#menu .mtop .pill b'); if (b) b.textContent = v;
+      var pe = document.querySelector('#menu .mtop .pill'); if (pe && !RM && pe.animate) pe.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.1)' }, { transform: 'scale(1)' }], { duration: 220 });
+    }
+    function done() {
+      S.tshow = null; S.tflying = false;
+      var b = document.querySelector('#menu .mtop .pill b'); if (b) b.textContent = S.trophies;
+      var pe = document.querySelector('#menu .mtop .pill');
+      if (pe) {
+        var r = pe.getBoundingClientRect(), t = document.createElement('div');
+        t.className = 'tgain'; t.textContent = '+' + gain + ' Trophäen';
+        t.style.left = (r.left + r.width / 2) + 'px'; t.style.top = (r.bottom + 4) + 'px';
+        document.body.appendChild(t);
+        if (t.animate && !RM) t.animate([{ opacity: 0, transform: 'translate(-50%, -6px) scale(0.8)' }, { opacity: 1, transform: 'translate(-50%, 0) scale(1)', offset: 0.2 }, { opacity: 1, transform: 'translate(-50%, 0) scale(1)', offset: 0.7 }, { opacity: 0, transform: 'translate(-50%, 8px) scale(1)' }], { duration: 1700, easing: 'ease-out' });
+        setTimeout(function () { t.remove(); }, 1750);
+      }
+      setTimeout(showArenaReveal, 700);
+    }
+    var pi = document.querySelector('#menu .mtop .pill .pi'), tr = pi ? pi.getBoundingClientRect() : null;
+    if (!sr || !tr || RM || !document.body.animate) { setShown(S.trophies); done(); return; }
+    var N = Math.min(10, Math.max(3, Math.round(gain / 3))), base = S.tshow, sx = sr.left + sr.width / 2, sy = sr.top + sr.height / 2, ex = tr.left + tr.width / 2, ey = tr.top + tr.height / 2, fin = 0;
+    for (var i = 0; i < N; i++) (function (i) {
+      var d = document.createElement('div'); d.className = 'tfly'; d.innerHTML = mi('trophy'); document.body.appendChild(d);
+      var ox = (Math.random() - 0.5) * 90, oy = -30 - Math.random() * 50, mx = (sx + ex) / 2 + ox, my = (sy + ey) / 2 + oy;
+      var a = d.animate([
+        { transform: 'translate(' + (sx - 15) + 'px,' + (sy - 15) + 'px) scale(0.4)', opacity: 0 },
+        { transform: 'translate(' + (sx - 15 + (Math.random() - 0.5) * 50) + 'px,' + (sy - 15 - 30) + 'px) scale(1.15)', opacity: 1, offset: 0.2 },
+        { transform: 'translate(' + (mx - 15) + 'px,' + (my - 15) + 'px) scale(1)', opacity: 1, offset: 0.55 },
+        { transform: 'translate(' + (ex - 15) + 'px,' + (ey - 15) + 'px) scale(0.55)', opacity: 1 }
+      ], { duration: 900, delay: i * 90, easing: 'ease-in-out', fill: 'both' });
+      a.onfinish = function () { d.remove(); fin++; setShown(base + Math.round(gain * fin / N)); if (fin === N) { setShown(S.trophies); done(); } };
+    })(i);
+  }
 
   function showScreen(name) {
     S.screen = name;
@@ -7799,12 +7856,12 @@ function cmodalHtml(k) {
     if (bd && S.screen === 'menu') {
       var di = +bd.getAttribute('data-buydaily'), dks = dailyPicks(), dk = dks[di], dbo = dailyState();
       if (dk && dbo.indexOf(di) < 0) {
-        if (S.coins >= DAILY_PRICE) {
-          S.coins -= DAILY_PRICE; saveWallet(); S.dailyMsg = ''; dbo.push(di);
+        if (S.coins >= dPrice(dk)) {
+          S.coins -= dPrice(dk); saveWallet(); S.dailyMsg = ''; dbo.push(di);
           try { localStorage.setItem(DAILY_KEY, JSON.stringify({ d: dayKey(), b: dbo })); } catch (e) {}
-          var db0 = S.cards[dk] || 0, dlv = upLevel(dk); S.cards[dk] = db0 + 1; saveCards(); autoUp(dk);
-          renderMenu(); showChest([{ k: dk, n: 1, before: db0, lv0: dlv, isNew: false }], function () { if (S.screen === 'menu') renderMenu(); }, 'direct');
-        } else { S.dailyMsg = 'Dafür fehlen dir ' + (DAILY_PRICE - S.coins).toLocaleString('de-DE') + ' Münzen.'; renderMenu(); }
+          var db0 = S.cards[dk] || 0, dlv = TYPES[dk].hero ? heroLv(dk) - 1 : upLevel(dk); S.cards[dk] = db0 + dQty(dk); saveCards(); autoUp(dk);
+          renderMenu(); showChest([{ k: dk, n: dQty(dk), before: db0, lv0: dlv, isNew: false }], function () { if (S.screen === 'menu') renderMenu(); }, 'direct');
+        } else { S.dailyMsg = 'Dafür fehlen dir ' + (dPrice(dk) - S.coins).toLocaleString('de-DE') + ' Münzen.'; renderMenu(); }
       }
       return;
     }
