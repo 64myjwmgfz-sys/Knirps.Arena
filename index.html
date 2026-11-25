@@ -2099,6 +2099,9 @@ html, body { overscroll-behavior-x: none; }
 .unit .lv.champ { left: auto; right: 88%; bottom: auto; top: calc(6% + 3.5px - 9px); z-index: 4; margin-right: -4px; }
 /* Sterne der Knirpse sitzen wie das Heldenlevel links am Lebensbalken; Lebensbalken schon in der Vorbereitung sichtbar */
 .unit .lv:not(.champ), .unit .lv.l2:not(.champ), .unit .lv.l3:not(.champ) { left: auto; right: 88%; bottom: auto; top: calc(6% + 3.5px - 8px); z-index: 4; margin-right: -2px; height: 18px; padding: 0; font-size: 16px; letter-spacing: -2px; border-radius: 0; background: none; box-shadow: none; color: #FFC933; -webkit-text-stroke: 2.5px #4A2A00; paint-order: stroke fill; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35); }
+.unit .lv:not(.champ), .unit .lv.l2:not(.champ), .unit .lv.l3:not(.champ) { font-size: 9px; letter-spacing: -1px; -webkit-text-stroke: 1.8px #4A2A00; height: 12px; }
+.unit .lv.l3:not(.champ) { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: auto; line-height: 0.82; top: calc(6% + 3.5px - 10px); letter-spacing: -1px; }
+.unit .lv.l3:not(.champ) b { display: block; font-weight: inherit; }
 .hpbar { opacity: 1; }
 @keyframes gin { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes gwp { from { transform: scale(0.96); } to { transform: scale(1.04); } }
@@ -3750,7 +3753,7 @@ CH.shield = critter({
       el.className = 'unit l' + u.level + (t.hero ? ' hlvu' : '') + (t.ability || t.aoe ? ' champ' : '') + ' ' + (u.team === 'p' ? 'mine' : 'foe') + (S.phase === 'battle' && u.team === 'e' ? ' reveal' : '') +
         (S.sel && S.sel.kind === 'unit' && S.sel.id === u.id ? ' picked' : '') + (S.pop === u.id ? ' pop' : '');
       el.innerHTML = '<div class="base"></div><div class="shd">' + icon(skey(u)) + '</div><div class="tok" style="--c:' + t.color + '">' + icon(skey(u)) + '</div>' +
-        (t.hero ? '<span class="lv champ" aria-label="Level ' + (u.hl || 1) + '">' + CROWN + '<b>' + (u.hl || 1) + '</b></span>' : u.level ? '<span class="lv l' + u.level + '" aria-label="' + u.level + ' von 3 Sternen">' + stars(u.level) + '</span>' : '') +
+        (t.hero ? '<span class="lv champ" aria-label="Level ' + (u.hl || 1) + '">' + CROWN + '<b>' + (u.hl || 1) + '</b></span>' : u.level ? '<span class="lv l' + u.level + '" aria-label="' + u.level + ' von 3 Sternen">' + (u.level >= 3 ? '<b>★</b><b>★★</b>' : stars(u.level)) + '</span>' : '') +
         '<span class="hpbar"><i></i></span>' + chbarHtml(t, u) + (t.shield ? '<span class="shbar" aria-hidden="true"><i></i><i></i><i></i></span>' : '') + '<span class="hit"></span>';
       unitsEl.appendChild(el);
       u.el = el; faceVars(u);
