@@ -1045,6 +1045,11 @@ use[href="#s-dorisB-w"] { display: none; }
 .unit.fs .tok svg { translate: 0 0; }
 .unit.fs .lgl { translate: calc(var(--stag, 1.2) * 0.7px) 0; rotate: 0deg; }
 .unit.fs .lgr { translate: calc(var(--stag, 1.2) * -0.9px) 0; rotate: 0deg; }
+.unit.poisoned .tok { filter: drop-shadow(0 0 5px #8CFF6A) drop-shadow(0 0 12px rgba(80,235,60,.95)) drop-shadow(0 0 22px rgba(60,220,50,.7)) hue-rotate(35deg) saturate(1.3); }
+.unit.poisoned .hpbar { box-shadow: 0 0 6px 2px #7CFF6A, 0 0 14px 4px rgba(70,230,60,.8); animation: poibar 1s ease-in-out infinite alternate; }
+@keyframes poibar { from { box-shadow: 0 0 5px 1px #7CFF6A, 0 0 10px 2px rgba(70,230,60,.6); } to { box-shadow: 0 0 8px 3px #B6FF9A, 0 0 20px 6px rgba(70,230,60,.95); } }
+.float.poison { color: #7CFF6A; font-size: 27px; font-weight: 900; margin-top: -26px; -webkit-text-stroke: 6px #0F4A12; paint-order: stroke fill; text-shadow: 0 3px 0 rgba(8,60,10,.7), 0 0 10px rgba(110,255,90,.9); letter-spacing: .02em; }
+.unit.burning .tok { filter: drop-shadow(0 0 6px rgba(255,120,30,.85)) sepia(.25) saturate(1.3); }
 .unit.invul .tok { filter: drop-shadow(0 0 7px #FFD866) drop-shadow(0 0 2px #FFF3C4); }
 .unit.invul::after { content: ""; position: absolute; left: 8%; right: 8%; top: 4%; bottom: 10%; border-radius: 50%; border: 3px solid rgba(255, 216, 102, 0.9); background: rgba(255, 216, 102, 0.2); pointer-events: none; animation: gpulse 0.6s ease-in-out infinite alternate; }
 
@@ -1180,7 +1185,7 @@ body.in-menu { background: radial-gradient(110% 50% at 50% 0%, rgba(255, 255, 25
 .l-tp .g1 { top: 18%; } .l-tp .g2 { top: 18%; } .l-tp .g3 { top: 60%; }
 .cfx.glow .c3 .f { box-shadow: inset 0 0 26px rgba(255, 230, 120, .95); }
 .cards { position: absolute; inset: 0; pointer-events: none; }
-.rcard { position: absolute; left: 50%; top: 14%; width: 150px; margin-left: -75px; padding: 10px 8px 12px; border-radius: 18px; background: linear-gradient(#2E8397, #1F5F70); box-shadow: 0 0 0 4px #2A1A0E, 0 8px 0 4px #2A1A0E, 0 0 40px rgba(255, 230, 130, .7); color: #fff; text-align: center; animation: rise .8s cubic-bezier(.2,1.3,.4,1) backwards; }
+.rcard { position: absolute; left: 50%; top: 14%; width: 150px; margin-left: -75px; padding: 10px 8px 12px; border-radius: 18px; background: linear-gradient(#2E8397, #1F5F70); box-shadow: 0 0 0 4px #2A1A0E, 0 8px 0 4px #2A1A0E, 0 0 40px rgba(255, 230, 130, .7); color: #fff; text-align: center; animation: cardrise .8s cubic-bezier(.2,1.3,.4,1) backwards; }
 .rcard .rn { display: block; font-family: var(--font-display); font-size: 30px; color: #FFD95A; -webkit-text-stroke: 5px #2A1A0E; paint-order: stroke fill; }
 .rcard .rfig { display: block; height: 96px; margin: 2px auto 0; } .rcard .rfig svg { height: 100%; width: auto; }
 .rcard b { display: block; font-size: 17px; font-weight: 900; margin-top: 4px; }
@@ -1262,7 +1267,7 @@ body.in-menu { background: radial-gradient(110% 50% at 50% 0%, rgba(255, 255, 25
 @keyframes dhal { from { transform: scale(.8); opacity: .65; } to { transform: scale(1.25); opacity: 1; } }
 .cfx .dstars .ds.on { animation: dspop .7s ease-out; }
 @keyframes dspop { 0% { transform: scale(.4); filter: brightness(4); } 55% { transform: scale(1.3); filter: brightness(2); } 100% { transform: scale(1); filter: none; } }
-.cfx .dcard { position: absolute; left: 50%; top: 13%; width: 210px; margin-left: -105px; padding: 18px 12px 16px; border-radius: 22px; text-align: center; color: #fff; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.18) 50%, rgba(70,180,160,.45)); box-shadow: 0 0 0 3px rgba(255,255,255,.7), 0 10px 0 2px rgba(10,60,80,.35), 0 0 46px rgba(255,240,150,.8); backdrop-filter: blur(3px); animation: rise .8s cubic-bezier(.2,1.3,.4,1) backwards; }
+.cfx .dcard { position: absolute; left: 50%; top: 13%; width: 210px; margin-left: -105px; padding: 18px 12px 16px; border-radius: 22px; text-align: center; color: #fff; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.18) 50%, rgba(70,180,160,.45)); box-shadow: 0 0 0 3px rgba(255,255,255,.7), 0 10px 0 2px rgba(10,60,80,.35), 0 0 46px rgba(255,240,150,.8); backdrop-filter: blur(3px); animation: cardrise .8s cubic-bezier(.2,1.3,.4,1) backwards; }
 .cfx .dcard .dico { display: block; width: 96px; height: 96px; margin: 0 auto 6px; filter: drop-shadow(0 5px 5px rgba(0,40,70,.4)); animation: dbounce 1.2s ease-in-out infinite alternate; }
 .cfx .dcard .dico svg { width: 100%; height: 100%; }
 @keyframes dbounce { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-6px) rotate(3deg); } }
@@ -1282,7 +1287,7 @@ body.in-menu { background: radial-gradient(110% 50% at 50% 0%, rgba(255, 255, 25
 @keyframes cpop { 0% { scale: .05; opacity: 0; } 55% { opacity: 1; } 100% { scale: 1; opacity: 1; } }
 @keyframes cwig { 0%, 100% { translate: 0 0; rotate: 0deg; } 25% { translate: -4px 0; rotate: -3deg; } 75% { translate: 4px 0; rotate: 3deg; } }
 @keyframes gpulse { from { filter: brightness(1) drop-shadow(0 0 6px rgba(255, 220, 90, .5)); } to { filter: brightness(1.35) drop-shadow(0 0 30px rgba(255, 220, 90, 1)); } }
-@keyframes rise { from { transform: translateY(330px) scale(.2); opacity: 0; } 60% { opacity: 1; } }
+@keyframes cardrise { from { transform: translateY(330px) scale(.2); opacity: 0; } 60% { opacity: 1; } }
 @keyframes spk { from { transform: translate(0, 0) scale(1); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; } }
 @keyframes hpulse { from { opacity: .6; } to { opacity: 1; } }
 .veil.hveil { position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center; background: rgba(10, 8, 6, 0.6); animation: hsdim 0.35s ease-out backwards; }
@@ -2388,11 +2393,13 @@ button.pslot b { font-size: 12.5px; }
     blade:  { name: 'Klingler',    cost: 2, hp: 16, atk: 3,  range: 1, ai: 3,  mi: 4, color: '#D2691E', front: true, fx: 'slash',
               blurb: 'Sehr schnelle Hiebe, aber wenig Leben.' },
     archer: { name: 'Bogi',        cost: 2, hp: 12, atk: 3,  range: 5, ai: 5,  mi: 5, color: '#4E9A57', fx: 'arrow',
-              blurb: 'Schnelle Pfeile im hohen Bogen aus bis zu 5 Feldern Entfernung.' },
+              reach: { lv: 1, add: 1, name: 'Adlerauge' }, reload: { lv: 3, tempo: 1.3, name: 'Schnellfeuer' },
+              blurb: 'Schnelle Pfeile im hohen Bogen aus bis zu 5 Feldern Entfernung. Mit Sternen sieht er weiter, schießt zwei Pfeile gleichzeitig und dann schneller.' },
     spark:  { name: 'Funke',       cost: 3, hp: 10, atk: 9, range: 2, ai: 10, mi: 6, color: '#8B5CD6', fx: 'bolt',
               blurb: 'Sehr langsam, aber jeder Zauber trifft hart.' },
-    healer: { name: 'Hexe',        cost: 3, hp: 22, atk: 3,  range: 3, ai: 6, mi: 5, color: '#4E9A22', fx: 'toss', potion: { every: 7, heal: 14, secs: 7, name: 'Heiltrank', desc: 'Wirft alle 7 Sekunden einen Heiltrank auf die nächste Figur oder den nächsten Helden in ihrem Team. Ab Stufe 3 werden alle Verbündeten im 3×3-Feld um das Ziel geheilt.' },
-              blurb: 'Wirft rote Schadenstränke auf Gegner. Alle 7 Sekunden heilt ein Trank den nächsten Verbündeten, ab Stufe 3 alle im 3×3-Feld.' },
+    healer: { name: 'Hexe',        cost: 3, hp: 22, atk: 3,  range: 3, ai: 6, mi: 5, color: '#4E9A22', fx: 'toss', potion: { every: 7, heal: 14, secs: 7, name: 'Heiltrank', desc: 'Wirft alle 7 Sekunden einen Heiltrank auf die nächste Figur oder den nächsten Helden in ihrem Team. Ab Stufe 2 werden alle Verbündeten im 3×3-Feld um das Ziel geheilt.' },
+              poison: { lv: 1, dmg: 1, secs: 4, spreadLv: 3, spreadSecs: 2, name: 'Gift' },
+              blurb: 'Wirft Schadenstränke auf Gegner, ab einem Stern mit Gift. Alle 7 Sekunden heilt ein Trank den nächsten Verbündeten, ab zwei Sternen alle im 3×3-Feld, ab drei Sternen steckt das Gift Nachbarn an.' },
     ram:    { name: 'Rammbock',    cost: 3, hp: 21, atk: 5, range: 1, ai: 6,  mi: 2, color: '#B4563C', front: true, fx: 'ram',
               blurb: 'Stürmt blitzschnell vor und rammt zu.' },
     sling:  { name: 'Schleuderer', cost: 2, hp: 12, atk: 2,  range: 3, ai: 3,  mi: 5, color: '#D9B13B', fx: 'sling',
@@ -2402,7 +2409,8 @@ button.pslot b { font-size: 12.5px; }
     giant:  { name: 'Brocken',     cost: 4, hp: 43, atk: 8, range: 1, ai: 9,  mi: 7, color: '#8E9AA3', front: true, fx: 'smash', minRound: 3,
               blurb: 'Riesiger Steinkerl. Sehr langsam, aber mit gewaltigen Schlägen.' },
     bomb:   { name: 'Bömbchen',    cost: 3, hp: 29, atk: 5, range: 3, ai: 8,  mi: 6, color: '#4D5368', fx: 'bomb', minRound: 2, aoe: { every: 3 },
-              blurb: 'Wirft Bomben aus 3 Feldern. Nach drei Würfen ist der vierte Wurf eine Flächenbombe im Kreuz (5 Felder, wie Mikas Giftgas).' },
+              tough: { lv: 1, red: 0.15, name: 'Panzerung' }, blast: { lv: 2, mult: 1.3, name: 'Sprengkraft' }, burn: { lv: 3, dmg: 2, secs: 3, name: 'Zündstoff', aoeOnly: true },
+              blurb: 'Wirft Bomben aus 3 Feldern. Nach drei Würfen ist der vierte Wurf eine Flächenbombe im Kreuz (5 Felder, wie Mikas Giftgas). Mit Sternen wird er zäher, die Flächenbombe stärker und entzündet.' },
     hero:   { name: 'Dolcha',      cost: 0, hp: 86, atk: 4,  range: 1, ai: 4,  mi: 4, color: '#E0589B', front: true, fx: 'stab', hero: true,
               role: 'Heldin',
               ability: { every: 6, heal: 16, tp: true, name: 'Schattensprung', tag: 'heilt sich und springt zum fernsten Gegner', short: 'Nach 6 Angriffen heilt sie sich um 16 und teleportiert sich hinter den am weitesten entfernten Gegner.', desc: 'Nach 6 Angriffen heilt sie sich selbst um 16 Trefferpunkte und teleportiert sich hinter die am weitesten entfernte gegnerische Truppe. Die Aufladung füllt sich im Kampf unter ihrem Lebensbalken.' },
@@ -2427,7 +2435,9 @@ button.pslot b { font-size: 12.5px; }
                          desc: 'Der Ulti-Balken unter seinem Lebensbalken füllt sich mit der Zeit. Alle 10 Sekunden wirft er eine Gasgranate. Das giftgrüne Gas breitet sich auf 5 Feldern in Kreuzform aus: Gegner darin erleiden sofort 1,3-fachen Schaden und danach 5 Sekunden lang jede Sekunde Giftschaden, solange sie im Gas stehen.' },
               blurb: 'Soldat mit Gewehr. Soldat mit Gewehr in der linken Hand. Grüßt zu Rundenbeginn seine Kameraden und sprüht alle 10 Sekunden giftgrünes Gas in Kreuzform, das dauerhaft Schaden macht.' },
     spitter: { name: 'Zirkustante', cost: 3, hp: 20, atk: 6, range: 3, ai: 7, mi: 5, color: '#D8352F', fx: 'flame',
-              blurb: 'Spuckt aus bis zu 3 Feldern einen Feuerball auf einen Gegner. Ab Stufe 3 trifft er im Kreuz (Ziel plus 4 Nachbarfelder).' },
+              crit: { chance: [0, 0.2, 0.2, 0.2], mult: 2, name: 'Kritischer Treffer' },
+              burn: { lv: 2, dmg: 2, secs: 3, name: 'Brandwunde' },
+              blurb: 'Spuckt aus bis zu 3 Feldern einen Feuerball auf einen Gegner. Mit einem Stern kann er kritisch treffen, mit zwei Sternen brennen Getroffene weiter, ab Stufe 3 trifft er im Kreuz (Ziel plus 4 Nachbarfelder).' },
     timo:   { name: 'Timo', cost: 2, hp: 17, atk: 3, range: 2, ai: 5, mi: 4, color: '#2F6FD6', fx: 'kick',
               opener: { ball: true, label: 'Torschuss', mult: 3, name: 'Torschuss', desc: 'Zu Beginn jeder Runde legt er sich einen Fußball vor die Füße und schießt ihn auf den nächsten Gegner in seiner Reihe. Der Ball trifft nur eine Person und macht mäßigen Schaden: das Dreifache seines normalen Angriffs. Steht kein Gegner in der Reihe, rollt der Ball ins Leere.' },
               blurb: 'Fußballer mit Stollenschuhen. Zu Rundenbeginn schießt er einen Ball auf den nächsten Gegner in seiner Reihe, danach tritt er Bälle aus der Distanz.' },
@@ -2438,26 +2448,29 @@ button.pslot b { font-size: 12.5px; }
               blurb: 'Dompteur mit langer Peitsche. Schlägt auf 2 Felder zu, nach 8 Hieben betäubt er einen Gegner auf 3 Felder für 4 Sekunden.' },
     coach:  { name: 'Coach Nabil', cost: 3, hp: 30, atk: 3, range: 1, ai: 6, mi: 5, color: '#1F8A8A', front: true, fx: 'box',
               summon: { every: 7, name: 'Ruf der Mamacitas' },
-              blurb: 'Boxtrainer mit Fade-Frisur. Schlägt mit Handschuhen abwechselnd links und rechts zu und ruft alle 7 Sekunden eine kleine Mamacita aufs Feld. Mit Sternen ruft er schneller und mehr.' },
+              blurb: 'Boxtrainer mit Fade-Frisur. Schlägt mit Handschuhen abwechselnd links und rechts zu und ruft alle 10 Sekunden eine kleine Mamacita aufs Feld. Mit Sternen ruft er schneller, dann gleich zwei, und heilt sich, wenn eine fällt.' },
     heilerin: { name: 'Heilerin', cost: 4, hp: 52, atk: 4, range: 1, ai: 7, mi: 5, color: '#E8B923', front: true, fx: 'heilsword',
               ability: { heal: 5, every: 5, allies: 7, name: 'Heilende Klinge', tag: 'heilt nach 5 Schlägen',
                          short: 'Nach 5 Schwerthieben heilt sie sich um 5 und die Knirpse und Helden direkt neben, vor und hinter ihr um 7. Mit Sternen wird das Feld größer und die Heilung stärker.',
                          desc: 'Jeder Schwerthieb lädt die Leiste unter ihrem Lebensbalken auf. Nach 5 Hieben erstrahlt ihre Rüstung: Sie heilt sich selbst um 5 Trefferpunkte und die Knirpse und Helden direkt links, rechts, vor und hinter ihr um 7. Die Heilmenge steigt mit jedem Stern. Ab ★ wirkt es auf das ganze 3×3-Feld, ab ★★ greift sie nach jedem Heilen 80 % schneller an, ab ★★★ wird das Heilfeld nochmal größer (zusätzlich 2 Felder in jede gerade Richtung).' },
               blurb: 'Kleine Kämpferin in goldener Rüstung mit langem, silbernem Schwert. Schlägt zügig zu und heilt nach 5 Hieben sich und ihre Nachbarn.' },
     ritter: { name: 'Ritter', cost: 3, hp: 44, atk: 5, range: 1, ai: 8, mi: 5, color: '#8C97A5', front: true, fx: 'ritterslash',
-              ironwill: { secs: 5, reduce: 0.9, lv: 3, name: 'Eiserne Wacht' },
-              blurb: 'Kleiner Ritter in Kettenrüstung mit Schnauzer. Hält viel aus und schlägt mit dem Schwert zu. Mit drei Sternen erleidet er zu Beginn jeder Runde 5 Sekunden lang 90 % weniger Schaden.' },
+              ironwill: { secs: 5, reduce: 0.7, lv: 1, name: 'Eiserne Wacht', allyLv: 3, allyReduce: 0.4 },
+              fury: { lv: 2, tempo: 1.3, secs: 10, name: 'Kampfeswut' },
+              blurb: 'Kleiner Ritter in Kettenrüstung mit Schnauzer. Hält viel aus und schlägt mit dem Schwert zu. Zu Rundenbeginn erleidet er 5 Sekunden lang 70 % weniger Schaden. Mit zwei Sternen packt ihn die Wut, wenn neben ihm ein Verbündeter fällt. Mit drei Sternen schützt er auch den Verbündeten direkt neben sich, der die wenigsten Leben hat.' },
     rost:   { name: 'Rost', cost: 3, hp: 30, atk: 10, range: 1, ai: 12, mi: 5, color: '#8A5A3A', front: true, fx: 'greatsword',
-              crit: { chance: [0.10, 0.25, 0.25, 0.25], mult: 2, name: 'Kritischer Treffer' },
+              crit: { chance: [0.10, 0.25, 0.25, 0.35], mult: 2, name: 'Kritischer Treffer' },
               blurb: 'Kleiner Ritter mit umgedrehtem Eimer als Helm und einem kräftigen Breitschwert. Holt mit dem Schwert von hinten aus, schlägt langsam, aber sehr hart und landet mit etwas Glück einen kritischen Treffer mit doppeltem Schaden.' },
     girl:   { name: 'Mamacita', cost: 0, hp: 14, atk: 2, range: 1, ai: 4, mi: 4, color: '#D9779F', front: true, fx: 'dagger', summon: true,
               blurb: 'Klein, flink und schwach. Wird von Coach Nabil gerufen.' },
     slappy: { name: 'Slappy', cost: 3, hp: 26, atk: 1.4, range: 1, ai: 3, mi: 4, color: '#E8584C', front: true, fx: 'fish',
               ability: { kind: 'combo', every: 5, hits: 8, mult: 1.5, name: 'Fisch-Combo', tag: 'Combo nach 5 Schlägen',
-                         short: 'Nach 5 Schlägen haut er mit dem Fisch 8-mal in Folge zu und ist dabei unverwundbar.',
-                         desc: 'Jeder Schlag mit dem Fisch füllt den Ulti-Balken unter seinem Lebensbalken. Ist er nach 5 Schlägen voll, startet Slappy eine wilde Combo und klatscht dem Gegner 8-mal hintereinander den Fisch um die Ohren. Solange die Combo läuft, ist er unverwundbar.' },
-              blurb: 'Frecher Knirps mit Fisch. Nach 5 Schlägen haut er 8-mal in Folge zu und ist dabei unverwundbar.' },
+                         short: 'Nach 5 Schlägen haut er mit dem Fisch 8-mal in Folge zu. Ab Stern 1 ist er dabei unverwundbar, ab Stern 2 trifft die Combo zwei Gegner, ab Stern 3 bleibt er danach noch 2,5 Sekunden unverwundbar.',
+                         desc: 'Jeder Schlag mit dem Fisch füllt den Ulti-Balken unter seinem Lebensbalken. Ist er nach 5 Schlägen voll, startet Slappy eine wilde Combo und klatscht dem Gegner 8-mal hintereinander den Fisch um die Ohren. Ab Stern 1 ist er unverwundbar, solange die Combo läuft. Ab Stern 2 trifft jeder Hieb zusätzlich einen Gegner neben dem Ziel. Ab Stern 3 bleibt er noch 2,5 Sekunden nach der Combo unverwundbar.' },
+              blurb: 'Frecher Knirps mit Fisch. Nach 5 Schlägen haut er 8-mal in Folge zu, ab Stern 1 sogar unverwundbar.' },
     crossbow: { name: 'Bolzo', cost: 3, hp: 22, atk: 5, range: 4, ai: 7, mi: 5, color: '#6B7F4A', fx: 'xbow',
+              crit: { chance: [0, 0.15, 0.15, 0.25], mult: 2, name: 'Zielsicher' },
+              reload: { lv: 2, tempo: 1.25, name: 'Schnelles Nachladen' },
               opener: { mult: 2, name: 'Riesenpfeil', desc: 'Zu Beginn jeder Runde schießt er einmal einen riesigen Magie-Pfeil geradeaus durch seine ganze Spalte. Jeder Gegner in der Linie erleidet das Doppelte seines normalen Angriffs: 10 Schaden auf Stufe 0, mit jedem Stern mehr.' },
               blurb: 'Lässiger Armbrustschütze mit blauen Magie-Pfeilen, 4 Feldern Reichweite und Durchschlag: jeder Schuss trifft alle Gegner in der Schusslinie bis zum Kartenrand. Zu Rundenbeginn schießt er einen riesigen Magie-Pfeil in einer Linie nach vorn: 20 Schaden.' }
   };
@@ -2465,18 +2478,23 @@ button.pslot b { font-size: 12.5px; }
   var KEYS = Object.keys(TYPES);
   var POOL = KEYS.filter(function (k) { return !TYPES[k].hero && TYPES[k].summon !== true; });
   var HEROES = KEYS.filter(function (k) { return TYPES[k].hero; });
-  var SUMMON_EVERY = [7, 7, 7, 7], SUMMON_N = [1, 1, 1, 1];
+  var SUMMON_EVERY = [10, 7, 7, 7], SUMMON_N = [1, 1, 2, 2], SUMMON_HEAL = 0.2;
   var DECK_SIZE = 5, DECK_TOTAL = 6;
   var CROWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.5 5 8l4.5 4.5L12 6l2.5 6.5L19 8l1.5 10.5z" fill="#3A2500"/></svg>';
   var LV = [1, 1.35, 1.9, 2.7];
   /* 3 Fähigkeiten-Slots je Mini (für ★, ★★, ★★★); null = noch leer. Bisher nur bei Bogi belegt. */
   var PERKS = { guard: [{ name: 'Schildwall', desc: 'Steht er zu Rundenbeginn vorn (kein Verbündeter vor ihm in seiner Spalte) und hat Gegner vor sich, bekommt er ein Schild, das die nächsten 3 Schläge komplett abfängt, egal wie viel Schaden sie machen.' }, { name: 'Rückendeckung', desc: 'Steht ein Verbündeter auf einem angrenzenden Feld, erleidet er 10 % weniger Schaden.' }, { name: 'Eiserne Haut', desc: 'Fällt sein Leben zum ersten Mal unter 40 %, ist er 3 Sekunden lang unverwundbar.' }],
-    archer: [null, { name: 'Doppelschuss', desc: 'Schießt 2 Pfeile gleichzeitig, wenn zwei Gegner in Reichweite sind. Sonst nur einen.' }, null],
+    coach: [{ name: 'Schneller Ruf', desc: 'Ruft alle 7 statt 10 Sekunden eine Mamacita.' }, { name: 'Doppelruf', desc: 'Ruft jedes Mal 2 Mamacitas gleichzeitig.' }, { name: 'Mamas Segen', desc: 'Stirbt eine seiner Mamacitas, heilt er sich um 20 % seiner Leben.' }],
+    crossbow: [{ name: 'Zielsicher', desc: 'Seine Schüsse können kritisch treffen: 15 % Chance auf doppelten Schaden.' }, { name: 'Schnelles Nachladen', desc: 'Er schießt 25 % schneller.' }, { name: 'Zielsicher II', desc: 'Kritische Treffer: 25 % Chance statt 15 %.' }],
+    healer: [{ name: 'Gift', desc: 'Ihre Schadenstränke vergiften: Getroffene leuchten grün und erleiden 4 Sekunden lang jede Sekunde 1 Schaden.' }, { name: 'Flächenheilung', desc: 'Der Heiltrank heilt alle Verbündeten im 3×3-Feld um das Ziel.' }, { name: 'Ansteckung', desc: 'Steht eine vergiftete Figur 2 Sekunden lang neben einem Verbündeten, wird auch dieser vergiftet (volle 4 Sekunden, die Figur selbst bleibt vergiftet).' }],
+    archer: [{ name: 'Adlerauge', desc: '1 Feld mehr Reichweite.' }, { name: 'Doppelschuss', desc: 'Schießt 2 Pfeile gleichzeitig, wenn zwei Gegner in Reichweite sind. Sonst nur einen.' }, { name: 'Schnellfeuer', desc: 'Er schießt 30 % schneller.' }],
+    bomb: [{ name: 'Panzerung', desc: 'Erleidet 15 % weniger Schaden.' }, { name: 'Sprengkraft', desc: 'Die Flächenbombe macht 30 % mehr Schaden.' }, { name: 'Zündstoff', desc: 'Wen die Flächenbombe trifft, brennt 3 Sekunden lang und erleidet jede Sekunde 2 Schaden.' }],
     heilerin: [{ name: 'Heilfeld 3×3', desc: 'Die Heilende Klinge wirkt jetzt auf alle 8 Felder um sie herum, auch schräg.' }, { name: 'Heilrausch', desc: 'Nach jedem Heilen greift sie 80 % schneller an, unbegrenzt stapelbar (bis zum Rundenende).' }, { name: 'Großes Heilfeld', desc: 'Das Heilfeld wird größer: zusätzlich die Felder 2 Schritte gerade nach oben, unten, links und rechts.' }],
     miner: [{ name: 'Einzelgänger-Wut', desc: 'Steht er zu Rundenbeginn allein (kein Verbündeter direkt daneben), bekommt er 10 Sekunden lang Wut: 30 % mehr Angriffs- und Bewegungstempo. Jeder Kill füllt die Wut um die Hälfte wieder auf.' }, { name: 'Flächenschaden', desc: 'Seine Spitzhacke trifft das Ziel und einen weiteren Gegner direkt daneben mit vollem Schaden. Nur dann erscheinen die roten Schadenszahlen.' }, { name: 'Energieraub', desc: 'Jeder Treffer zieht den getroffenen Gegnern 2 Ult-Aufladung ab. Das erscheint als blaue Zahl über ihnen.' }],
-    ritter: [null, null, { name: 'Eiserne Wacht', desc: 'Zu Beginn jeder Runde erleidet er 5 Sekunden lang 90 % weniger Schaden.' }],
-    rost: [{ name: 'Mehr Glück', desc: 'Kritische Treffer: 25 % Chance (statt 10 %) auf doppelten Schaden.' }, { name: 'Überraschungsschlag', desc: 'Steht zu Rundenbeginn direkt vor ihm ein Gegner, macht sein erster Schlag doppelten Schaden.' }, null],
-    spitter: [null, null, { name: 'Flammenmeer', desc: 'Jeder Feuerball macht Flächenschaden im Kreuz: das Ziel und die 4 Nachbarfelder werden getroffen.' }] };
+    slappy: [{ name: 'Unverwundbare Combo', desc: 'Während seiner Fisch-Combo kann ihn niemand verletzen.' }, { name: 'Flächen-Combo', desc: 'Jeder Hieb der Combo trifft zusätzlich einen zweiten Gegner direkt neben dem Ziel.' }, { name: 'Nachwirkung', desc: 'Nach der Combo bleibt er noch 2,5 Sekunden unverwundbar.' }],
+    ritter: [{ name: 'Eiserne Wacht', desc: 'Zu Beginn jeder Runde erleidet er 5 Sekunden lang 70 % weniger Schaden.' }, { name: 'Kampfeswut', desc: 'Stirbt direkt neben ihm ein Verbündeter, bekommt er 10 Sekunden lang Wut: 30 % mehr Angriffs- und Bewegungstempo.' }, { name: 'Eiserne Wacht II', desc: 'Auch der Verbündete direkt neben ihm mit den wenigsten Leben erleidet zu Rundenbeginn 5 Sekunden lang 40 % weniger Schaden.' }],
+    rost: [{ name: 'Mehr Glück', desc: 'Kritische Treffer: 25 % Chance (statt 10 %) auf doppelten Schaden.' }, { name: 'Überraschungsschlag', desc: 'Steht zu Rundenbeginn direkt vor ihm ein Gegner, macht sein erster Schlag doppelten Schaden.' }, { name: 'Mehr Glück II', desc: 'Kritische Treffer: 35 % Chance statt 25 %.' }],
+    spitter: [{ name: 'Glückstreffer', desc: 'Jeder Feuerball kann kritisch treffen: 20 % Chance auf doppelten Schaden.' }, { name: 'Brandwunde', desc: 'Getroffene brennen 3 Sekunden lang und erleiden jede Sekunde 2 Schaden.' }, { name: 'Flammenmeer', desc: 'Jeder Feuerball macht Flächenschaden im Kreuz: das Ziel und die 4 Nachbarfelder werden getroffen.' }] };
   /* Helden-Level: aktuell bis Level 5 (später bis 15). Je Level mehr Leben und Angriff; auf Level 5 (später 10, 15) kommt eine Verstärkung der Fähigkeit. */
   var HERO_MAXLV = 5, HERO_UP_COSTS = [400, 1200, 3000, 7500], HERO_CARD_NEED = [10, 25, 50, 100], HERO_PERK_LVS = [5, 10, 15];
   function heroMul(lv) { return { hp: 1 + 0.10 * (lv - 1), atk: 1 + 0.125 * (lv - 1) }; }
@@ -3975,7 +3993,7 @@ CH.shield = critter({
     S.runtime = S.team.concat(S.enemy).map(function (u) {
       var st = stats(u);
       return { id: u.id, type: u.type, level: u.level, hl: u.hl, team: u.team, x: u.x, y: u.y,
-               hp: st.hp, max: st.hp, atk: st.atk, heal: st.heal, range: st.range,
+               hp: st.hp, max: st.hp, atk: st.atk, heal: st.heal, range: st.range + ((TYPES[u.type].reach && (u.level || 0) >= TYPES[u.type].reach.lv) ? TYPES[u.type].reach.add : 0),
                ai: st.ai, mi: st.mi, cd: rnd(3), charge: 0, vis: 0, nAtk: 0, guardT: 0, guardVis: false, el: null,
                sumT: u.type === 'coach' ? Math.round(SUMMON_EVERY[Math.min(3, u.level || 0)] * 1000 / TICK) - 1 : 0 };
     });
@@ -4464,6 +4482,13 @@ CH.shield = critter({
       { transform: T(0, 0, 1, 0), filter: 'brightness(1)' }], 260, { easing: 'ease-out' });
   }
   function kill(t, v) {
+    try { furyCheck(t); } catch (e) {}
+    try {
+      if (t.type === 'girl' && t.owner) {
+        var ow = S.runtime.filter(function (o) { return o.id === t.owner && o.hp > 0 && (o.level || 0) >= 3; })[0];
+        if (ow) { var hg = Math.min(ow.max - ow.hp, Math.ceil(ow.max * SUMMON_HEAL)); if (hg > 0) { ow.hp += hg; setHp(ow); floatText(ow, '+' + hg, 'heal'); fxPlus(ctr(ow), 1); } }
+      }
+    } catch (e) {}
     var tok = tokOf(t), el = t.el;
     if (!el) return;
     if (!v) { var ang = (200 + Math.random() * 140) * Math.PI / 180; v = { x: Math.cos(ang), y: Math.sin(ang) }; }
@@ -4640,6 +4665,7 @@ CH.shield = critter({
         post.push(function () { guardVis(t, c, fire); });
       }
     }
+    var tgh = TYPES[t.type].tough; if (tgh && (t.level || 0) >= tgh.lv) out = out * (1 - tgh.red);
     if (t.drT > 0) out = Math.max(1, Math.round(out * (1 - t.dr)));
     if (out > 0) out = Math.max(1, Math.round(out)); /* keine Kommazahlen */
     t.hp = Math.max(0, t.hp - out);
@@ -4659,6 +4685,14 @@ CH.shield = critter({
       u.dr = w.reduce; u.drT = Math.ceil(w.secs * 1000 / TICK);
       u.drMax = u.drT;
       if (u.el) { u.el.classList.add('ironwill'); u.el.insertAdjacentHTML('beforeend', '<span class="irshield"></span><span class="irbar"><i></i></span>'); }
+      if ((u.level || 0) >= w.allyLv) {
+        var best = null, bd = 99;
+        S.runtime.forEach(function (a) { if (a !== u && a.hp > 0 && a.team === u.team && dist(u, a) <= 1 && a.hp < bd) { best = a; bd = a.hp; } });
+        if (best && !(best.drT > 0 && best.dr >= w.allyReduce)) {
+          best.dr = w.allyReduce; best.drT = u.drT; best.drMax = u.drT;
+          if (best.el && !best.el.classList.contains('ironwill')) { best.el.classList.add('ironwill'); best.el.insertAdjacentHTML('beforeend', '<span class="irshield"></span><span class="irbar"><i></i></span>'); }
+        }
+      }
     });
   }
   function openStrikeStart() {
@@ -4698,14 +4732,36 @@ CH.shield = critter({
       if (u.el) { u.el.classList.add('rage'); u.el.insertAdjacentHTML('beforeend', '<span class="ragebadge" style="--p:1">' + RAGE_ICON + '</span>'); }
     });
   }
+  /* Ritter ab Stern 2: faellt direkt neben ihm ein Verbuendeter, packt ihn die Wut */
+  function furyCheck(dead) {
+    S.runtime.forEach(function (u) {
+      var f = TYPES[u.type].fury; if (!f || u === dead || u.hp <= 0 || u.team !== dead.team || (u.level || 0) < f.lv || dist(u, dead) > 1) return;
+      u.rageMax = Math.ceil(f.secs * 1000 / TICK); u.rageT = u.rageMax; u.rAcc = 0;
+      if (u.el) {
+        if (!u.el.classList.contains('rage')) { u.el.classList.add('rage'); u.el.insertAdjacentHTML('beforeend', '<span class="ragebadge" style="--p:1">' + RAGE_ICON + '</span>'); }
+        else { var b0 = u.el.querySelector('.ragebadge'); if (b0) b0.style.setProperty('--p', 1); }
+        floatText(u, 'Wut!', 'reflect');
+      }
+    });
+  }
   function rageRefill(u) {
     if (!(u.rageT > 0)) return;
     u.rageT = Math.min(u.rageMax, u.rageT + Math.ceil(u.rageMax / 2)); /* Kill: Wut fuellt sich um die Haelfte auf */
     var b = u.el && u.el.querySelector('.ragebadge'); if (b) { b.style.setProperty('--p', u.rageT / u.rageMax); try { b.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.35)', offset: .35 }, { transform: 'scale(1)' }], { duration: 360 }); } catch (e) {} }
   }
   function rageOn(u) { return u.rageT > 0 && u.hp > 0; }
-  function rageCd(u, base) { u.rAcc = (u.rAcc || 0) + base / TYPES[u.type].rage.tempo; var c = Math.max(1, Math.floor(u.rAcc + 1e-9)); u.rAcc -= c; return c - 1; }
+  function reloadOn(u) { var r = TYPES[u.type].reload; return !!r && (u.level || 0) >= r.lv && u.hp > 0; }
+  function rageCd(u, base) { var rg = TYPES[u.type].rage || TYPES[u.type].fury || TYPES[u.type].reload; u.rAcc = (u.rAcc || 0) + base / rg.tempo; var c = Math.max(1, Math.floor(u.rAcc + 1e-9)); u.rAcc -= c; return c - 1; }
   /* Ult-Aufladung des Gegners verringern (Einheiten: Segmente der Ult-Leiste) */
+  /* Der verlorene Teil der Lebensleiste blinkt kurz rot und verschwindet dann */
+  function hpLossFx(t, p0) {
+    var bar = t.el && t.el.querySelector('.hpbar'); if (!bar || RM || p0 == null) return;
+    var p1 = Math.max(0, t.hp / t.max * 100); if (p1 >= p0) return;
+    var g = document.createElement('span');
+    g.style.cssText = 'position:absolute;top:0;bottom:0;z-index:3;pointer-events:none;border-radius:2px;background:#FF2A2A;box-shadow:0 0 6px 1px rgba(255,40,40,.9);left:' + p1 + '%;width:' + (p0 - p1) + '%;';
+    bar.appendChild(g);
+    try { g.animate([{ opacity: 1 }, { opacity: .15, offset: .2 }, { opacity: 1, offset: .4 }, { opacity: .15, offset: .6 }, { opacity: 1, offset: .75 }, { opacity: 0 }], { duration: 800 }).onfinish = function () { g.remove(); }; } catch (e) { g.remove(); }
+  }
   function drainUlt(e, amt) {
     if (!e || e.hp <= 0 || e.away) return;
     var ab = abOf(e), pot = TYPES[e.type].potion, did = false, bar = partOf(e, '.chbar'), p0 = bar ? parseFloat(bar.style.getPropertyValue('--p')) : NaN, dp = 0;
@@ -4725,6 +4781,53 @@ CH.shield = critter({
         bar.animate([{ filter: 'drop-shadow(0 0 0 ' + col + ')' }, { filter: 'drop-shadow(0 0 5px ' + col + ') brightness(1.5)', offset: .3 }, { filter: 'drop-shadow(0 0 0 ' + col + ')' }], { duration: 700 });
       } catch (x) { g.remove(); }
     }
+  }
+  /* Zirkustante ab Stern 2: Getroffene brennen und erleiden jede Sekunde etwas Schaden */
+  function igniteUnit(src, e) {
+    var b = TYPES[src.type].burn; if (!b || (src.level || 0) < b.lv || !e || e.hp <= 0 || e.dying) return;
+    e.burnT = Math.ceil(b.secs * 1000 / TICK); e.burnAcc = 0; e.burnDmg = b.dmg; e.burnSrc = src;
+    if (e.el) e.el.classList.add('burning');
+  }
+  function burnTick(u) {
+    u.burnT--; u.burnAcc = (u.burnAcc || 0) + 1;
+    if (u.burnAcc >= Math.round(1000 / TICK) && !u.invul && !u.away && !(u.digT > 0)) {
+      u.burnAcc = 0;
+      var d = u.burnDmg || 1; u.hp = Math.max(0, u.hp - d); setHp(u); floatText(u, '-' + d, 'aoe');
+      if (u.hp <= 0 && !u.dying) { u.dying = true; kill(u); return; }
+    }
+    if (u.burnT <= 0 && u.el) u.el.classList.remove('burning');
+  }
+  /* Hexe ab Stern 1: Gift - gruenes Leuchten, gruene Zahlen, Schaden ueber Zeit; ab Stern 3 springt es auf Nachbarn ueber */
+  function poisonPulse(e) {
+    var tk = tokOf(e); if (!tk || RM || e.dying) return;
+    anim(tk, [{ transform: T(0, 0, 1, 0), filter: 'drop-shadow(0 0 0 rgba(120,255,90,0))' },
+      { transform: T(-1.5, 1.5, 1, -3) + ' scale(0.92,0.9)', filter: 'drop-shadow(0 0 8px #B6FF9A) drop-shadow(0 0 18px #4BE03A) drop-shadow(0 0 32px #4BE03A) brightness(1.25)', offset: 0.25 },
+      { transform: T(1.5, 0.5, 1, 2) + ' scale(1.04,0.97)', filter: 'drop-shadow(0 0 8px #8CFF6A) drop-shadow(0 0 20px #4BE03A) brightness(1.1)', offset: 0.55 },
+      { transform: T(0, 0, 1, 0), filter: 'drop-shadow(0 0 0 rgba(120,255,90,0))' }], 480, { easing: 'ease-out' });
+  }
+  function poisonUnit(src, e, dmg) {
+    var p = TYPES[src.type].poison; if (!p || (src.level || 0) < p.lv || !e || e.hp <= 0 || e.dying) return;
+    if (dmg > 0) floatText(e, '-' + dmg, 'poison');
+    e.poiT = Math.ceil(p.secs * 1000 / TICK); e.poiAcc = 0; e.poiDmg = p.dmg; e.poiLv = src.level || 0; e.poiCt = 0; e.poiP = p;
+    if (e.el) e.el.classList.add('poisoned');
+    poisonPulse(e);
+  }
+  function poisonTick(u) {
+    u.poiT--; u.poiAcc = (u.poiAcc || 0) + 1;
+    var sec = Math.round(1000 / TICK);
+    if (u.poiAcc >= sec && !u.invul && !u.away && !(u.digT > 0)) {
+      u.poiAcc = 0;
+      var d = u.poiDmg || 1; u.hp = Math.max(0, u.hp - d); setHp(u); floatText(u, '-' + d, 'poison');
+      if (u.hp <= 0 && !u.dying) { u.dying = true; kill(u); return; }
+      poisonPulse(u);
+    }
+    var p = u.poiP;
+    if (p && u.poiLv >= p.spreadLv) {
+      var nb = S.runtime.filter(function (a) { return a !== u && a.hp > 0 && a.team === u.team && !(a.poiT > 0) && !a.away && !(a.digT > 0) && dist(u, a) <= 1; })[0];
+      if (nb) { u.poiCt = (u.poiCt || 0) + 1; if (u.poiCt >= Math.round(p.spreadSecs * 1000 / TICK)) { u.poiCt = 0; poisonUnit({ type: 'healer', level: u.poiLv }, nb, 0); } }
+      else u.poiCt = 0;
+    }
+    if (u.poiT <= 0 && u.el) u.el.classList.remove('poisoned');
   }
   function hurtLate(src, t, dmg, post) { var h0 = t.hp, d = hurt(src, t, dmg, post); t.hp = h0; return d; }
   function applyLate(t, d) { if (t.hp > 0 && !t.away) t.hp = Math.max(0, t.hp - (d || 0)); }
@@ -5052,7 +5155,7 @@ CH.shield = critter({
     // Combo
     u.comboReady = false; u.nAtk = 0;
     var step = 130, t0 = 200, last = t0;
-    u.invul = true; if (u.el) u.el.classList.add('invul');
+    if ((u.level || 0) >= 1) { u.invul = true; if (u.el) u.el.classList.add('invul'); } /* Unverwundbar erst ab Stern 1 */
     later(0, function () { floatText(u, 'Combo!', 'reflect'); fxRing(ctr(u), '#FFD866', 1.8, 480); fxStar(ctr(u), '#FFF3C4', 1, 300); });
     /* Jeder Schlag sucht sich sein Ziel erst im Moment des Treffers: Schaden kommt erst beim sichtbaren Schlag, wandert das Ziel oder stirbt, nimmt er den naechsten Gegner in Reichweite */
     var N = ab.hits, cur = t, cdm = Math.max(2, Math.round(u.atk * (ab.mult || 1))), last = t0 + (N - 1) * step;
@@ -5074,11 +5177,16 @@ CH.shield = critter({
         setCharge(u, Math.max(0, Math.round(ab.every * (1 - (idx + 1) / N))));
         showHit(tg, vv, d, final ? 2.4 : 0.9 + idx * 0.1);
         pp.forEach(function (fn) { fn(); });
+        if ((u.level || 0) >= 2) { /* Stern 2: die Combo trifft zusaetzlich einen Gegner neben dem Ziel (maximal 2 Truppen) */
+          var sec = S.runtime.filter(function (e) { return alive(e) && e !== tg && dist(tg, e) <= 1; }).sort(function (a, b) { return dist(tg, a) - dist(tg, b) || a.hp - b.hp; })[0];
+          if (sec) { var v2 = vec(u, sec), p2 = [], d2 = hurt(u, sec, cdm, p2); fishFx({ B: { x: v2.B.x + (Math.random() - 0.5) * 18, y: v2.B.y + (Math.random() - 0.5) * 12 }, a: v2.a, x: v2.x, y: v2.y }, false); showHit(sec, v2, d2, 0.9); p2.forEach(function (fn) { fn(); }); }
+        }
         if (final) shake(9, 380);
       });
     })(i);
     later(last + 40, function () { setCharge(u, 0); u.vis = 0; });
-    later(last + 200, function () { u.invul = false; if (u.el) u.el.classList.remove('invul'); });
+    var itok = u.invulTok = (u.invulTok || 0) + 1, extra = (u.level || 0) >= 3 ? 2500 : 0; /* Stern 3: noch 2,5 Sekunden nach der Combo unverwundbar */
+    later(last + 200 + extra, function () { if (u.invulTok !== itok) return; u.invul = false; if (u.el) u.el.classList.remove('invul'); });
     u.extraCd = 0;
   }
 
@@ -5395,6 +5503,7 @@ CH.shield = critter({
     var dbl = false;
     if (u.openDbl) { u.openDbl = false; dbl = true; crit = true; dmg = dmg * 2; } /* Ueberraschungsschlag */
     else if (def.crit) { crit = Math.random() < def.crit.chance[Math.min(3, u.level || 0)]; if (crit) dmg = Math.round(dmg * def.crit.mult); }
+    if (isAoe && def.blast && (u.level || 0) >= def.blast.lv) dmg = Math.round(dmg * def.blast.mult);
     if (kind === 'flame' && u.level >= 3) isAoe = true; /* Flammenmeer: jeder Feuerball trifft im Kreuz */
     if (isAoe) {
       aoeHit = S.runtime.filter(function (e) { return e.hp > 0 && e.team !== u.team && Math.abs(e.x - t.x) + Math.abs(e.y - t.y) <= 1; });
@@ -5524,7 +5633,7 @@ CH.shield = critter({
       var tt = 1;
       t.hp = Math.min(t.max, t.hp + dmg); /* Hauptziel: Abzug erst beim Aufprall */
       hitAt = XST + fx2 * Math.min(1, gl / sTot);
-      later(hitAt, function () { applyLate(t, dmg); fxPierce(v.B, brot, 1, t.el, true); showHit(t, v, dmg, 1); });
+      later(hitAt, function () { var hpx = t.shownHp; applyLate(t, dmg); fxPierce(v.B, brot, 1, t.el, true); showHit(t, v, dmg, crit ? 1.5 : 1); if (crit) { floatText(t, 'KRIT!', 'crit'); hpLossFx(t, hpx); } });
       others.forEach(function (o) {
         var at = XST + fx2 * Math.min(1, o.s / sTot); if (at > hitAt) hitAt = at;
         later(at, function () { applyLate(o.e, o.d); var vv = vec(u, o.e); fxPierce(ctr(o.e), brot, 1, o.e.el, true); showHit(o.e, vv, o.d, 1); });
@@ -5569,9 +5678,11 @@ CH.shield = critter({
       hitAt = 585;
       later(hitAt, function () {
         boxHit(v.B, t, 0); fxPuff(v.A, 'rgba(238,230,205,0.9)', 5, 20);
-        if (crit) { boxHit(v.B, t, 1); fxGlow({ x: v.B.x, y: v.B.y - 4 }, 1.3, 340); floatText(t, dbl ? 'x2!' : 'KRIT!', 'crit'); }
+        var hp0 = t.shownHp;
+        if (crit) { boxHit(v.B, t, 1); fxGlow({ x: v.B.x, y: v.B.y - 4 }, 1.3, 340); if (dbl) floatText(t, '-' + dmg, 'aoe'); else floatText(t, 'KRIT!', 'crit'); }
         fxBump(v.B, v.a * 57.2958, crit ? 1.8 : 1.3, t.el);
         showHit(t, v, dmg, crit ? 2.2 : 1.7);
+        if (crit) hpLossFx(t, hp0);
       });
     } else if (kind === 'box') {
       // Boxer: Schritt nach vorn, dann abwechselnd Links-Rechts-Haken
@@ -5640,11 +5751,15 @@ CH.shield = critter({
           crossFire(tx0, ty0, 480);
           shake(4, 220);
           aoeHit.forEach(function (e) { showHit(e, vec(u, e), e.dmgOut, 1.1 * k); });
+          if (crit) floatText(t, 'KRIT!', 'crit');
         } else {
           /* Einzelziel: gleicher Glut-Blitz wie Stufe 3, nur auf dem Ziel, keine stehende Flamme */
           crossFire(tx0, ty0, 480, true);
-          shake(k > 1 ? 3 : 1.8, 140); showHit(t, v, dmg, 1.1 * k);
+          var hpf = t.shownHp;
+          shake(k > 1 ? 3 : 1.8, 140); showHit(t, v, dmg, crit ? 1.6 : 1.1 * k);
+          if (crit) { floatText(t, 'KRIT!', 'crit'); hpLossFx(t, hpf); }
         }
+        try { (isAoe ? aoeHit : [t]).forEach(function (e) { igniteUnit(u, e); }); } catch (er) {}
       });
     } else if (kind === 'bolt') {
       // Zauber aufladen, Blitzkugel schießen
@@ -5674,7 +5789,7 @@ CH.shield = critter({
         if (isAoe) {
           var pw = tilePx({ x: tx0, y: ty0 });
           fxGrid(tx0, ty0, 560); fxRing(v.B, '#FFB84A', pw.w * 1.6 / 26, 520); fxPuff(v.B, '#6B6F82', 10, pw.w * 1.2);
-          aoeHit.forEach(function (e) { showHit(e, vec(u, e), e.dmgOut, 1.8 * k); });
+          aoeHit.forEach(function (e) { showHit(e, vec(u, e), e.dmgOut, 1.8 * k); try { igniteUnit(u, e); } catch (er) {} });
         } else showHit(t, v, dmg, 1.8 * k);
       });
     } else {
@@ -5693,7 +5808,7 @@ CH.shield = critter({
       });
       later(340, function () { lob(HA, v.B, fh, SVG.potion('#E5393B', '#FF6B6B')); });
       hitAt = 340 + fh;
-      later(hitAt, function () { potionHit(v.B, t, v, k); showHit(t, v, dmg, 1.0 * k); flinch(t, v); });
+      later(hitAt, function () { potionHit(v.B, t, v, k); showHit(t, v, dmg, 1.0 * k); flinch(t, v); try { poisonUnit(u, t, dmg); } catch (er) {} });
     }
     if (def.ability && def.ability.heal) chargeHero(u, hitAt);
     if (def.aoe) {
@@ -5975,7 +6090,7 @@ CH.shield = critter({
     }
     cells.sort(function (a, b) { return a.k - b.k; });
     for (var i = 0; i < n && i < cells.length; i++) {
-      var c = cells[i], g = { id: 'g' + (++GIRL_ID) + '_' + Date.now() % 1000, type: 'girl', level: 0, team: u.team, x: c.x, y: c.y,
+      var c = cells[i], g = { id: 'g' + (++GIRL_ID) + '_' + Date.now() % 1000, type: 'girl', level: 0, team: u.team, x: c.x, y: c.y, owner: u.id,
         hp: Math.round(gt.hp * m), max: Math.round(gt.hp * m), atk: Math.round(gt.atk * m), heal: 0, range: gt.range, ai: gt.ai, mi: gt.mi,
         cd: 2 + rnd(2), charge: 0, vis: 0, nAtk: 0, guardT: 0, guardVis: false, el: null };
       S.runtime.push(g); mountOne(g);
@@ -6061,6 +6176,8 @@ CH.shield = critter({
     S.gas = (S.gas || []).filter(function (z) { return z.t > 0; });
     shuffle(aliveUnits()).forEach(function (u) {
       if (u.hp <= 0) return;
+      if (u.poiT > 0 && u.hp > 0) { try { poisonTick(u); } catch (er) {} if (u.hp <= 0) return; }
+      if (u.burnT > 0 && u.hp > 0) { try { burnTick(u); } catch (er) {} if (u.hp <= 0) return; }
       if (u.ironT > 0) { u.ironT--; if (u.ironT <= 0) { u.invul = false; if (u.el) u.el.classList.remove('invul'); } else return; /* in Schildhaltung: kein Laufen, kein Angriff */ }
       if (u.drT > 0) {
         u.drT--;
@@ -6115,7 +6232,7 @@ CH.shield = critter({
           var hl = Math.round(pot.heal * LV[u.level]);
           var hb0 = ally.hp; ally.hp = Math.min(ally.max, ally.hp + hl);
           var grp = null;
-          if (u.level >= 3) {
+          if (u.level >= 2) {
             grp = S.runtime.filter(function (a) { return a.hp > 0 && a.team === u.team && a !== ally && dist(ally, a) <= 1; }).map(function (a) { var b0 = a.hp; a.hp = Math.min(a.max, a.hp + hl); return { e: a, amt: a.hp - b0 }; });
           }
           healFx(u, ally, ally.hp - hb0, grp);
@@ -6146,7 +6263,7 @@ CH.shield = critter({
       u.lockId = t.id;
       if (dist(u, t) <= rng) {
         if (gab && gab.kind === 'gas' && u.gasT >= Math.round(gab.secs * 1000 / TICK)) { u.gasT = 0; u.gasSeg = 0; gasAttack(u, t); u.cd = u.ai + 1; u.cdTot = 0; return; }
-        attack(u, t); u.cd = (rageOn(u) ? rageCd(u, u.ai) : u.ai - 1) + (u.extraCd || 0); u.cdTot = u.cd; u.extraCd = 0; return;
+        attack(u, t); u.cd = (rageOn(u) || reloadOn(u) ? rageCd(u, u.ai) : u.ai - 1) + (u.extraCd || 0); u.cdTot = u.cd; u.extraCd = 0; return;
       }
       if (stepToward(u, t)) { try { if (u.mdx) setFacing(u, 'S', u.mdx > 0 ? -1 : 1); else setFacing(u, u.mdy < 0 ? 'B' : 'F', 1); } catch (e) {} hop(u); }
       u.cd = rageOn(u) ? rageCd(u, u.mi) : u.mi - 1;
@@ -7426,8 +7543,15 @@ function cmodalHtml(k) {
       var sx = '';
       if (t.aoe) sx += '<div class="abil"><b>Flächenschaden</b><p>Nach ' + t.aoe.every + ' normalen Würfen ist der nächste Wurf eine Flächenbombe: Sie explodiert im Kreuz (Ziel plus die 4 Nachbarfelder) und trifft alle Gegner darin.</p></div>';
       if (t.ability) sx += '<div class="abil"><b>' + t.ability.name + '</b><p>' + t.ability.desc + '</p><div class="chdemo" style="--n:' + t.ability.every + '" aria-hidden="true">' + segs(Math.ceil(t.ability.every * 2 / 3), t.ability.every) + '</div></div>';
-      if (t.ironwill) sx += '<div class="abil"><b>' + t.ironwill.name + ' (★★★)</b><p>Zu Beginn jeder Runde erleidet er ' + t.ironwill.secs + ' Sekunden lang ' + Math.round(t.ironwill.reduce * 100) + ' % weniger Schaden.</p></div>';
+      if (t.ironwill) sx += '<div class="abil"><b>' + t.ironwill.name + ' (★)</b><p>Zu Beginn jeder Runde erleidet er ' + t.ironwill.secs + ' Sekunden lang ' + Math.round(t.ironwill.reduce * 100) + ' % weniger Schaden. Mit ★★★ gilt das auch für den Verbündeten direkt neben ihm (' + Math.round(t.ironwill.allyReduce * 100) + ' %).</p></div>';
+      if (t.reach) sx += '<div class="abil"><b>' + t.reach.name + ' (★)</b><p>' + t.reach.add + ' Feld mehr Reichweite.</p></div>';
+      if (t.tough) sx += '<div class="abil"><b>' + t.tough.name + ' (★)</b><p>Erleidet ' + Math.round(t.tough.red * 100) + ' % weniger Schaden.</p></div>';
+      if (t.blast) sx += '<div class="abil"><b>' + t.blast.name + ' (★★)</b><p>Die Flächenbombe macht ' + Math.round((t.blast.mult - 1) * 100) + ' % mehr Schaden.</p></div>';
+      if (t.reload) sx += '<div class="abil"><b>' + t.reload.name + ' (' + (t.reload.lv >= 3 ? '★★★' : '★★') + ')</b><p>Er schießt ' + Math.round((t.reload.tempo - 1) * 100) + ' % schneller.</p></div>';
+      if (t.poison) sx += '<div class="abil"><b>' + t.poison.name + ' (★)</b><p>Getroffene werden vergiftet: ' + t.poison.secs + ' Sekunden lang ' + t.poison.dmg + ' Schaden pro Sekunde. Mit ★★★ werden auch Verbündete vergiftet, die ' + t.poison.spreadSecs + ' Sekunden neben einer vergifteten Figur stehen (volle Dauer, die Figur bleibt vergiftet).</p></div>';
+      if (t.burn) sx += '<div class="abil"><b>' + t.burn.name + ' (' + (t.burn.aoeOnly ? '★★★' : '★★') + ')</b><p>' + (t.burn.aoeOnly ? 'Wen die Flächenbombe trifft, brennt ' : 'Getroffene brennen ') + '' + t.burn.secs + ' Sekunden lang und ' + (t.burn.aoeOnly ? 'erleidet' : 'erleiden') + ' jede Sekunde ' + t.burn.dmg + ' Schaden.</p></div>';
       if (t.crit) sx += '<div class="abil"><b>' + t.crit.name + '</b><p>Jeder Schlag kann kritisch treffen und macht dann doppelten Schaden. Chance: ' + t.crit.chance.map(function (c) { return Math.round(c * 100) + ' %'; }).join(' / ') + ' (Start / ★ / ★★ / ★★★).</p></div>';
+      if (t.fury) sx += '<div class="abil"><b>' + t.fury.name + ' (★★)</b><p>Stirbt direkt neben ihm ein Verbündeter, hat er ' + t.fury.secs + ' Sekunden lang 30 % mehr Angriffs- und Bewegungstempo.</p></div>';
       if (t.rage) sx += '<div class="abil"><b>Einzelgänger-Wut (★)</b><p>Steht er zu Rundenbeginn allein, hat er 10 Sekunden lang 30 % mehr Angriffs- und Bewegungstempo. Jeder Kill füllt die Wut um die Hälfte wieder auf.</p></div>';
       if (t.dig) sx += '<div class="abil"><b>' + t.dig.name + '</b><p>' + t.dig.desc + '</p></div>';
       if (t.opener) sx += '<div class="abil"><b>' + t.opener.name + '</b><p>' + t.opener.desc + '</p><p><b>' + (t.opener.label || 'Superschuss') + ': ' + [0, 1, 2, 3].map(function (lv) { return stats({ type: k, level: lv }).atk * t.opener.mult; }).join(' / ') + '</b> (Start / ★ / ★★ / ★★★)</p></div>';
