@@ -19,6 +19,10 @@ Das Spiel nutzt Firebase (kostenloser Spark-Tarif). Ohne Einrichtung bleibt der 
        match /users/{uid} {
          allow read, write: if request.auth != null && request.auth.uid == uid;
        }
+       match /ladder/{uid} {
+         allow read: if request.auth != null;
+         allow write: if request.auth != null && request.auth.uid == uid;
+       }
      }
    }
    ```
