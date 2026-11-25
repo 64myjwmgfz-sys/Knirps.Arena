@@ -978,23 +978,70 @@ body.modal-open { overflow: hidden; }
 .rpk-go { position: relative; margin-top: 8px; width: min(100%, 320px); padding: 14px; border: 0; border-radius: 16px; font-family: var(--font-display); font-size: 22px; color: #3A2500; background: linear-gradient(#FFE88A, #FFC12E); box-shadow: 0 0 0 3px #7A4A08, 0 5px 0 3px #7A4A08; cursor: pointer; }
 .rpk-go:disabled { filter: grayscale(.9) brightness(.8); opacity: .55; cursor: default; }
 .rpk-go:not(:disabled):active { transform: translateY(3px); }
-/* Rangliste */
-.mbody .passchip.ladchip { top: 66px; height: 42px; font-size: 17px; padding-right: 15px; }
-.passchip.ladchip svg { width: 30px; height: 30px; }
+/* Bestenliste */
 .lad { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.lsh { margin: 14px 0 0; }
+.lsr { display: flex; gap: 8px; margin-top: 10px; }
+.lsr .accinp { flex: 1; min-width: 0; }
+.lsr .lgo { width: auto; padding: 0 16px; font-weight: 900; }
+.lmore { margin: 12px auto 0; display: block; }
 .lrow { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 8px; border-radius: 14px; background: var(--m-panel); box-shadow: 0 0 0 2.5px var(--m-ol); }
 .lpos { flex: none; min-width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px; background: var(--m-panel-d); font-family: var(--font-display); font-size: 17px; color: var(--m-sub); box-shadow: 0 0 0 2.5px var(--m-ol); }
-.lrow.t1 .lpos { background: linear-gradient(#FFF0A0, #F2B53A); color: #3A2500; }
-.lrow.t2 .lpos { background: linear-gradient(#F4F7FA, #B5C1CD); color: #25303B; }
-.lrow.t3 .lpos { background: linear-gradient(#F6C79A, #C47A3C); color: #3A1D08; }
+.lrow.t1 .lpos, .lpmk.t1 { background: linear-gradient(#FFF0A0, #F2B53A); color: #3A2500; }
+.lrow.t2 .lpos, .lpmk.t2 { background: linear-gradient(#F4F7FA, #B5C1CD); color: #25303B; }
+.lrow.t3 .lpos, .lpmk.t3 { background: linear-gradient(#F6C79A, #C47A3C); color: #3A1D08; }
 .lnm { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.15; }
 .lnm b { font-family: var(--font-display); font-weight: 400; font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lnm small { font-size: 11.5px; font-weight: 800; color: var(--m-sub); }
 .ltr { flex: none; display: flex; align-items: center; gap: 5px; font-family: var(--font-display); font-size: 18px; }
 .ltr svg { width: 20px; height: 20px; fill: none; stroke: #FFD23F; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.lrow.me { background: linear-gradient(#FFF3C0, #FFD96A); color: #3A2500; box-shadow: 0 0 0 2.5px #B97800, 0 0 12px rgba(255,214,90,.7); }
-.lrow.me small { color: #7A4A08; }
-.lrow.me .ltr svg { stroke: #7A4A08; }
+.lrow.me, .lbig.me { background: linear-gradient(#FFF3C0, #FFD96A); color: #3A2500; box-shadow: 0 0 0 2.5px #B97800, 0 0 12px rgba(255,214,90,.7); }
+.lrow.me small, .lbig.me small { color: #7A4A08; }
+.lrow.me .ltr svg, .lbig.me .ltr svg { stroke: #7A4A08; }
+/* Bestenliste im Trophäenpfad */
+.prow.lfull > .pc { grid-column: 1 / -1; padding: 5px 0; }
+.lbox { padding: 10px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,.42) 0%, rgba(170,214,240,.2) 40%, rgba(130,190,230,.18) 70%, rgba(255,255,255,.34) 100%); -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3); box-shadow: 0 0 0 2.5px rgba(255,255,255,.75), inset 0 0 0 2px rgba(255,255,255,.55), inset 0 0 26px rgba(150,210,245,.45), 0 8px 0 2px rgba(40,95,135,.35); }
+.lhd { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 2px 4px 8px; }
+.lhd small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.88); text-shadow: 0 1px 2px rgba(20,70,110,.55); }
+.lhd h3 { margin: 0; color: #fff; text-shadow: 0 2px 0 rgba(20,70,110,.5); font-family: var(--font-display); font-weight: 400; font-size: 24px; }
+.lall { flex: none; padding: 7px 12px; border: 0; border-radius: 999px; background: var(--m-panel-d); box-shadow: 0 0 0 2.5px var(--m-ol); color: #fff; font: inherit; font-weight: 800; font-size: 12.5px; cursor: pointer; }
+.lwhite { display: flex; flex-direction: column; gap: 9px; color: #24344A; }
+.lw { display: flex; align-items: center; gap: 10px; padding: 5px 12px 5px 6px; min-height: 46px; border-radius: 14px; background: linear-gradient(160deg, rgba(255,255,255,.98), rgba(226,236,246,.95)); box-shadow: 0 0 0 1.5px #fff, 0 2px 4px rgba(60,85,120,.25); }
+.lw .lpos { background: #E6EEF7; color: #6B7F98; box-shadow: 0 0 0 2.5px #C3D2E3; }
+.lw.t1 .lpos { background: linear-gradient(#FFF0A0, #F2B53A); color: #3A2500; box-shadow: 0 0 0 2.5px #B97800; }
+.lw.t2 .lpos { background: linear-gradient(#F4F7FA, #B5C1CD); color: #25303B; box-shadow: 0 0 0 2.5px #7C8B9B; }
+.lw.t3 .lpos { background: linear-gradient(#F6C79A, #C47A3C); color: #3A1D08; box-shadow: 0 0 0 2.5px #8A4F1F; }
+.lw .lnm b { font-size: 20px; color: #1E2D44; }
+.lw .lnm small { color: #6B7F98; }
+.lw .ltr { position: relative; color: #1E2D44; }
+.lw .ltr svg { stroke: #D99A0B; }
+.lw .lcr { position: absolute; right: 2px; top: -19px; width: 20px; height: 24px; }
+.lw .lcr svg { width: 100%; height: 100%; fill: #FFD23F; stroke: #7A4A08; stroke-width: 2; stroke-linejoin: round; }
+.lw.t1 { background: linear-gradient(#FFF8DA, #FFEAA0); }
+.lw.me { background: linear-gradient(#FFF3C0, #FFD96A); }
+.lw.me small { color: #7A4A08; }
+.lempty { justify-content: center; font-weight: 800; color: #6B7F98; }
+.lgrid { display: grid; grid-template-rows: repeat(5, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 5px; margin-top: 4px; }
+.lc { display: flex; align-items: baseline; gap: 4px; min-width: 0; padding: 7px 6px; line-height: 1.1; border-radius: 11px; background: linear-gradient(160deg, rgba(255,255,255,.98), rgba(226,236,246,.95)); box-shadow: 0 0 0 1.5px #fff; }
+.lc .ln { flex: none; width: 13px; font-size: 10px; font-weight: 900; color: #8A9BB0; text-align: right; }
+.lc b { flex: 1; min-width: 0; font-size: 12px; font-weight: 800; color: #1E2D44; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lc .lt { flex: none; font-size: 10px; font-weight: 800; color: #B77A00; }
+.lc.me { background: linear-gradient(#FFF3C0, #FFD96A); }
+.lc.me .ln, .lc.me .lt { color: #7A4A08; }
+/* Varianten Top 5 */
+.lbox[data-v="b"] .lw { min-height: 54px; gap: 10px; }
+.lbox[data-v="b"] .lw .lpos { min-width: 34px; width: 34px; height: 34px; font-size: 17px; }
+.lbox[data-v="b"] .lw .lnm b { font-size: 19px; }
+.lbox[data-v="b"] .lw .lnm small { display: none; }
+.lbox[data-v="b"] .lwhite { gap: 8px; }
+.lbox[data-v="c"] .lwhite { gap: 8px; }
+.lbox[data-v="c"] .lw { min-height: 40px; border-radius: 999px; padding: 4px 14px 4px 5px; }
+.lbox[data-v="c"] .lw .lnm small { display: none; }
+.lbox[data-v="c"] .lw .lpos { min-width: 30px; width: 30px; height: 30px; font-size: 15px; }
+.lbox[data-v="c"] .lgrid { margin: 3px 0 0; }
+.lbox .lwhite > .lw { margin: 0 14px; justify-content: flex-start; gap: 10px; padding: 5px 14px 5px 6px; }
+.lbox .lw .lnm { flex: none; }
+.lbox .lw .ltr { margin-left: auto; }
 /* Trophäenstraße */
 .ptrack { position: relative; display: flex; flex-direction: column; padding: 4px 0 10px; }
 .pbar { position: absolute; left: 31px; width: 12px; margin-left: -6px; border-radius: 6px; background: rgba(0, 0, 0, 0.35); box-shadow: 0 0 0 3px var(--m-ol); overflow: hidden; z-index: 0; }
@@ -1527,7 +1574,7 @@ html, body { overscroll-behavior-x: none; }
 .pcell.prem.rdy { box-shadow: 0 5px 14px rgba(50,10,110,.5), 0 0 16px 3px rgba(200,130,255,.75), inset 0 1.5px 0 rgba(255,255,255,.7), inset 0 -3px 8px rgba(30,0,80,.5); }
 .pcell.rdy { cursor: pointer; border-color: #FFE27A; animation: pready 2.6s ease-in-out infinite; }
 .pcell.done { opacity: .68; }
-.pcell .pck { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: #2F9E55; box-shadow: 0 0 0 2px #fff; display: grid; place-items: center; }
+.pcell .pck { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: #2F9E55; box-shadow: 0 0 0 1.5px #fff, 0 2px 4px rgba(60,85,120,.25); display: grid; place-items: center; }
 .pcell .pck svg { width: 11px; height: 11px; fill: none; stroke: #fff; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
 .pcell:active.rdy { transform: translateY(3px); }
 @keyframes pready { 0%, 100% { box-shadow: 0 5px 14px rgba(0,50,90,.32), 0 0 10px 2px rgba(255,200,50,.45), inset 0 1.5px 0 rgba(255,255,255,.85), inset 0 -3px 8px rgba(255,150,20,.3); } 50% { box-shadow: 0 5px 14px rgba(0,50,90,.32), 0 0 20px 6px rgba(255,205,60,.8), inset 0 1.5px 0 rgba(255,255,255,.9), inset 0 -3px 8px rgba(255,150,20,.45); } }
@@ -2131,7 +2178,7 @@ html, body { overscroll-behavior-x: none; }
 .cm.glass h3 { color: #1E2D44; font-size: 26px; text-align: center; letter-spacing: .02em; text-shadow: 0 2px 0 #fff; }
 .cm.glass .cmrole { align-self: center; }
 .cm.glass p { color: #4A5E78; text-align: center; }
-.cm.glass .cmart { background: linear-gradient(#CFE6F4, #A9CBE0); box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px rgba(120,150,190,.5), inset 0 -10px 20px rgba(255,255,255,.4); }
+.cm.glass .cmart { background: linear-gradient(#CFE6F4, #A9CBE0); box-shadow: 0 0 0 1.5px #fff, 0 2px 4px rgba(60,85,120,.25), inset 0 -10px 20px rgba(255,255,255,.4); }
 .cm.glass .cmst div { background: linear-gradient(#fff, #E6EEF7); box-shadow: 0 0 0 2px #C9D8E8, inset 0 2px 0 #fff; }
 .cm.glass .cmst b { color: #1E2D44; }
 .cm.glass .cmst small { color: #6B7F98; }
@@ -2149,7 +2196,7 @@ html, body { overscroll-behavior-x: none; }
 .cm.glass .abil p { color: #4A5E78; text-align: left; }
 .cm.glass .cx { background: #fff; color: #24344A; box-shadow: 0 0 0 2.5px #C3D2E3; }
 .cm.glass .cmbar { background: linear-gradient(#fff, #E9F0F8); box-shadow: 0 0 0 2px #C9D8E8, inset 0 2px 0 #fff; padding: 14px 18px 9px 10px; }
-.cmtrack { position: relative; height: 22px; margin-right: 12px; border-radius: 999px; background: #C9D6E4; box-shadow: inset 0 3px 5px rgba(30,50,80,.35), 0 0 0 2px #fff, 0 0 0 3.5px #9FB3CA; }
+.cmtrack { position: relative; height: 22px; margin-right: 12px; border-radius: 999px; background: #C9D6E4; box-shadow: inset 0 3px 5px rgba(30,50,80,.35), 0 0 0 1.5px #fff, 0 2px 4px rgba(60,85,120,.25), 0 0 0 3.5px #9FB3CA; }
 .cmtrack i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(#9CFFF0, #28D3BF 55%, #12A898); box-shadow: inset 0 3px 0 rgba(255,255,255,.55), 0 0 10px rgba(40,230,205,.6); transition: width .4s; }
 .cmtrack .ms { position: absolute; top: 50%; width: 38px; height: 38px; margin: -19px 0 0 -19px; z-index: 2; }
 .cmtrack .ms svg { width: 100%; height: 100%; fill: #D2D9E2; stroke: #8794A6; stroke-width: 1.8; stroke-linejoin: round; filter: drop-shadow(0 2px 2px rgba(30,50,80,.35)); }
@@ -7098,8 +7145,21 @@ CH.shield = critter({
   try { var nm = localStorage.getItem(NAME_KEY); if (nm && nm.trim()) S.name = nm.trim().slice(0, 16); } catch (e) {}
   function saveName(v) {
     v = String(v || '').replace(/\s+/g, ' ').trim().slice(0, 16);
-    if (v) { S.name = v; try { localStorage.setItem(NAME_KEY, v); } catch (e) {} }
-    S.editName = false; renderMenu();
+    if (!v || v === S.name) { S.editName = false; S.nameMsg = ''; renderMenu(); return; }
+    var old = S.name;
+    function apply() {
+      S.name = v; try { localStorage.setItem(NAME_KEY, v); } catch (e) {}
+      S.editName = false; S.nameMsg = '';
+      if (S.cl && S.cl.user && S.cl.db && old && nameKey(old) !== 'spieler' && nameKey(old) !== nameKey(v)) { try { S.cl.db.collection('names').doc(nameKey(old)).delete().catch(function () {}); } catch (e) {} }
+      renderMenu(); if (typeof clLadder === 'function') clLadder(true);
+    }
+    if (S.cl && S.cl.user && S.cl.ready && nameKey(v) !== 'spieler') {
+      S.nameMsg = 'Prüfe, ob der Name frei ist …'; renderMenu();
+      clClaimName(v, function (ok, e) {
+        if (ok) apply();
+        else { S.nameMsg = e && e.code === 'name-taken' ? 'Dieser Name ist schon vergeben.' : 'Der Name konnte nicht geprüft werden. Bitte später nochmal versuchen.'; S.editName = true; renderMenu(); var ni = document.getElementById('nameinp'); if (ni) { ni.focus(); ni.select(); } }
+      });
+    } else apply();
   }
   var WALLET_KEY = 'knirps-arena-wallet';
   S.gems = 0; S.coins = 0; S.runCoins = 0; S.ownD = false;
@@ -7367,7 +7427,7 @@ CH.shield = critter({
 
   function homeHtml() {
     var ready = S.deck.length >= DECK_SIZE && !!S.heroKey;
-    var h = '' + passChip() + questChip() + ladChip() +
+    var h = '' + passChip() + questChip() +
       deckStage() +
       '<div class="ctarow">' + isleBtn() +
       '<button class="cta" data-act="play"' + (!S.inGame && !ready ? ' disabled' : '') + '>' + (S.inGame ? 'Weiter' : 'Kampf') + '</button></div>' +
@@ -7713,8 +7773,10 @@ function cmodalHtml(k) {
     var T = S.trophies, ci = arenaIdxOf(T), rows = '', ai, i;
     function row(mark, content) { return '<div class="prow"><div class="pmw">' + mark + '</div><div class="pc">' + content + '</div></div>'; }
     function mk(t, big) { return '<span class="pm' + (big ? ' big' : '') + (T >= t ? ' on' : '') + '" data-t="' + t + '">' + (big ? mi('crown') : '') + t + '</span>'; }
+    rows += ladPathRows();
     for (ai = ARENAS.length - 1; ai >= 0; ai--) {
       var A = ARENAS[ai], locked = ai > ci;
+      if (A.soon) continue;
       if (!A.soon) for (i = A.ranks.length - 1; i >= 1; i--) {
         var r = A.ranks[i];
         rows += row(mk(r[0]), roadCell(r[0], roadRw(r[0], ai, i), T >= r[0]));
@@ -7737,12 +7799,13 @@ function cmodalHtml(k) {
     var top = ys[0], bot = ys[ys.length - 1], T = S.trophies, y = bot;
     if (T >= ts[0]) y = top;
     else for (i = ms.length - 1; i > 0; i--) if (T >= ts[i] && T < ts[i - 1]) { y = ys[i] + (ys[i - 1] - ys[i]) * (T - ts[i]) / (ts[i - 1] - ts[i]); y = ys[i] + (ys[i - 1] - ys[i]) * (T - ts[i]) / (ts[i - 1] - ts[i]); break; }
-    var bar = $('pbar'); bar.style.top = top + 'px'; bar.style.height = (bot - top) + 'px';
+    var bar = $('pbar'); bar.style.top = '0px'; bar.style.height = bot + 'px';
     $('pfill').style.height = Math.max(0, bot - y) + 'px';
     var you = $('pyou'); you.style.top = y + 'px';
     if (scroll && you.scrollIntoView) you.scrollIntoView({ block: 'center' });
   }
   window.addEventListener('resize', function () { pathLayout(false); });
+  document.addEventListener('input', function (e) { if (e.target && e.target.id === 'ladq') S.lad.qv = e.target.value; });
 
   function rulesHtml() {
     return '<button class="backbtn" data-tab="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button>' +
@@ -7859,7 +7922,7 @@ function cmodalHtml(k) {
     clLoadScript(base + 'firebase-app-compat.js').then(function () { return clLoadScript(base + 'firebase-auth-compat.js'); }).then(function () { return clLoadScript(base + 'firebase-firestore-compat.js'); }).then(function () {
       CL.fb = window.firebase; CL.fb.initializeApp(cfg); CL.auth = CL.fb.auth(); CL.db = CL.fb.firestore(); CL.ready = true;
       CL.auth.getRedirectResult().catch(function (e) { CL.msg = clErr(e); CL.ok = false; clRender(); });
-      CL.auth.onAuthStateChanged(function (u) { CL.user = u; if (u) { clSyncIn(); clLadder(true); } if (S.tab === 'ladder') { S.lad.at = 0; ladLoad(true); } clRender(); });
+      CL.auth.onAuthStateChanged(function (u) { CL.user = u; if (u) { clSyncIn(); clEnsureName(); clLadder(true); } if (S.tab === 'ladder') { S.lad.at = 0; ladLoad(true); } clRender(); });
       clRender();
     }).catch(function () { CL.msg = 'Der Konto-Server ist gerade nicht erreichbar.'; CL.ok = false; clRender(); });
   }
@@ -7961,7 +8024,7 @@ function cmodalHtml(k) {
       '<div><h2 class="mtitle">Konto</h2><p class="msub">Dein Stand in der Knirps-Arena.</p></div>' +
       '<div class="panel accf"><small class="accl">Spielername</small>' +
       (S.editName ? '<div class="accrow"><input id="nameinp" class="accinp" maxlength="16" value="' + S.name.replace(/"/g, '&quot;') + '" autocomplete="off" autocapitalize="words" spellcheck="false"><button class="accbtn" data-namesave="1" aria-label="Speichern">' + mi('check') + '</button></div>'
-        : '<div class="accrow"><b class="accval">' + S.name.replace(/</g, '&lt;') + '</b><button class="accbtn" data-nameedit="1" aria-label="Spielernamen bearbeiten">' + mi('pencil') + '</button></div>') + '</div>' +
+        : '<div class="accrow"><b class="accval">' + S.name.replace(/</g, '&lt;') + '</b><button class="accbtn" data-nameedit="1" aria-label="Spielernamen bearbeiten">' + mi('pencil') + '</button></div>') + (S.nameMsg ? '<p class="clmsg">' + S.nameMsg + '</p>' : '') + '</div>' +
       clHtml() +
       '<div class="sg">' +
       '<div class="sc"><b>' + S.trophies + '</b><span>Trophäen</span></div>' +
@@ -7971,48 +8034,109 @@ function cmodalHtml(k) {
       '<div class="panel"><b style="font-family:var(--font-display);font-weight:400;font-size:18px">Aktuelle Arena</b><p style="margin:6px 0 0;font-weight:700">' + (A.name || '') + '</p>' +
       '<p style="margin:6px 0 0;font-weight:600">Dein Held: ' + (S.heroKey ? TYPES[S.heroKey].name : 'keiner') + (unlocked('hero') ? ' · Dolcha freigeschaltet' : '') + '</p></div>';
   }
-  /* ---------- Ranked Ladder (ab 1000 Trophäen): Top 30 nach Trophäen ---------- */
-  var LAD_MIN = 1000, LAD_N = 30;
-  S.lad = { rows: [], st: '', at: 0 };
+  /* ---------- Bestenliste (ab 1000 Trophäen): Top 30 nach Trophäen, Suche, eindeutige Namen ---------- */
+  var LAD_MIN = 1000, LAD_N = 30, LAD_MAX = 90;
+  S.lad = { rows: [], st: '', at: 0, n: LAD_N, q: '', qv: '', qrows: null, qst: '' };
+  S.nameMsg = '';
   var LAD_ICON = '<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="ldg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF0A0"/><stop offset="1" stop-color="#F2A81C"/></linearGradient></defs><path d="M9 4h14v7a7 7 0 0 1-14 0z" fill="url(#ldg)" stroke="#7A4A08" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 7H4.500Q4 14 10 15M23 7h4.500Q28 14 22 15" fill="none" stroke="#7A4A08" stroke-width="1.8" stroke-linecap="round"/><path d="M16 18v5M10 28h12l-1.500-5h-9z" fill="url(#ldg)" stroke="#7A4A08" stroke-width="1.8" stroke-linejoin="round"/></svg>';
-  function ladChip() {
-    if (!(S.maxT >= LAD_MIN)) return '';
-    return '<button class="passchip questchip ladchip" data-tab="ladder" aria-label="Rangliste">' + LAD_ICON + 'Rangliste</button>';
+  function nameKey(v) { return String(v || '').toLowerCase().replace(/[\/.#\[\]$]/g, '_'); }
+  function clClaimName(v, cb) {
+    var CLx = S.cl, ref = CLx.db.collection('names').doc(nameKey(v)), uid = CLx.user.uid;
+    CLx.db.runTransaction(function (tx) {
+      return tx.get(ref).then(function (d) {
+        if (d.exists && d.data().uid !== uid) throw { code: 'name-taken' };
+        tx.set(ref, { uid: uid, name: v });
+      });
+    }).then(function () { cb(true); }).catch(function (e) { cb(false, e); });
+  }
+  function clEnsureName() {
+    var CLx = S.cl; if (!CLx || !CLx.user || !CLx.ready || nameKey(S.name) === 'spieler') return;
+    clClaimName(S.name, function (ok, e) {
+      if (ok || !(e && e.code === 'name-taken')) return;
+      (function tryNew(i) {
+        var nv = 'Spieler' + (1000 + Math.floor(Math.random() * 9000));
+        clClaimName(nv, function (ok2) {
+          if (ok2) { S.name = nv; try { localStorage.setItem(NAME_KEY, nv); } catch (e2) {} S.nameMsg = 'Dein Name war schon vergeben. Neuer Name: ' + nv; clLadder(true); if (S.screen === 'menu') renderMenu(); }
+          else if (i < 4) tryNew(i + 1);
+        });
+      })(0);
+    });
   }
   function clLadder(force) {
-    if (!CL.user || !CL.ready || !(S.maxT >= LAD_MIN)) return;
-    var key = (S.name || '') + '|' + (S.trophies || 0); if (!force && key === CL.ladSent) return; CL.ladSent = key;
-    CL.db.collection('ladder').doc(CL.user.uid).set({ name: (S.name || 'Spieler').slice(0, 16), trophies: S.trophies || 0, updated: CL.fb.firestore.FieldValue.serverTimestamp() }).catch(function () { CL.ladSent = ''; });
+    var CLx = S.cl; if (!CLx || !CLx.user || !CLx.ready || !(S.maxT >= LAD_MIN)) return;
+    var key = (S.name || '') + '|' + (S.trophies || 0); if (!force && key === CLx.ladSent) return; CLx.ladSent = key;
+    var nm = (S.name || 'Spieler').slice(0, 16);
+    CLx.db.collection('ladder').doc(CLx.user.uid).set({ name: nm, nl: nm.toLowerCase(), trophies: S.trophies || 0, updated: CLx.fb.firestore.FieldValue.serverTimestamp() }).catch(function () { CLx.ladSent = ''; });
   }
-  function ladRender() { if (S.screen === 'menu' && S.tab === 'ladder') renderMenu(); }
+  function ladRender() {
+    if (S.screen !== 'menu' || (S.tab !== 'ladder' && S.tab !== 'rec')) return;
+    S.noScr = 1; renderMenu(); S.noScr = 0;
+  }
   function ladLoad(force) {
     if (!CL.ready || !CL.db) { S.lad.st = 'off'; return; }
     if (S.lad.st === 'load' || (!force && Date.now() - S.lad.at < 30000)) return;
     S.lad.st = 'load';
-    CL.db.collection('ladder').where('trophies', '>=', LAD_MIN).orderBy('trophies', 'desc').limit(LAD_N).get().then(function (q) {
+    CL.db.collection('ladder').where('trophies', '>=', LAD_MIN).orderBy('trophies', 'desc').limit(S.lad.n).get().then(function (q) {
       S.lad.rows = q.docs.map(function (d) { var o = d.data(); return { id: d.id, name: ((o.name || 'Spieler') + '').slice(0, 16), t: o.trophies || 0 }; });
       S.lad.st = 'ok'; S.lad.at = Date.now(); ladRender();
     }).catch(function (e) { S.lad.st = e && e.code === 'permission-denied' ? 'perm' : 'err'; S.lad.at = Date.now(); ladRender(); });
   }
-  function ladHtml() {
-    var me = CL.user ? CL.user.uid : '', rows = S.lad.rows.slice(), has = false;
-    rows.forEach(function (r) { if (r.id === me) { has = true; r.t = Math.max(r.t, 0); } });
-    if (me) rows.forEach(function (r) { if (r.id === me) { r.t = S.trophies; r.name = S.name; } });
+  function ladRows(n) {
+    var me = CL.user ? CL.user.uid : '', rows = S.lad.rows.map(function (r) { return { id: r.id, name: r.name, t: r.t }; }), has = false;
+    rows.forEach(function (r) { if (r.id === me) { has = true; r.t = S.trophies; r.name = S.name; } });
     if (!has && S.trophies >= LAD_MIN) rows.push({ id: me || 'local', name: S.name, t: S.trophies });
-    rows.sort(function (a, b) { return b.t - a.t; }); rows = rows.slice(0, LAD_N);
-    var note = '';
-    if (!CL.cfg) note = 'Der Konto-Server ist noch nicht eingerichtet. Du siehst nur dich selbst.';
-    else if (!CL.user) note = 'Melde dich im Konto an, damit andere dich in der Rangliste sehen.';
-    else if (S.lad.st === 'perm') note = 'Die Rangliste ist auf dem Server noch nicht freigeschaltet.';
-    else if (S.lad.st === 'err') note = 'Die Rangliste konnte nicht geladen werden.';
-    else if (S.lad.st === 'load' || !S.lad.st) note = 'Lade Rangliste …';
-    var list = rows.map(function (r, i) {
-      var mine = r.id === me || r.id === 'local';
-      return '<div class="lrow' + (mine ? ' me' : '') + (i < 3 ? ' t' + (i + 1) : '') + '"><span class="lpos">' + (i + 1) + '</span><span class="lnm"><b>' + (r.name + '').replace(/</g, '&lt;') + '</b><small>' + rankOf(r.t) + '</small></span><span class="ltr">' + mi('trophy') + r.t.toLocaleString('de-DE') + '</span></div>';
-    }).join('');
+    rows.sort(function (a, b) { return b.t - a.t; });
+    rows = rows.filter(function (r) { return r.t >= LAD_MIN; });
+    return rows.slice(0, n || LAD_N);
+  }
+  function ladSearch(q) {
+    q = String(q || '').trim().toLowerCase().slice(0, 16); S.lad.q = q; S.lad.qv = q;
+    if (!q) { S.lad.qrows = null; S.lad.qst = ''; ladRender(); return; }
+    if (!CL.ready || !CL.db) { S.lad.qrows = ladRows(LAD_MAX).filter(function (r) { return r.name.toLowerCase().indexOf(q) >= 0; }); S.lad.qst = 'ok'; ladRender(); return; }
+    S.lad.qst = 'load'; ladRender();
+    CL.db.collection('ladder').where('nl', '>=', q).where('nl', '<', q + '').orderBy('nl').limit(10).get().then(function (r) {
+      if (S.lad.q !== q) return;
+      S.lad.qrows = r.docs.map(function (d) { var o = d.data(); return { id: d.id, name: ((o.name || 'Spieler') + '').slice(0, 16), t: o.trophies || 0 }; }).sort(function (a, b) { return b.t - a.t; });
+      S.lad.qst = 'ok'; ladRender();
+    }).catch(function (e) { S.lad.qst = e && e.code === 'permission-denied' ? 'perm' : 'err'; S.lad.qrows = []; ladRender(); });
+  }
+  function ladMe(r) { return r.id === (CL.user ? CL.user.uid : '') || r.id === 'local'; }
+  function ladEsc(v) { return String(v).replace(/</g, '&lt;'); }
+  function ladRow(r, pos) {
+    return '<div class="lrow' + (ladMe(r) ? ' me' : '') + (pos && pos <= 3 ? ' t' + pos : '') + '"><span class="lpos">' + (pos || '–') + '</span><span class="lnm"><b>' + ladEsc(r.name) + '</b><small>' + rankOf(r.t) + '</small></span><span class="ltr">' + mi('trophy') + r.t.toLocaleString('de-DE') + '</span></div>';
+  }
+  function ladNote() {
+    if (!CL.cfg) return 'Der Konto-Server ist noch nicht eingerichtet. Du siehst nur dich selbst.';
+    if (!CL.user) return 'Melde dich im Konto an, damit andere dich in der Bestenliste sehen.';
+    if (S.lad.st === 'perm') return 'Die Bestenliste ist auf dem Server noch nicht freigeschaltet.';
+    if (S.lad.st === 'err') return 'Die Bestenliste konnte nicht geladen werden.';
+    if (S.lad.st === 'load' || !S.lad.st) return 'Lade Bestenliste …';
+    return '';
+  }
+  function ladHtml() {
+    var rows = ladRows(S.lad.n), note = ladNote(), all = ladRows(LAD_MAX), more = S.lad.rows.length >= S.lad.n && S.lad.n < LAD_MAX;
+    var list = rows.map(function (r, i) { return ladRow(r, i + 1); }).join('');
+    var sr = '';
+    if (S.lad.q) {
+      sr = '<h3 class="shh lsh">Suchergebnis</h3>' + (S.lad.qst === 'load' ? '<p class="mnote">Suche …</p>' : S.lad.qst === 'perm' ? '<p class="mnote">Die Suche ist auf dem Server noch nicht freigeschaltet.</p>' : S.lad.qst === 'err' ? '<p class="mnote">Die Suche hat nicht geklappt.</p>' :
+        (S.lad.qrows && S.lad.qrows.length ? '<div class="lad">' + S.lad.qrows.map(function (r) { var ix = -1; all.forEach(function (x, i) { if (x.id === r.id) ix = i; }); return ladRow(r, ix >= 0 ? ix + 1 : 0); }).join('') + '</div>' : '<p class="mnote">Kein Spieler mit diesem Namen gefunden.</p>')) +
+        '<button class="link" data-ladclear="1">Suche zurücksetzen</button>';
+    }
     return '<button class="backbtn" data-tab="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button>' +
-      '<div><h2 class="mtitle">Rangliste</h2><p class="msub">Die Top ' + LAD_N + ' mit den meisten Trophäen. Ab ' + LAD_MIN.toLocaleString('de-DE') + ' Trophäen bist du dabei.</p></div>' +
-      (note ? '<p class="mnote">' + note + '</p>' : '') + '<div class="lad">' + (list || '<p class="mnote">Noch niemand in der Rangliste.</p>') + '</div>';
+      '<div><h2 class="mtitle">Bestenliste</h2><p class="msub">Die besten ' + LAD_N + ' Spieler nach Trophäen. Ab ' + LAD_MIN.toLocaleString('de-DE') + ' Trophäen bist du dabei.</p></div>' +
+      '<div class="lsr"><input id="ladq" class="accinp" maxlength="16" placeholder="Spieler suchen" value="' + ladEsc(S.lad.qv).replace(/"/g, '&quot;') + '" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="accbtn lgo" data-ladsearch="1">Suchen</button></div>' +
+      sr + (note ? '<p class="mnote">' + note + '</p>' : '') +
+      '<h3 class="shh lsh">Top ' + LAD_N + '</h3><div class="lad">' + (list || '<p class="mnote">Noch niemand in der Bestenliste.</p>') + '</div>' +
+      (more ? '<button class="clbtn lmore" data-ladmore="1">Mehr anzeigen</button>' : '');
+  }
+  /* im Trophäenpfad ganz oben: die besten 5 groß, darunter die restlichen 25 klein */
+  function ladPathRows() {
+    var rows = ladRows(20), top = rows.slice(0, 5), rest = rows.slice(5), h;
+    h = '<div class="prow lfull"><div class="pc"><div class="lbox" data-v="b"><div class="lhd"><span><small>Ganz oben</small><h3>Bestenliste</h3></span><button class="lall" data-tab="ladder">Alle ansehen</button></div>';
+    h += '<div class="lwhite">' + (top.length ? top.map(function (r, i) {
+      return '<div class="lw t' + (i + 1) + (ladMe(r) ? ' me' : '') + '"><span class="lpos">' + (i + 1) + '</span><span class="lnm"><b>' + ladEsc(r.name) + '</b><small>' + rankOf(r.t) + '</small></span><span class="ltr">' + (i === 0 ? '<i class="lcr">' + mi('crown') + '</i>' : '') + mi('trophy') + r.t.toLocaleString('de-DE') + '</span></div>';
+    }).join('') : '<div class="lw lempty">' + (S.lad.st === 'load' ? 'Lade Bestenliste …' : 'Noch niemand ab ' + LAD_MIN.toLocaleString('de-DE') + ' Trophäen.') + '</div>') + (rest.length ? '<div class="lgrid">' + rest.map(function (r, i) { return '<div class="lc' + (ladMe(r) ? ' me' : '') + '"><span class="ln">' + (i + 6) + '</span><b>' + ladEsc(r.name) + '</b><span class="lt">' + r.t.toLocaleString('de-DE') + '</span></div>'; }).join('') + '</div>' : '') + '</div>';
+    return h + '</div></div></div>';
   }
   function achHtml() {
     var st = S.stats, quote = st.games ? Math.round(st.wins / st.games * 100) + ' %' : '–';
@@ -8124,7 +8248,7 @@ function cmodalHtml(k) {
     var oldBody = $('menu').querySelector('.mbody'), sc = slideCls();
     $('menu').innerHTML =
       '<div class="mtop">' + '<button class="mlvl" data-mmenu="1" aria-label="Menü, ' + S.name.replace(/[<>&"]/g, '') + ', Level ' + LI.l + '" aria-expanded="' + !!S.mpop + '">' + lvlRing(LI) + '<span class="lbar"><span class="lname">' + S.name.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</span></span></button>' + pill('trophy', 'Trophäen', S.tshow != null ? S.tshow : S.trophies) + pill('coin', 'Münzen', S.coins).replace('class="pill"', 'class="pill coinp"') + pill('gem', 'Juwelen', S.gems).replace('class="pill"', 'class="pill gemp"') +
-      (S.mpop ? '<div class="mpop" role="menu"><button data-tab="acct" role="menuitem">' + mi('user') + 'Konto</button><button data-tab="rules" role="menuitem">' + mi('book') + 'Spielregeln</button><button data-tab="ach" role="menuitem">' + mi('crown') + 'Erfolge</button><button data-tab="pass" role="menuitem">' + mi('star') + 'Knirpspass</button></div>' : '') + '</div>' +
+      (S.mpop ? '<div class="mpop" role="menu"><button data-tab="acct" role="menuitem">' + mi('user') + 'Konto</button><button data-tab="ladder" role="menuitem">' + mi('trophy') + 'Bestenliste</button><button data-tab="rules" role="menuitem">' + mi('book') + 'Spielregeln</button><button data-tab="ach" role="menuitem">' + mi('crown') + 'Erfolge</button></div>' : '') + '</div>' +
       '<div class="mwrap"><div class="mbody' + sc + '">' + body + '</div></div>' + tabsHtml() + (S.ppick ? pickHtml() : '');
     if (sc && oldBody) {
       var wrap = $('menu').querySelector('.mwrap');
@@ -8149,8 +8273,8 @@ function cmodalHtml(k) {
         if (S.screen !== 'menu' || S.tab !== 'home' || S.cmodal || S.ppick || S.mpop) return;
         var t = e.touches[0]; if (t && Math.abs(t.clientY - hy0) > Math.abs(t.clientX - hx0) && e.cancelable) e.preventDefault();
       }, { passive: false }); }
-    if (S.tab === 'rec') setTimeout(function () { pathLayout(true); }, 0);
-    if (S.tab === 'ladder') setTimeout(function () { ladLoad(false); }, 0);
+    if (S.tab === 'rec') setTimeout(function () { pathLayout(!S.noScr); }, 0);
+    if (S.tab === 'ladder' || S.tab === 'rec') setTimeout(function () { ladLoad(false); }, 0);
     var cv = $('menu').querySelector('.cclip');
     if (cv) { cv.muted = true; var pp = cv.play(); if (pp && pp.catch) pp.catch(function () { setTimeout(function () { try { cv.play(); } catch (e) {} }, 150); }); }
   }
@@ -8451,6 +8575,7 @@ function cmodalHtml(k) {
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && e.target && (e.target.id === 'clmail' || e.target.id === 'clpw')) { e.preventDefault(); clAction(CL.mode); }
     if (e.key === 'Enter' && e.target && e.target.id === 'nameinp') { e.preventDefault(); saveName(e.target.value); }
+    if (e.key === 'Enter' && e.target && e.target.id === 'ladq') { e.preventDefault(); ladSearch(e.target.value); }
     if (e.key === 'Escape' && e.target && e.target.id === 'nameinp') { S.editName = false; renderMenu(); }
   });
   document.addEventListener('click', function (e) {
@@ -8556,6 +8681,9 @@ function cmodalHtml(k) {
       if (pt <= lvlInfo().l && !(pp ? S.pass.q[pt] : S.pass.f[pt]) && (!pp || S.pass.p)) { (pp ? S.pass.q : S.pass.f)[pt] = 1; savePass(); var rw = passReward(pt, pp), crect = pcl.getBoundingClientRect(), c0 = S.coins, g0 = S.gems, gt = rw.k === 'chest' ? '' : passGrant(rw); renderMenu(); if (rw.k === 'chest') { showChest(rw.gold ? luckyRoll : drawChest(1, 0), function () { if (S.screen === 'menu') renderMenu(); }, rw.gold ? 'gold' : 'wood'); return; } if (rw.k === 'coin') coinFly(crect, rw.n, c0); else if (rw.k === 'gem') coinFly(crect, rw.n, g0, true); passMsg(gt); }
       return;
     }
+    if (e.target.closest('[data-ladsearch]') && S.screen === 'menu') { var lq = $('ladq'); ladSearch(lq ? lq.value : S.lad.qv); return; }
+    if (e.target.closest('[data-ladclear]') && S.screen === 'menu') { S.lad.q = ''; S.lad.qv = ''; S.lad.qrows = null; S.lad.qst = ''; ladRender(); return; }
+    if (e.target.closest('[data-ladmore]') && S.screen === 'menu') { S.lad.n = Math.min(LAD_MAX, S.lad.n + LAD_N); ladLoad(true); return; }
     var rcl = e.target.closest('[data-rclaim]');
     if (rcl && S.screen === 'menu') {
       var rt = +rcl.getAttribute('data-rclaim'), rnd0 = null;
